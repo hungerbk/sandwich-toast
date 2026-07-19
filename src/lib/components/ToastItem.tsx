@@ -79,7 +79,9 @@ export function ToastItem({
     setIsDismissing(true)
 
     const el = rootRef.current
-    if (!el) {
+    // jsdom(Jest/Vitest 테스트 환경)이나 구형 브라우저엔 Web Animations
+    // API가 없을 수 있다 — 그런 경우 애니메이션 없이 바로 dismiss.
+    if (!el || typeof el.animate !== 'function') {
       onDismiss?.()
       return
     }
@@ -188,6 +190,10 @@ export function ToastItem({
             right: 4,
             width: 22,
             height: 22,
+            padding: 0,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
             border: 'none',
             borderRadius: '50%',
             background: 'rgba(0, 0, 0, 0.5)',
