@@ -8,7 +8,7 @@ on the single image, not by shipping two cropped files.
 
 ## Current ingredients
 
-| file | type | ingredient |
+| file | toast type | ingredient |
 | --- | --- | --- |
 | `lettuce.webp` | success | lettuce |
 | `tomato.webp` | error | tomato |
