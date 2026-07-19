@@ -35,17 +35,26 @@ const TILE_OVERLAP = "24%";
 
 export interface IngredientProps {
   ingredient: ToastIngredient;
+  className?: string;
+  style?: CSSProperties;
 }
 
-export function Ingredient({ ingredient }: IngredientProps) {
+export function Ingredient({ ingredient, className, style }: IngredientProps) {
   const asset = INGREDIENT_ASSETS[ingredient];
 
   if (!asset.repeat) {
-    return <img src={asset.src} alt="" style={{ display: "block", width: "100%", ...asset.style }} />;
+    return (
+      <img
+        src={asset.src}
+        alt=""
+        className={className}
+        style={{ display: "block", width: "100%", ...style, ...asset.style }}
+      />
+    );
   }
 
   return (
-    <div style={{ display: "flex", width: "100%" }}>
+    <div className={className} style={{ display: "flex", width: "100%", ...style }}>
       {Array.from({ length: asset.repeat }, (_, i) => (
         <img
           key={`${ingredient}-${i}`}
