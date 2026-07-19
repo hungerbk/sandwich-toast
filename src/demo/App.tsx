@@ -2,10 +2,43 @@ import { useState, useSyncExternalStore } from "react";
 import { toast } from "../lib";
 import { subscribe, getSnapshot } from "../lib/store";
 import { Ingredient } from "../lib/components/Ingredient";
+import { ToastItem } from "../lib/components/ToastItem";
 import { useMeasuredRows } from "../lib/useMeasuredRows";
 import "./App.css";
 
 const ALL_INGREDIENTS = ["lettuce", "tomato", "cheese", "bread"] as const;
+
+// index 0 = 스택 맨 앞(최신), 마지막 index = 맨 뒤(가장 오래됨).
+const MOCK_STACK = [
+  { id: "a", ingredient: "lettuce", message: "상큼하게 성공!" } as const,
+  { id: "b", ingredient: "tomato", message: "서버 응답이 없어요, 다시 시도해주세요" } as const,
+  { id: "c", ingredient: "cheese", message: "조심하세요, 경고입니다" } as const,
+];
+
+// 호버한 토스트보다 앞에(위에) 쌓여있던 토스트들이 위로 비켜서 호버한
+// 토스트가 잘 보이게 하는 미리보기. Toaster(#9)가 실제 큐로 이 흐름을
+// 대체하게 될 것.
+function HoverStackPreview() {
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const RESTING_GAP = 40;
+  const EXTRA_LIFT = 70;
+
+  return (
+    <div style={{ position: "relative", height: 420 }}>
+      {MOCK_STACK.map((t, i) => (
+        <ToastItem
+          key={t.id}
+          ingredient={t.ingredient}
+          message={t.message}
+          onMouseEnter={() => setHoveredIndex(i)}
+          onMouseLeave={() => setHoveredIndex(null)}
+          liftOffset={hoveredIndex !== null && i < hoveredIndex ? EXTRA_LIFT : 0}
+          style={{ position: "absolute", top: i * RESTING_GAP, left: 0, zIndex: MOCK_STACK.length - i }}
+        />
+      ))}
+    </div>
+  );
+}
 
 // 텍스트가 길어질수록 Ingredient의 rows가 늘어나는 걸 보여주는 미리보기.
 // 실제로는 SandwichToast(#7)가 이 흐름을 조립해서 쓰게 될 것.
@@ -67,6 +100,9 @@ function App() {
 
       <h2>Text wrap + rows preview</h2>
       <TextWrapPreview />
+
+      <h2>Hover stack preview</h2>
+      <HoverStackPreview />
     </div>
   );
 }
