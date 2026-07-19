@@ -41,11 +41,14 @@ export function addToast(toast: Toast) {
 }
 
 export function removeToast(id: string) {
-  toasts = toasts.filter((toast) => toast.id !== id)
+  const nextToasts = toasts.filter((toast) => toast.id !== id)
+  if (nextToasts.length === toasts.length) return
+  toasts = nextToasts
   emitChange()
 }
 
 export function clearToasts() {
+  if (toasts.length === 0) return
   toasts = []
   emitChange()
 }
