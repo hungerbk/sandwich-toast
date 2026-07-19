@@ -1,7 +1,10 @@
 import { useSyncExternalStore } from 'react'
 import { toast } from '../lib'
 import { subscribe, getSnapshot } from '../lib/store'
+import { Ingredient } from '../lib/components/Ingredient'
 import './App.css'
+
+const ALL_INGREDIENTS = ['lettuce', 'tomato', 'cheese', 'bread'] as const
 
 // Toaster UI가 아직 없어서(#9) 큐 상태를 디버그 리스트로만 확인하는 임시 플레이그라운드.
 function App() {
@@ -30,6 +33,15 @@ function App() {
           </li>
         ))}
       </ul>
+
+      <h2>Ingredient preview</h2>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', width: '480px' }}>
+        {ALL_INGREDIENTS.map((ingredient) => (
+          <div key={ingredient} style={{ border: '1px solid #ddd' }}>
+            <Ingredient ingredient={ingredient} />
+          </div>
+        ))}
+      </div>
     </div>
   )
 }
