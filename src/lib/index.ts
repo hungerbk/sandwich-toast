@@ -6,8 +6,10 @@ import {
   type ToastIngredient,
   type ToastType,
 } from './store'
+import { Toaster } from './components/Toaster'
 
 export type { ToastType, ToastIngredient }
+export { Toaster }
 
 export interface ToastOptions {
   type?: ToastType
