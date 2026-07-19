@@ -8,24 +8,22 @@ on the single image, not by shipping two cropped files.
 
 ## Current ingredients
 
-| file | toast type | ingredient |
-| --- | --- | --- |
-| `lettuce.webp` | success | lettuce |
-| `tomato.webp` | error | tomato |
-| `cheese.webp` | warning | cheese |
-| `bread.webp` | info | bread |
+| file | toast type | ingredient | size |
+| --- | --- | --- | --- |
+| `lettuce.webp` | success | lettuce | 556×562 |
+| `tomato.webp` | error | tomato | 499×400 |
+| `cheese.webp` | warning | cheese | 450×400 |
+| `bread.webp` | info | bread | 1600×400 |
 
-All source canvases are 1600×400, but the drawn content is not centered and
-does not fill the same proportion of the canvas across ingredients (`bread`
-nearly fills its canvas; `lettuce`/`tomato`/`cheese` are smaller and sit at
-different positions). This is intentional, not a cropping issue:
+Each file is cropped tight to its drawn content (no padding/whitespace), so
+sizes differ per ingredient — that's expected, not a bug. `Ingredient.tsx`
+handles the two rendering modes:
 
 - `bread` renders as a single full-width base/cap layer.
-- `lettuce` / `tomato` / `cheese` are meant to be tiled ~4x side by side
-  (each instance with a slightly different rotation) to build up the full
-  sandwich width, rather than stretching one image. Ingredient.tsx (issue
-  #4) needs a repeat/tile rendering mode for these, separate from bread's
-  single-image mode.
+- `lettuce` / `tomato` / `cheese` are tiled 4x side by side, overlapping,
+  each instance with a slightly different rotation (and a matching
+  scale-down so the rotated corners don't visually spill past the tile's
+  box) to build up the full sandwich width rather than stretching one image.
 
 ## Reserved (not part of the current ingredient type union)
 
