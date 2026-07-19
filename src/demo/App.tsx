@@ -107,6 +107,12 @@ function App() {
       <button type="button" onClick={() => toast.tomato("서버 응답 없음")}>
         toast.tomato()
       </button>
+      <button type="button" onClick={() => toast.cheese("warning!")}>
+        toast.cheese()
+      </button>
+      <button type="button" onClick={() => toast.info("이건 테스트용이에요")}>
+        toast.info()
+      </button>
       <button type="button" onClick={() => toast.success("귀여운 성공", { ingredient: "tomato" })}>
         toast.success() + ingredient override
       </button>
@@ -121,6 +127,13 @@ function App() {
           </li>
         ))}
       </ul>
+
+      <h2>Real queue preview (store 연결 + 삭제 버튼)</h2>
+      <div style={{ position: "relative", minHeight: 400 }}>
+        {toasts.map((t, i) => (
+          <ToastItem key={t.id} ingredient={t.ingredient} message={t.message} onDismiss={() => toast.dismiss(t.id)} style={{ position: "absolute", top: i * 40, left: 0, zIndex: toasts.length - i }} />
+        ))}
+      </div>
 
       <h2>Ingredient preview</h2>
       <div style={{ display: "flex", flexDirection: "column", gap: "8px", width: "480px" }}>
