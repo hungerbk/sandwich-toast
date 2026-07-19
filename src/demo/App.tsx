@@ -23,15 +23,16 @@ function HoverStackPreview() {
   // 많아야 몇 개라 배열 재정렬 비용은 신경 쓸 필요 없다.
   const [order, setOrder] = useState<string[]>(MOCK_STACK.map((t) => t.id));
   const [hoveredId, setHoveredId] = useState<string | null>(null);
-  // 클릭으로 순서가 바뀌는 애니메이션 도중엔 호버 반응을 꺼둔다. 안 그러면
-  // 마우스는 그대로 있는데 요소들이 그 밑으로 슬라이드해 들어오면서 "새로
-  // 밑에 온 게 호버된 것처럼" 보이는 혼란스러운 움직임이 생긴다.
+  // 클릭으로 순서가 바뀌는 애니메이션 도중엔 pointer-events: none으로
+  // 마우스 이벤트 자체를 막아둔다(아래 style). 안 그러면 마우스는 그대로
+  // 있는데 요소들이 그 밑으로 슬라이드해 들어오면서 "새로 밑에 온 게
+  // 호버된 것처럼" 보이는 혼란스러운 움직임이 생긴다.
   const [isSettling, setIsSettling] = useState(false);
   const RESTING_GAP = 40;
   const EXTRA_LIFT = 70;
   const SETTLE_MS = TOAST_ITEM_TRANSITION_MS + 20; // ToastItem의 transition 시간 + 약간의 여유
 
-  const hoveredRank = !isSettling && hoveredId ? order.indexOf(hoveredId) : -1;
+  const hoveredRank = hoveredId ? order.indexOf(hoveredId) : -1;
 
   const bringToFront = (id: string) => {
     setHoveredId(null);
@@ -49,11 +50,22 @@ function HoverStackPreview() {
             key={id}
             ingredient={t.ingredient}
             message={t.message}
-            onMouseEnter={() => !isSettling && setHoveredId(id)}
+            onMouseEnter={() => setHoveredId(id)}
             onMouseLeave={() => setHoveredId(null)}
             onClick={() => bringToFront(id)}
             liftOffset={hoveredRank >= 0 && rank < hoveredRank ? EXTRA_LIFT : 0}
-            style={{ position: "absolute", top: rank * RESTING_GAP, left: 0, zIndex: order.length - rank }}
+            style={{
+              position: "absolute",
+              top: rank * RESTING_GAP,
+              left: 0,
+              zIndex: order.length - rank,
+              // isSettling 동안엔 마우스 이벤트 자체를 막아야 한다 — 형제
+              // lift(hoveredRank)는 이미 막아뒀지만, ToastItem 내부의
+              // isSelfHovered(자기 확대)는 부모의 isSettling을 모르기
+              // 때문에 pointer-events로 원천 차단해야 재정렬 중 우연히
+              // 마우스 밑에 들어온 토스트가 확대되는 걸 막을 수 있다.
+              pointerEvents: isSettling ? "none" : "auto",
+            }}
           />
         );
       })}

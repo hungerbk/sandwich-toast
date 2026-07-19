@@ -88,11 +88,15 @@ export function ToastItem({ message, ingredient, liftOffset = 0, onMouseEnter, o
         style={{
           visibility: "hidden",
           position: "absolute",
-          width: "100%",
+          // width:100%은 box-sizing이 content-box(브라우저 기본값)일 때
+          // padding만큼 실제 렌더링 폭이 부모보다 커진다. inset으로 좌우를
+          // 직접 고정하면 box-sizing과 무관하게 padding이 안쪽으로 들어간다.
+          inset: "0 0 auto 0",
           margin: 0,
           padding: "16px",
           overflowWrap: "break-word",
           pointerEvents: "none",
+          boxSizing: "border-box",
         }}>
         {message}
       </p>
@@ -107,6 +111,7 @@ export function ToastItem({ message, ingredient, liftOffset = 0, onMouseEnter, o
           padding: "16px",
           overflowWrap: "break-word",
           textAlign: "center",
+          boxSizing: "border-box",
         }}>
         {message}
       </p>
