@@ -8,15 +8,14 @@ import tomatoSrc from "../assets/tomato.webp";
 interface IngredientAsset {
   src: string;
   style?: CSSProperties;
-  // 지정하면 이미지를 이 개수만큼 겹쳐서 반복 배치해 빵 가로 길이를 채운다
-  // (lettuce/tomato/cheese). 없으면 통이미지 1장으로 렌더링한다 (bread).
-  repeat?: number;
+  // 가로로 몇 개 겹쳐서 나란히 배치할지. 지정 안 하면 1장(bread).
+  columns?: number;
 }
 
 const INGREDIENT_ASSETS: Record<ToastIngredient, IngredientAsset> = {
-  lettuce: { src: lettuceSrc, repeat: 4 },
-  tomato: { src: tomatoSrc, repeat: 4 },
-  cheese: { src: cheeseSrc, repeat: 4 },
+  lettuce: { src: lettuceSrc, columns: 4 },
+  tomato: { src: tomatoSrc, columns: 4 },
+  cheese: { src: cheeseSrc, columns: 4 },
   bread: { src: breadSrc },
 };
 
@@ -30,47 +29,59 @@ const TILE_ROTATIONS = [-4, 3, -2, 4];
 // 기준(cos4°+sin4°≈1.067 → 1/1.067≈0.937)에 약간의 여유만 더한 값.
 const ROTATION_COMPENSATE_SCALE = 0.95;
 
-// 타일끼리 이 비율만큼 겹친다 (음수 margin).
-const TILE_OVERLAP = "24%";
+// 같은 행 안에서 타일끼리 겹치는 비율 (가로, 음수 margin)
+const COLUMN_OVERLAP = "24%";
+// 행끼리 겹치는 비율 (세로, 음수 margin)
+const ROW_OVERLAP = "25%";
 
 export interface IngredientProps {
   ingredient: ToastIngredient;
+  // 메시지가 길어져 토스트가 세로로 늘어날 때, 같은 타일 배열을 이 값만큼
+  // 세로로 반복해 쌓아 높이를 채운다. 이미지 자체를 늘리지(stretch) 않고
+  // 층을 하나 더 얹는 방식이라 그림이 찌그러지지 않는다.
+  rows?: number;
   className?: string;
   style?: CSSProperties;
 }
 
-export function Ingredient({ ingredient, className, style }: IngredientProps) {
+export function Ingredient({ ingredient, rows = 1, className, style }: IngredientProps) {
   const asset = INGREDIENT_ASSETS[ingredient];
-
-  if (!asset.repeat) {
-    return (
-      <img
-        src={asset.src}
-        alt=""
-        className={className}
-        style={{ display: "block", width: "100%", ...style, ...asset.style }}
-      />
-    );
-  }
+  const columns = asset.columns ?? 1;
+  const rowCount = Math.max(1, rows);
 
   return (
-    <div className={className} style={{ display: "flex", width: "100%", ...style }}>
-      {Array.from({ length: asset.repeat }, (_, i) => (
-        <img
-          key={`${ingredient}-${i}`}
-          src={asset.src}
-          alt=""
+    <div className={className} style={{ display: "flex", flexDirection: "column", width: "100%", ...style }}>
+      {Array.from({ length: rowCount }, (_, r) => (
+        <div
+          key={r}
           style={{
-            display: "block",
-            flex: 1,
-            minWidth: 0,
-            height: "auto",
-            marginLeft: i === 0 ? 0 : `-${TILE_OVERLAP}`,
-            zIndex: i,
-            transform: `rotate(${TILE_ROTATIONS[i % TILE_ROTATIONS.length]}deg) scale(${ROTATION_COMPENSATE_SCALE})`,
-            ...asset.style,
-          }}
-        />
+            display: "flex",
+            width: "100%",
+            marginTop: r === 0 ? 0 : `-${ROW_OVERLAP}`,
+            // flex item에 z-index를 주면 그 자체로 새 stacking context가
+            // 생겨서, 안에 있는 이미지들의 zIndex(0~3)가 다른 행과 섞이지
+            // 않고 이 행 안에서만 비교된다. 값 자체는 앞쪽 행(r이 작을수록)이
+            // 위로 오도록 내림차순.
+            zIndex: rowCount - r,
+          }}>
+          {Array.from({ length: columns }, (_, c) => (
+            <img
+              key={`${ingredient}-${r}-${c}`}
+              src={asset.src}
+              alt=""
+              style={{
+                display: "block",
+                flex: 1,
+                minWidth: 0,
+                height: "auto",
+                marginLeft: c === 0 ? 0 : `-${COLUMN_OVERLAP}`,
+                zIndex: c,
+                transform: columns > 1 ? `rotate(${TILE_ROTATIONS[c % TILE_ROTATIONS.length]}deg) scale(${ROTATION_COMPENSATE_SCALE})` : undefined,
+                ...asset.style,
+              }}
+            />
+          ))}
+        </div>
       ))}
     </div>
   );
