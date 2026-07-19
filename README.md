@@ -1,32 +1,24 @@
-# React + TypeScript + Vite
+# sandwich-toast
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+🥪 A playful React toast library where notifications stack up as sandwich ingredient layers.
 
-Currently, two official plugins are available:
+> Full usage docs land once the API is implemented — see the project issues for progress.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Development
 
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the Oxlint configuration
-
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
-
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+```bash
+npm install
+npm run dev         # demo playground (src/demo)
+npm run build        # build the publishable library (src/lib -> dist)
+npm run build:demo   # build the static demo site (src/demo -> dist-demo)
+npm run typecheck
+npm run lint
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+## Project structure
+
+```
+src/
+├── demo/   # playground & demo site (not published)
+└── lib/    # library source (published to npm)
+```
