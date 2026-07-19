@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 // 메시지 텍스트가 실제로 몇 줄로 감싸졌는지(word-wrap) 측정해서, 재료가
 // 몇 층 쌓여야 하는지(Ingredient의 rows) 계산한다. 폰트/줄바꿈 규칙을
@@ -8,13 +8,14 @@ export function useMeasuredRows<T extends HTMLElement>(rowHeightPx: number) {
   const ref = useRef<T>(null)
   const [rows, setRows] = useState(1)
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     const el = ref.current
     if (!el) return
 
     const observer = new ResizeObserver(([entry]) => {
       if (!entry) return
-      setRows(Math.max(1, Math.ceil(entry.contentRect.height / rowHeightPx)))
+      const calculatedRows = rowHeightPx > 0 ? Math.ceil(entry.contentRect.height / rowHeightPx) : 1
+      setRows(Math.max(1, calculatedRows))
     })
     observer.observe(el)
     return () => observer.disconnect()

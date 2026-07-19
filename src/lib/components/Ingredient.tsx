@@ -47,7 +47,7 @@ export interface IngredientProps {
 export function Ingredient({ ingredient, rows = 1, className, style }: IngredientProps) {
   const asset = INGREDIENT_ASSETS[ingredient];
   const columns = asset.columns ?? 1;
-  const rowCount = Math.max(1, rows);
+  const rowCount = Math.max(1, Math.round(rows));
 
   return (
     <div className={className} style={{ display: "flex", flexDirection: "column", width: "100%", ...style }}>
