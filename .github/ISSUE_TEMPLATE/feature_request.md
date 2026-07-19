@@ -7,19 +7,10 @@ assignees: ''
 
 ---
 
----
-name: Feature report
-about: Suggest an idea for this project
-title: "[Feat]"
-labels: feature
-assignees: ''
-
----
-
 <!--
 name: 기능 구현
 about: 새로운 기능 개발
-title: "[Feat] "
+title: "feat: "
 labels: feature
 assignees: ""
 -->

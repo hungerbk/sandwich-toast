@@ -7,19 +7,10 @@ assignees: ''
 
 ---
 
----
-name: Bug report
-about: Create a report to help us improve
-title: "[BUG]"
-labels: bug
-assignees: ''
-
----
-
 <!--
 name: 버그 리포트
 about: 버그 및 오류 보고
-title: "[BUG] "
+title: "BUG: "
 labels: bug
 assignees: ""
 -->
