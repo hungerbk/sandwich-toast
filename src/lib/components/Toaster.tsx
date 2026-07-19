@@ -57,6 +57,7 @@ export function Toaster() {
             onMouseLeave={() => setHoveredId(null)}
             onClick={() => bringToFront(id)}
             onDismiss={() => removeToast(id)}
+            duration={t.duration}
             liftOffset={hoveredRank >= 0 && rank < hoveredRank ? EXTRA_LIFT : 0}
             style={{
               position: 'absolute',

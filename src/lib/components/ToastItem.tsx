@@ -1,4 +1,4 @@
-import { useRef, useState, type CSSProperties, type MouseEventHandler } from 'react'
+import { useEffect, useRef, useState, type CSSProperties, type MouseEventHandler } from 'react'
 import type { ToastIngredient } from '../store'
 import { useMeasuredRows } from '../useMeasuredRows'
 import { bitePolygon, NO_BITES, DISMISS_ANIMATION_MS } from '../dismissBite'
@@ -46,6 +46,9 @@ export interface ToastItemProps {
   // 지정하면 우상단에 삭제(X) 버튼이 뜨고, 베어 물린 듯한 애니메이션이
   // 끝난 뒤 호출된다. 실제로 store에서 지우는 건 호출하는 쪽(Toaster) 책임.
   onDismiss?: () => void
+  // ms. 지정하면 그 시간 뒤 onDismiss와 똑같은 애니메이션으로 자동
+  // 삭제된다. Infinity/미지정이면 자동 삭제하지 않는다(로딩 토스트 등).
+  duration?: number
   className?: string
   style?: CSSProperties
 }
@@ -58,6 +61,7 @@ export function ToastItem({
   onMouseLeave,
   onClick,
   onDismiss,
+  duration,
   className,
   style,
 }: ToastItemProps) {
@@ -73,9 +77,16 @@ export function ToastItem({
   const [isSelfHovered, setIsSelfHovered] = useState(false)
   const [isDismissing, setIsDismissing] = useState(false)
   const rootRef = useRef<HTMLDivElement>(null)
+  // isDismissing(state)은 렌더링(pointerEvents 등)에 쓰이지만, 중복 실행
+  // 방지 가드로 쓰기엔 부적합하다 — 아래 자동 삭제 타이머의 클로저가
+  // 마운트 시점의 오래된(stale) isDismissing 값을 계속 들고 있어서,
+  // 수동으로 먼저 닫아도 타이머가 나중에 또 실행돼버릴 수 있다. ref는
+  // 항상 최신값을 읽으므로 이 가드에는 ref를 쓴다.
+  const dismissedRef = useRef(false)
 
   const handleDismiss = () => {
-    if (isDismissing) return
+    if (dismissedRef.current) return
+    dismissedRef.current = true
     setIsDismissing(true)
 
     const el = rootRef.current
@@ -100,6 +111,20 @@ export function ToastItem({
     )
     animation.onfinish = () => onDismiss?.()
   }
+
+  // 렌더마다 handleDismiss가 새로 만들어지므로, 이 함수를 effect의
+  // dependency로 넣으면 매 렌더마다 타이머가 리셋돼서 영영 안 울린다.
+  // 그렇다고 deps를 비워서 첫 렌더의 handleDismiss를 그대로 굳혀버리면
+  // 클로저가 오래된 props를 참조하게 된다. ref에 최신 함수를 담아두고
+  // effect 안에서는 ref로만 호출하면 두 문제 다 피할 수 있다.
+  const handleDismissRef = useRef(handleDismiss)
+  handleDismissRef.current = handleDismiss
+
+  useEffect(() => {
+    if (duration === undefined || !Number.isFinite(duration)) return
+    const timer = setTimeout(() => handleDismissRef.current(), duration)
+    return () => clearTimeout(timer)
+  }, [duration])
 
   return (
     <div
