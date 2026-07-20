@@ -14,8 +14,8 @@ interface IngredientAsset {
   src: string;
   // 개별 이미지(타일 하나)에 적용.
   style?: CSSProperties;
-  // 가로로 몇 개 겹쳐서 나란히 배치할지. 지정 안 하면 1장(bread).
-  columns?: number;
+  // 가로로 몇 번 반복해서 겹쳐 배치할지. 지정 안 하면 1장(bread).
+  repeat?: number;
   // 재료마다 원본 이미지 구도 때문에 자연스러운 렌더링 높이가 크게
   // 다르다(80~145px) — 겹쳐진 타일 전체를 감싸는 컨테이너에 적용한다.
   // 개별 이미지에 object-fit을 주는 것과 달리 타일들의 겹침 비율은 그대로
@@ -26,9 +26,9 @@ interface IngredientAsset {
 }
 
 const INGREDIENT_ASSETS: Record<ToastIngredient, IngredientAsset> = {
-  lettuce: { src: lettuceSrc, columns: 4, rowStyle: { height: TARGET_ROW_HEIGHT, overflow: "hidden" } },
-  tomato: { src: tomatoSrc, columns: 4, rowStyle: { height: TARGET_ROW_HEIGHT, overflow: "hidden" } },
-  cheese: { src: cheeseSrc, columns: 4, rowStyle: { height: TARGET_ROW_HEIGHT, overflow: "hidden" } },
+  lettuce: { src: lettuceSrc, repeat: 4, rowStyle: { height: TARGET_ROW_HEIGHT, overflow: "hidden" } },
+  tomato: { src: tomatoSrc, repeat: 4, rowStyle: { height: TARGET_ROW_HEIGHT, overflow: "hidden" } },
+  cheese: { src: cheeseSrc, repeat: 4, rowStyle: { height: TARGET_ROW_HEIGHT, overflow: "hidden" } },
   bread: { src: breadSrc, style: { height: TARGET_ROW_HEIGHT, objectFit: "contain" } },
 };
 
@@ -42,8 +42,8 @@ const TILE_ROTATIONS = [-4, 3, -2, 4];
 // 기준(cos4°+sin4°≈1.067 → 1/1.067≈0.937)에 약간의 여유만 더한 값.
 const ROTATION_COMPENSATE_SCALE = 0.95;
 
-// 같은 행 안에서 타일끼리 겹치는 비율 (가로, 음수 margin)
-const COLUMN_OVERLAP = "24%";
+// 반복되는 타일끼리 겹치는 비율 (가로, 음수 margin)
+const REPEAT_OVERLAP = "24%";
 
 export interface IngredientProps {
   ingredient: ToastIngredient;
@@ -53,7 +53,7 @@ export interface IngredientProps {
 
 export function Ingredient({ ingredient, className, style }: IngredientProps) {
   const asset = INGREDIENT_ASSETS[ingredient];
-  const columns = asset.columns ?? 1;
+  const repeat = asset.repeat ?? 1;
 
   return (
     <div
@@ -64,7 +64,7 @@ export function Ingredient({ ingredient, className, style }: IngredientProps) {
         ...asset.rowStyle,
         ...style,
       }}>
-      {Array.from({ length: columns }, (_, c) => (
+      {Array.from({ length: repeat }, (_, c) => (
         <img
           key={`${ingredient}-${c}`}
           src={asset.src}
@@ -74,9 +74,9 @@ export function Ingredient({ ingredient, className, style }: IngredientProps) {
             flex: 1,
             minWidth: 0,
             height: "auto",
-            marginLeft: c === 0 ? 0 : `-${COLUMN_OVERLAP}`,
+            marginLeft: c === 0 ? 0 : `-${REPEAT_OVERLAP}`,
             zIndex: c,
-            transform: columns > 1 ? `rotate(${TILE_ROTATIONS[c % TILE_ROTATIONS.length]}deg) scale(${ROTATION_COMPENSATE_SCALE})` : undefined,
+            transform: repeat > 1 ? `rotate(${TILE_ROTATIONS[c % TILE_ROTATIONS.length]}deg) scale(${ROTATION_COMPENSATE_SCALE})` : undefined,
             ...asset.style,
           }}
         />
