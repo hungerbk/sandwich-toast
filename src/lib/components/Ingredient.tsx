@@ -7,16 +7,24 @@ import tomatoSrc from "../assets/tomato.webp";
 
 interface IngredientAsset {
   src: string;
+  // 개별 이미지(타일 하나)에 적용.
   style?: CSSProperties;
   // 가로로 몇 개 겹쳐서 나란히 배치할지. 지정 안 하면 1장(bread).
   columns?: number;
+  // 재료마다 원본 이미지 구도 때문에 한 행의 자연스러운 렌더링 높이가
+  // 크게 다르다(80~145px) — 행 전체(겹쳐진 타일들)를 감싸는 컨테이너에
+  // 적용한다. 개별 이미지에 object-fit을 주는 것과 달리 타일들의 겹침
+  // 비율은 그대로 유지된 채 바깥 뷰포트만 잘리는 방식이라, lettuce처럼
+  // 여러 장이 겹쳐 타일링되는 재료에 적합하다(개별 이미지를 줄이면
+  // 겹침이 깨져서 사이가 벌어져 보인다).
+  rowStyle?: CSSProperties;
 }
 
 const INGREDIENT_ASSETS: Record<ToastIngredient, IngredientAsset> = {
-  lettuce: { src: lettuceSrc, columns: 4 },
+  lettuce: { src: lettuceSrc, columns: 4, rowStyle: { height: 120, overflow: "hidden" } },
   tomato: { src: tomatoSrc, columns: 4 },
   cheese: { src: cheeseSrc, columns: 4 },
-  bread: { src: breadSrc },
+  bread: { src: breadSrc, style: { height: 120, objectFit: "contain" } },
 };
 
 // 반복 타일마다 손그림 느낌으로 살짝 다른 각도를 준다. 렌더링마다 값이
@@ -63,6 +71,7 @@ export function Ingredient({ ingredient, rows = 1, className, style }: Ingredien
             // 않고 이 행 안에서만 비교된다. 값 자체는 앞쪽 행(r이 작을수록)이
             // 위로 오도록 내림차순.
             zIndex: rowCount - r,
+            ...asset.rowStyle,
           }}>
           {Array.from({ length: columns }, (_, c) => (
             <img
