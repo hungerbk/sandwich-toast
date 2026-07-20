@@ -13,7 +13,7 @@ on the single image, not by shipping two cropped files.
 | `lettuce.webp` | success | lettuce | 556×562 |
 | `tomato.webp` | error | tomato | 499×400 |
 | `cheese.webp` | warning | cheese | 450×400 |
-| `bread.webp` | info | bread | 1600×400 |
+| `bread.webp` | info | bread | 800×200 |
 
 Each file is cropped tight to its drawn content (no padding/whitespace), so
 sizes differ per ingredient — that's expected, not a bug. `Ingredient.tsx`
@@ -27,8 +27,11 @@ handles the two rendering modes:
 
 ## Reserved (not part of the current ingredient type union)
 
-- `ketchup.webp`, `scrambled.webp`, `no-ketchup-scrambled.webp` — art for
-  the future loading-spinner feature (backlog: ketchup/mustard sauce map,
-  scrambled-egg loading layer). Not wired up yet.
+- `scrambled.webp` (800×200, ketchup-free) + `ketchup.webp` (800×200) — art
+  for the future loading-spinner feature. Composited together at render
+  time rather than shipped as one baked-in image, so the ketchup layer can
+  be animated independently (only while the toast is loading; static
+  otherwise). An earlier ketchup-baked-in variant of the scrambled-egg art
+  was dropped in favor of this compositing approach. Not wired up yet.
 - `bacon` — mentioned in the original spec as a future-extensibility
   example; no asset yet, no type union entry yet.
