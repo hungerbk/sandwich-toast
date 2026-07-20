@@ -1,4 +1,4 @@
-import { useEffect, useState, useSyncExternalStore } from 'react'
+import { useState, useSyncExternalStore } from 'react'
 import { subscribe, getSnapshot, removeToast } from '../store'
 import { ToastItem, TOAST_ITEM_TRANSITION_MS, TOAST_ITEM_WIDTH } from './ToastItem'
 
@@ -15,20 +15,26 @@ export function Toaster() {
   // 도착 순서일 뿐이고, 클릭으로 "맨 앞으로" 가져온 순서는 여기서 별도로
   // 관리한다 — store 자체를 건드리면 도착 순서(데이터)와 화면 표시
   // 순서(UI)가 뒤섞인다.
-  const [order, setOrder] = useState<string[]>([])
+  const [order, setOrder] = useState<string[]>(() => [...toasts.map((t) => t.id)].reverse())
   const [hoveredId, setHoveredId] = useState<string | null>(null)
   const [isSettling, setIsSettling] = useState(false)
 
-  useEffect(() => {
-    setOrder((prevOrder) => {
-      const currentIds = new Set(toasts.map((t) => t.id))
-      const kept = prevOrder.filter((id) => currentIds.has(id))
-      // store에 새로 추가됐지만 아직 order에 없는 것들 — 도착 순서를
-      // 유지한 채로 맨 앞에 놓는다 (나중에 온 게 더 앞).
-      const newIds = toasts.map((t) => t.id).filter((id) => !prevOrder.includes(id))
-      return [...newIds.reverse(), ...kept]
-    })
-  }, [toasts])
+  // toasts가 바뀐 뒤에 useEffect로 order를 동기화하면, 새 토스트가 아직
+  // order에 없는 채로 한 번 렌더 및 페인트된 다음에야(그 프레임엔 새
+  // 토스트가 안 보임) effect가 실행되어 다시 렌더링되는 깜빡임이 생긴다.
+  // 렌더링 도중 상태를 바로 맞추면(React 공식 문서의 "Adjusting state
+  // when a prop changes" 패턴) 커밋 전에 다시 렌더링돼서 깜빡임 없이 첫
+  // 프레임부터 정확하다.
+  const [prevToasts, setPrevToasts] = useState(toasts)
+  if (toasts !== prevToasts) {
+    setPrevToasts(toasts)
+    const currentIds = new Set(toasts.map((t) => t.id))
+    const kept = order.filter((id) => currentIds.has(id))
+    // store에 새로 추가됐지만 아직 order에 없는 것들 — 도착 순서를
+    // 유지한 채로 맨 앞에 놓는다 (나중에 온 게 더 앞).
+    const newIds = toasts.map((t) => t.id).filter((id) => !order.includes(id))
+    setOrder([...newIds.reverse(), ...kept])
+  }
 
   const hoveredRank = hoveredId ? order.indexOf(hoveredId) : -1
 

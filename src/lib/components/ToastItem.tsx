@@ -121,8 +121,15 @@ export function ToastItem({ message, ingredient, liftOffset = 0, onMouseEnter, o
   // 그렇다고 deps를 비워서 첫 렌더의 handleDismiss를 그대로 굳혀버리면
   // 클로저가 오래된 props를 참조하게 된다. ref에 최신 함수를 담아두고
   // effect 안에서는 ref로만 호출하면 두 문제 다 피할 수 있다.
+  // ref.current 갱신 자체도 렌더링 도중이 아니라 커밋 이후(effect)에
+  // 해야 한다 — 렌더 도중 ref를 직접 mutate하면, 그 렌더가 커밋되지
+  // 않고 버려지는 경우(concurrent 기능 사용 시)에도 mutation은 되돌려지지
+  // 않아서 실제 화면과 ref가 어긋날 수 있다. deps 없는 effect는 매
+  // 커밋 후 실행되므로 duration effect와 별개로 항상 최신 상태를 유지한다.
   const handleDismissRef = useRef(handleDismiss);
-  handleDismissRef.current = handleDismiss;
+  useEffect(() => {
+    handleDismissRef.current = handleDismiss;
+  });
 
   useEffect(() => {
     if (duration === undefined || !Number.isFinite(duration)) return;
