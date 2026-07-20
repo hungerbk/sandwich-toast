@@ -184,7 +184,18 @@ export function ToastItem({ message, ingredient, liftOffset = 0, onMouseEnter, o
         }}>
         <span
           style={{
-            width: "100%",
+            // 카드 전체가 아니라 텍스트 영역만 감싸도록 내용 크기에 맞춘다.
+            // maxWidth는 긴 메시지가 카드 밖으로 넘치지 않고 줄바꿈되도록
+            // 하는 상한선.
+            width: "fit-content",
+            maxWidth: "100%",
+            // 재료 이미지가 화려해서 글자색만으로는 대비가 부족할 수 있다 —
+            // 반투명 흰 배경을 텍스트 뒤에만 깔아 가독성을 보장한다(카드
+            // 전체를 덮지 않고 텍스트 영역만 감싸서 재료 그림은 그대로 보임).
+            background: "rgba(255, 255, 255, 0.45)",
+            borderRadius: 8,
+            padding: "4px 10px",
+            boxSizing: "border-box",
             // MAX_MESSAGE_LINES를 넘는 메시지는 여기서 말줄임표로 자른다.
             // -webkit-line-clamp는 부모(flex)의 display와 무관하게 이 span
             // 자신의 display를 -webkit-box로 바꿔서 독립적으로 동작한다.
