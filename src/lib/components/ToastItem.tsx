@@ -77,6 +77,7 @@ export function ToastItem({ message, ingredient, liftOffset = 0, onMouseEnter, o
   // 커지는" 건 다른 토스트를 몰라도 되는 자기 완결적 동작이라 내부에서
   // 처리한다.
   const [isSelfHovered, setIsSelfHovered] = useState(false);
+  const [isDismissButtonHovered, setIsDismissButtonHovered] = useState(false);
   const [isDismissing, setIsDismissing] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
   // isDismissing(state)은 렌더링(pointerEvents 등)에 쓰이지만, 중복 실행
@@ -211,6 +212,8 @@ export function ToastItem({ message, ingredient, liftOffset = 0, onMouseEnter, o
             e.stopPropagation();
             handleDismiss();
           }}
+          onMouseEnter={() => setIsDismissButtonHovered(true)}
+          onMouseLeave={() => setIsDismissButtonHovered(false)}
           style={{
             position: "absolute",
             // Ingredient 내부 이미지들이 겹침 연출을 위해 자체 z-index를
@@ -232,11 +235,16 @@ export function ToastItem({ message, ingredient, liftOffset = 0, onMouseEnter, o
             justifyContent: "center",
             border: "none",
             borderRadius: "50%",
-            background: "rgba(0, 0, 0, 0.5)",
+            background: isDismissButtonHovered ? "rgba(0, 0, 0, 0.75)" : "rgba(0, 0, 0, 0.5)",
             color: "#fff",
             fontSize: 14,
             lineHeight: 1,
             cursor: "pointer",
+            // 카드 자체의 호버 확대(scale)와는 별개로, 버튼 위에 있다는 걸
+            // 명확히 알 수 있도록 버튼만 한 번 더 커진다.
+            transform: isDismissButtonHovered ? "scale(1.15)" : "scale(1)",
+            transition: "transform 120ms ease-out, background 120ms ease-out",
+            boxShadow: isDismissButtonHovered ? "0 0 0 2px rgba(255, 255, 255, 0.6)" : "none",
           }}>
           ×
         </button>
