@@ -7,6 +7,8 @@ export interface Toast {
   type: ToastType
   ingredient: ToastIngredient
   isLoading: boolean
+  // ms. Infinity면 자동으로 사라지지 않는다(로딩 토스트 기본값).
+  duration: number
 }
 
 type Listener = () => void
