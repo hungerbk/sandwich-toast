@@ -1,5 +1,6 @@
 import type { CSSProperties } from "react";
 import type { ToastIngredient } from "../store";
+import { TARGET_ROW_HEIGHT, ROW_OVERLAP_RATIO } from "../rowGeometry";
 import breadSrc from "../assets/bread.webp";
 import cheeseSrc from "../assets/cheese.webp";
 import lettuceSrc from "../assets/lettuce.webp";
@@ -21,10 +22,10 @@ interface IngredientAsset {
 }
 
 const INGREDIENT_ASSETS: Record<ToastIngredient, IngredientAsset> = {
-  lettuce: { src: lettuceSrc, columns: 4, rowStyle: { height: 120, overflow: "hidden" } },
-  tomato: { src: tomatoSrc, columns: 4 },
-  cheese: { src: cheeseSrc, columns: 4 },
-  bread: { src: breadSrc, style: { height: 120, objectFit: "contain" } },
+  lettuce: { src: lettuceSrc, columns: 4, rowStyle: { height: TARGET_ROW_HEIGHT, overflow: "hidden" } },
+  tomato: { src: tomatoSrc, columns: 4, rowStyle: { height: TARGET_ROW_HEIGHT, overflow: "hidden" } },
+  cheese: { src: cheeseSrc, columns: 4, rowStyle: { height: TARGET_ROW_HEIGHT, overflow: "hidden" } },
+  bread: { src: breadSrc, style: { height: TARGET_ROW_HEIGHT, objectFit: "contain" } },
 };
 
 // 반복 타일마다 손그림 느낌으로 살짝 다른 각도를 준다. 렌더링마다 값이
@@ -39,8 +40,6 @@ const ROTATION_COMPENSATE_SCALE = 0.95;
 
 // 같은 행 안에서 타일끼리 겹치는 비율 (가로, 음수 margin)
 const COLUMN_OVERLAP = "24%";
-// 행끼리 겹치는 비율 (세로, 음수 margin)
-const ROW_OVERLAP = "25%";
 
 export interface IngredientProps {
   ingredient: ToastIngredient;
@@ -65,7 +64,7 @@ export function Ingredient({ ingredient, rows = 1, className, style }: Ingredien
           style={{
             display: "flex",
             width: "100%",
-            marginTop: r === 0 ? 0 : `-${ROW_OVERLAP}`,
+            marginTop: r === 0 ? 0 : `-${ROW_OVERLAP_RATIO * 100}%`,
             // flex item에 z-index를 주면 그 자체로 새 stacking context가
             // 생겨서, 안에 있는 이미지들의 zIndex(0~3)가 다른 행과 섞이지
             // 않고 이 행 안에서만 비교된다. 값 자체는 앞쪽 행(r이 작을수록)이

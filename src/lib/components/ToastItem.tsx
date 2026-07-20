@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState, type CSSProperties, type MouseEventHandler } from "react";
 import type { ToastIngredient } from "../store";
-import { useMeasuredRows } from "../useMeasuredRows";
 import { bitePolygon, NO_BITES, DISMISS_ANIMATION_MS } from "../dismissBite";
 import { Ingredient } from "./Ingredient";
 
@@ -11,10 +10,18 @@ export const TOAST_ITEM_WIDTH = 320;
 // 값을 기준으로 계산하도록 export한다.
 export const TOAST_ITEM_TRANSITION_MS = 320;
 
-// Ingredient 한 행의 대략적인 렌더링 높이(px) 추정치. 카드 너비 기준으로
-// 재료별 평균적인 비율에 맞춘 값. 완벽히 정확할 필요는 없다 — rows는
-// 어차피 정수로 올림되고, 실제 렌더링 높이는 Ingredient가 스스로 정한다.
-const ROW_HEIGHT_PX = 76;
+// 재료 한 행(TARGET_ROW_HEIGHT=110px)이면 2줄 정도의 메시지는 여유
+// 있게 담긴다 — 그래서 재료를 여러 행으로 쌓지 않고 항상 기본 1행으로
+// 고정하고, 메시지를 2줄로 제한한다. 예전에는 메시지 길이에 따라 재료
+// 행 수를 늘리는 동적 계산(rowsForContentHeight)이 있었지만, 재료마다
+// 실제 렌더링 높이가 다르고(과거 버그) 겹침 비율까지 얽혀서 계산이
+// 쉽게 어긋났다 — 메시지를 2줄로 짧게 제한하면 그 복잡도 자체가
+// 필요 없어진다.
+const MAX_MESSAGE_LINES = 2;
+
+// 메시지 상하/좌우 padding.
+const MESSAGE_PADDING_Y = 18;
+const MESSAGE_PADDING_X = 28;
 
 // 재료마다 이미지 구도(글자가 놓일 안전한 영역)가 달라서 메시지 스타일을
 // 일괄 적용할 수 없다 — HOVER_CLIP_PATH와 같은 방식으로 재료별 예외를
@@ -64,13 +71,7 @@ export interface ToastItemProps {
 }
 
 export function ToastItem({ message, ingredient, liftOffset = 0, onMouseEnter, onMouseLeave, onClick, onDismiss, duration, className, style }: ToastItemProps) {
-  // 화면에 실제로 보이는 텍스트는 Ingredient 위에 absolute로 겹쳐지는데,
-  // 그 상태로 높이를 재면 Ingredient의 rows -> 높이 -> 다시 텍스트 높이로
-  // 순환 참조가 생긴다. 그래서 레이아웃에 영향 없는 숨김 복제본으로
-  // "제약 없는 원래 높이"를 따로 측정한다.
-  const { ref: measureRef, rows } = useMeasuredRows<HTMLParagraphElement>(ROW_HEIGHT_PX);
-  // 재료별 예외 스타일. hidden 측정용 복제본과 보이는 텍스트 양쪽에 똑같이
-  // 적용해야 padding 등을 재료별로 바꿔도 rows 계산이 어긋나지 않는다.
+  // 재료별 예외 스타일(MESSAGE_STYLE_OVERRIDES)은 텍스트 위치만 조정한다.
   const messageStyleOverride = MESSAGE_STYLE_OVERRIDES[ingredient];
 
   // 형제 토스트를 위해 비켜서는 것(liftOffset)과 달리, "내가 호버됐을 때
@@ -155,27 +156,7 @@ export function ToastItem({ message, ingredient, liftOffset = 0, onMouseEnter, o
         pointerEvents: isDismissing ? "none" : undefined,
         ...style,
       }}>
-      <p
-        ref={measureRef}
-        aria-hidden="true"
-        style={{
-          visibility: "hidden",
-          position: "absolute",
-          // width:100%은 box-sizing이 content-box(브라우저 기본값)일 때
-          // padding만큼 실제 렌더링 폭이 부모보다 커진다. inset으로 좌우를
-          // 직접 고정하면 box-sizing과 무관하게 padding이 안쪽으로 들어간다.
-          inset: "0 0 auto 0",
-          margin: 0,
-          padding: "16px 28px",
-          overflowWrap: "break-word",
-          pointerEvents: "none",
-          boxSizing: "border-box",
-          ...messageStyleOverride,
-        }}>
-        {message}
-      </p>
-
-      <Ingredient ingredient={ingredient} rows={rows} />
+      <Ingredient ingredient={ingredient} />
 
       <p
         style={{
@@ -185,7 +166,7 @@ export function ToastItem({ message, ingredient, liftOffset = 0, onMouseEnter, o
           // 확실히 오도록 함.
           zIndex: 5,
           margin: 0,
-          padding: "16px 28px",
+          padding: `${MESSAGE_PADDING_Y}px ${MESSAGE_PADDING_X}px`,
           overflowWrap: "break-word",
           boxSizing: "border-box",
           // 상속된 색을 그대로 쓰면 소비자 앱의 전역 텍스트 색(회색 계열 등)을
@@ -201,7 +182,20 @@ export function ToastItem({ message, ingredient, liftOffset = 0, onMouseEnter, o
           alignItems: "center",
           ...messageStyleOverride,
         }}>
-        <span style={{ width: "100%" }}>{message}</span>
+        <span
+          style={{
+            width: "100%",
+            // MAX_MESSAGE_LINES를 넘는 메시지는 여기서 말줄임표로 자른다.
+            // -webkit-line-clamp는 부모(flex)의 display와 무관하게 이 span
+            // 자신의 display를 -webkit-box로 바꿔서 독립적으로 동작한다.
+            display: "-webkit-box",
+            WebkitLineClamp: MAX_MESSAGE_LINES,
+            WebkitBoxOrient: "vertical",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+          }}>
+          {message}
+        </span>
       </p>
 
       {onDismiss && (
