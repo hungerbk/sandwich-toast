@@ -220,13 +220,12 @@ export function ToastItem({ message, ingredient, liftOffset = 0, onMouseEnter, o
             // 쓰고 있어서, 명시적으로 더 높은 값을 줘야 그 위로 확실히
             // 올라온다 (안 그러면 Ingredient에 가려서 안 보이고 클릭도 안 됨).
             zIndex: 10,
-            // 진짜 우상단 모서리(top:0 근처)는 HOVER_CLIP_PATH가 토마토/
-            // 치즈에서 잘라내는 영역이라 버튼이 히트테스트 사각지대에
-            // 들어간다. 세로 20% 지점부터는 모든 재료의 clip이 그 자리를
-            // 온전히 남겨두므로, 관례적인 우상단 위치는 유지하되 그만큼만
-            // 아래로 내린다.
-            top: "20%",
+            // 오른쪽 가장자리 세로 50% 지점(중앙). HOVER_CLIP_PATH의 모든
+            // 재료가 x=100% 기준 y 20~80% 구간은 안 잘라내므로 50%는
+            // 항상 히트테스트 사각지대 밖이다.
+            top: "50%",
             right: 4,
+            transform: `translateY(-40%) scale(${isDismissButtonHovered ? 1.15 : 1})`,
             width: 22,
             height: 22,
             padding: 0,
@@ -235,16 +234,16 @@ export function ToastItem({ message, ingredient, liftOffset = 0, onMouseEnter, o
             justifyContent: "center",
             border: "none",
             borderRadius: "50%",
-            background: isDismissButtonHovered ? "rgba(0, 0, 0, 0.75)" : "rgba(0, 0, 0, 0.5)",
-            color: "#fff",
+            // 검정 배경은 재료 이미지와 톤이 맞지 않아 흰 배경 + 어두운 ×로
+            // 바꾸고, 밝은 이미지(치즈/빵) 위에서도 경계가 보이도록 그림자를
+            // 준다.
+            background: isDismissButtonHovered ? "rgba(255, 255, 255, 0.95)" : "rgba(255, 255, 255, 0.75)",
+            color: "#1a1a1a",
             fontSize: 14,
             lineHeight: 1,
             cursor: "pointer",
-            // 카드 자체의 호버 확대(scale)와는 별개로, 버튼 위에 있다는 걸
-            // 명확히 알 수 있도록 버튼만 한 번 더 커진다.
-            transform: isDismissButtonHovered ? "scale(1.15)" : "scale(1)",
-            transition: "transform 120ms ease-out, background 120ms ease-out",
-            boxShadow: isDismissButtonHovered ? "0 0 0 2px rgba(255, 255, 255, 0.6)" : "none",
+            transition: "transform 120ms ease-out, background 120ms ease-out, box-shadow 120ms ease-out",
+            boxShadow: isDismissButtonHovered ? "0 2px 6px rgba(0, 0, 0, 0.35)" : "0 1px 3px rgba(0, 0, 0, 0.25)",
           }}>
           ×
         </button>
