@@ -1,6 +1,7 @@
 import { useState, useSyncExternalStore } from 'react'
 import { subscribe, getSnapshot, removeToast } from '../store'
-import { ToastItem, TOAST_ITEM_TRANSITION_MS, TOAST_ITEM_WIDTH } from './ToastItem'
+import { ToastItem } from './ToastItem'
+import { TOAST_ITEM_TRANSITION_MS, TOAST_ITEM_WIDTH } from './ToastItem.styles'
 
 const RESTING_GAP = 40
 const EXTRA_LIFT = 70
