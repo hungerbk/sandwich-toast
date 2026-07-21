@@ -57,7 +57,14 @@ export const INGREDIENT_MESSAGE_CLASS: Partial<Record<ToastIngredient, string>> 
 export const STYLE_KEY = "toast-item";
 export const STYLE_CSS = `
 .sandwich-toast-item {
-  position: relative;
+  /* 내부의 절대 위치 자식(메시지/삭제 버튼)이 자리 잡을 기준이 필요해서
+     position이 static이면 안 된다. absolute로 두는 이유는 라이브러리
+     설계상 ToastItem이 Toaster 없이 단독으로 쓰이는 경우가 없어서다
+     (공개 API로 export되지도 않는다) — Toaster가 항상 이 컴포넌트를
+     자기 컨테이너 기준으로 쌓아야(absolute) 해서, 그 쪽에서 다시
+     덮어쓰게 만들 이유가 없다. */
+  position: absolute;
+  left: 0;
   width: ${TOAST_ITEM_WIDTH}px;
   transform: translateY(calc(var(${LIFT_VAR}, 0px) * -1)) scale(1);
   transition: transform ${TOAST_ITEM_TRANSITION_MS}ms ease-in-out, top ${TOAST_ITEM_TRANSITION_MS}ms ease-in-out;

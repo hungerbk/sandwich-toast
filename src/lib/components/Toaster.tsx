@@ -1,7 +1,9 @@
 import { useState, useSyncExternalStore } from 'react'
 import { subscribe, getSnapshot, removeToast } from '../store'
 import { ToastItem } from './ToastItem'
-import { TOAST_ITEM_TRANSITION_MS, TOAST_ITEM_WIDTH } from './ToastItem.styles'
+import { TOAST_ITEM_TRANSITION_MS } from './ToastItem.styles'
+import { useInjectedStyle } from '../injectStyle'
+import { STYLE_KEY, STYLE_CSS } from './Toaster.styles'
 
 const RESTING_GAP = 40
 const EXTRA_LIFT = 70
@@ -10,6 +12,8 @@ const EXTRA_LIFT = 70
 const SETTLE_MS = TOAST_ITEM_TRANSITION_MS + 20
 
 export function Toaster() {
+  useInjectedStyle(STYLE_KEY, STYLE_CSS)
+
   const toasts = useSyncExternalStore(subscribe, getSnapshot)
 
   // 화면에 보여줄 순서(맨 앞이 index 0). store의 toasts 배열은 그냥
@@ -47,11 +51,7 @@ export function Toaster() {
   }
 
   return (
-    // top:0 근처(맨 앞 토스트)가 화면 정중앙에 오도록 left:50% +
-    // translateX(-50%)로 잡는다. 자식들은 이 컨테이너 기준 absolute라서
-    // 컨테이너 자체에 TOAST_ITEM_WIDTH를 명시해야 translateX(-50%)가
-    // 카드 폭 기준으로 정확히 중앙 정렬된다.
-    <div style={{ position: 'fixed', top: 24, left: '50%', transform: 'translateX(-50%)', width: TOAST_ITEM_WIDTH, zIndex: 2147483647 }}>
+    <div className="sandwich-toaster">
       {order.map((id, rank) => {
         const t = toasts.find((toast) => toast.id === id)
         if (!t) return null
@@ -67,9 +67,7 @@ export function Toaster() {
             duration={t.duration}
             liftOffset={hoveredRank >= 0 && rank < hoveredRank ? EXTRA_LIFT : 0}
             style={{
-              position: 'absolute',
               top: rank * RESTING_GAP,
-              left: 0,
               zIndex: order.length - rank,
               pointerEvents: isSettling ? 'none' : undefined,
             }}
