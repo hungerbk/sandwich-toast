@@ -52,16 +52,14 @@ export function ToastItem({ message, ingredient, liftOffset = 0, onMouseEnter, o
       onDismiss?.();
       return;
     }
-    const F = false;
-    const T = true;
     const animation = el.animate(
       [
         { clipPath: NO_BITES, opacity: 1, offset: 0 },
-        { clipPath: bitePolygon({ top: F, right: T, bottom: F, left: F }), opacity: 1, offset: 0.22 },
-        { clipPath: bitePolygon({ top: T, right: T, bottom: F, left: F }), opacity: 1, offset: 0.44 },
-        { clipPath: bitePolygon({ top: T, right: T, bottom: T, left: F }), opacity: 1, offset: 0.66 },
-        { clipPath: bitePolygon({ top: T, right: T, bottom: T, left: T }), opacity: 1, offset: 0.82 },
-        { clipPath: bitePolygon({ top: T, right: T, bottom: T, left: T }), opacity: 0, offset: 1 },
+        { clipPath: bitePolygon({ top: false, right: true, bottom: false, left: false }), opacity: 1, offset: 0.22 },
+        { clipPath: bitePolygon({ top: true, right: true, bottom: false, left: false }), opacity: 1, offset: 0.44 },
+        { clipPath: bitePolygon({ top: true, right: true, bottom: true, left: false }), opacity: 1, offset: 0.66 },
+        { clipPath: bitePolygon({ top: true, right: true, bottom: true, left: true }), opacity: 1, offset: 0.82 },
+        { clipPath: bitePolygon({ top: true, right: true, bottom: true, left: true }), opacity: 0, offset: 1 },
       ],
       { duration: DISMISS_ANIMATION_MS, easing: "ease-out" },
     );
