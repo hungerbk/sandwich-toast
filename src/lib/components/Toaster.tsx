@@ -1,4 +1,4 @@
-import { useState, useSyncExternalStore } from 'react'
+import { useRef, useState, useSyncExternalStore } from 'react'
 import { subscribe, getSnapshot, removeToast } from '../store'
 import { ToastItem } from './ToastItem'
 import { TOAST_ITEM_TRANSITION_MS } from './ToastItem.styles'
@@ -16,11 +16,26 @@ export function Toaster() {
 
   const toasts = useSyncExternalStore(subscribe, getSnapshot)
 
-  // 화면에 보여줄 순서(맨 앞이 index 0). store의 toasts 배열은 그냥
-  // 도착 순서일 뿐이고, 클릭으로 "맨 앞으로" 가져온 순서는 여기서 별도로
-  // 관리한다 — store 자체를 건드리면 도착 순서(데이터)와 화면 표시
-  // 순서(UI)가 뒤섞인다.
-  const [order, setOrder] = useState<string[]>(() => [...toasts.map((t) => t.id)].reverse())
+  // order는 순전히 리액트 리스트 렌더링용 "존재하는 토스트 id 목록"이고,
+  // 추가/삭제될 때만 바뀐다 — 클릭으로 맨 앞에 가져와도 이 배열 자체의
+  // 순서는 절대 바꾸지 않는다. 화면 표시 순서(맨 앞이 어느 토스트인지)는
+  // 아래 priority로 별도 계산한다.
+  //
+  // 예전엔 order 배열 자체를 재정렬해서 화면 순서를 표현했는데, 배열의
+  // 첫 요소가 바뀌는 재정렬을 하면 React가(StrictMode에서, 실제
+  // 프로덕션 빌드에서도 재현됨) 위치 이동이 아니라 언마운트 후
+  // 리마운트로 처리하는 경우가 있었다 — 그 바람에 재정렬로 밀려난
+  // 다른 토스트들의 로컬 state(자동 삭제 타이머 등)가 전부 초기화돼서,
+  // 하나를 맨 앞으로 가져올 때마다 나머지가 다같이 리셋되는 버그가
+  // 있었다. order 배열의 순서 자체를 절대 바꾸지 않으면 이 문제가
+  // 원천적으로 생기지 않는다.
+  const [order, setOrder] = useState<string[]>(() => toasts.map((t) => t.id))
+  const [priority, setPriority] = useState<Record<string, number>>(() => Object.fromEntries(toasts.map((t, i) => [t.id, i])))
+  // priority에 쓸 다음 값. 클릭하거나 새 토스트가 추가될 때마다 하나씩
+  // 올려서, 항상 "가장 최근에 앞으로 온(또는 도착한) 토스트가 가장 크다"를
+  // 유지한다.
+  const prioritySeqRef = useRef(toasts.length)
+
   const [hoveredId, setHoveredId] = useState<string | null>(null)
   const [isSettling, setIsSettling] = useState(false)
 
@@ -35,26 +50,36 @@ export function Toaster() {
     setPrevToasts(toasts)
     const currentIds = new Set(toasts.map((t) => t.id))
     const kept = order.filter((id) => currentIds.has(id))
-    // store에 새로 추가됐지만 아직 order에 없는 것들 — 도착 순서를
-    // 유지한 채로 맨 앞에 놓는다 (나중에 온 게 더 앞).
     const newIds = toasts.map((t) => t.id).filter((id) => !order.includes(id))
-    setOrder([...newIds.reverse(), ...kept])
+    setOrder([...kept, ...newIds])
+    if (newIds.length > 0) {
+      const nextPriority = { ...priority }
+      for (const id of newIds) {
+        nextPriority[id] = ++prioritySeqRef.current
+      }
+      setPriority(nextPriority)
+    }
   }
 
-  const hoveredRank = hoveredId ? order.indexOf(hoveredId) : -1
+  // 화면 표시 순서(맨 앞이 rank 0)는 priority가 큰 순.
+  const visualOrder = [...order].sort((a, b) => (priority[b] ?? 0) - (priority[a] ?? 0))
+  const rankOf = new Map(visualOrder.map((id, i) => [id, i]))
+
+  const hoveredRank = hoveredId ? (rankOf.get(hoveredId) ?? -1) : -1
 
   const bringToFront = (id: string) => {
     setHoveredId(null)
     setIsSettling(true)
-    setOrder((prev) => [id, ...prev.filter((x) => x !== id)])
+    setPriority((prev) => ({ ...prev, [id]: ++prioritySeqRef.current }))
     setTimeout(() => setIsSettling(false), SETTLE_MS)
   }
 
   return (
     <div className="sandwich-toaster">
-      {order.map((id, rank) => {
+      {order.map((id) => {
         const t = toasts.find((toast) => toast.id === id)
         if (!t) return null
+        const rank = rankOf.get(id) ?? 0
         return (
           <ToastItem
             key={id}
