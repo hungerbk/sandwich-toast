@@ -65,6 +65,7 @@ export function Toaster() {
             onClick={() => bringToFront(id)}
             onDismiss={() => removeToast(id)}
             duration={t.duration}
+            isPaused={hoveredId === id}
             liftOffset={hoveredRank >= 0 && rank < hoveredRank ? EXTRA_LIFT : 0}
             style={{
               top: rank * RESTING_GAP,

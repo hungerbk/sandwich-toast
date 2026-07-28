@@ -24,11 +24,16 @@ export interface ToastItemProps {
   // ms. 지정하면 그 시간 뒤 onDismiss와 똑같은 애니메이션으로 자동
   // 삭제된다. Infinity/미지정이면 자동 삭제하지 않는다(로딩 토스트 등).
   duration?: number;
+  // true면 자동 삭제 타이머를 멈춘다 — 사용자가 읽으려고 호버한 토스트가
+  // 다 읽기도 전에 사라지면 안 되기 때문. 형제 토스트를 알아야(지금 이
+  // 토스트가 호버된 그 토스트인지) 판단할 수 있어서 부모(Toaster)가
+  // 계산해서 넘긴다.
+  isPaused?: boolean;
   className?: string;
   style?: CSSProperties;
 }
 
-export function ToastItem({ message, ingredient, liftOffset = 0, onMouseEnter, onMouseLeave, onClick, onDismiss, duration, className, style }: ToastItemProps) {
+export function ToastItem({ message, ingredient, liftOffset = 0, onMouseEnter, onMouseLeave, onClick, onDismiss, duration, isPaused = false, className, style }: ToastItemProps) {
   useInjectedStyle(STYLE_KEY, STYLE_CSS);
 
   const [isDismissing, setIsDismissing] = useState(false);
@@ -81,11 +86,17 @@ export function ToastItem({ message, ingredient, liftOffset = 0, onMouseEnter, o
     handleDismissRef.current = handleDismiss;
   });
 
+  // 호버 중엔 타이머를 걸지 않고, 호버가 풀리면 duration을 처음부터 다시
+  // 센다 — 클릭해서 맨 앞으로 가져올 때도 Toaster가 동시에 호버를
+  // 해제하므로(bringToFront) 별도 처리 없이 이 effect만으로 "클릭 시
+  // duration 초기화" 요구사항도 함께 충족된다.
   useEffect(() => {
     if (duration === undefined || !Number.isFinite(duration)) return;
+    if (isPaused) return;
+
     const timer = setTimeout(() => handleDismissRef.current(), duration);
     return () => clearTimeout(timer);
-  }, [duration]);
+  }, [duration, isPaused]);
 
   const rootClassName = ["sandwich-toast-item", onClick && "sandwich-toast-item--clickable", isDismissing && "sandwich-toast-item--dismissing", INGREDIENT_CLIP_CLASS[ingredient], className]
     .filter(Boolean)
