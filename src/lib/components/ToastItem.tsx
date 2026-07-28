@@ -5,6 +5,10 @@ import { Ingredient } from "./Ingredient";
 import { useInjectedStyle } from "../injectStyle";
 import { LIFT_VAR, INGREDIENT_CLIP_CLASS, INGREDIENT_MESSAGE_CLASS, STYLE_KEY, STYLE_CSS } from "./ToastItem.styles";
 
+// 다른 토스트를 향해 마우스가 스쳐 지나가는 것까지 "읽는 중"으로 치면 안
+// 되므로, 이 시간 이상 계속 호버돼 있어야만 duration을 멈춘다.
+const HOVER_PAUSE_THRESHOLD_MS = 150;
+
 export interface ToastItemProps {
   message: string;
   ingredient: ToastIngredient;
@@ -86,17 +90,30 @@ export function ToastItem({ message, ingredient, liftOffset = 0, onMouseEnter, o
     handleDismissRef.current = handleDismiss;
   });
 
+  // isPaused는 마우스가 카드 위에 있기만 해도 true라서, 다른 토스트로
+  // 가는 길에 스쳐 지나가는 것까지 그대로 반영한다. HOVER_PAUSE_THRESHOLD_MS
+  // 이상 계속 머물러야만 "진짜로 멈춘 상태"로 인정한다.
+  const [isReallyPaused, setIsReallyPaused] = useState(false);
+  useEffect(() => {
+    if (!isPaused) {
+      setIsReallyPaused(false);
+      return;
+    }
+    const timer = setTimeout(() => setIsReallyPaused(true), HOVER_PAUSE_THRESHOLD_MS);
+    return () => clearTimeout(timer);
+  }, [isPaused]);
+
   // 호버 중엔 타이머를 걸지 않고, 호버가 풀리면 duration을 처음부터 다시
   // 센다 — 클릭해서 맨 앞으로 가져올 때도 Toaster가 동시에 호버를
   // 해제하므로(bringToFront) 별도 처리 없이 이 effect만으로 "클릭 시
   // duration 초기화" 요구사항도 함께 충족된다.
   useEffect(() => {
     if (duration === undefined || !Number.isFinite(duration)) return;
-    if (isPaused) return;
+    if (isReallyPaused) return;
 
     const timer = setTimeout(() => handleDismissRef.current(), duration);
     return () => clearTimeout(timer);
-  }, [duration, isPaused]);
+  }, [duration, isReallyPaused]);
 
   const rootClassName = ["sandwich-toast-item", onClick && "sandwich-toast-item--clickable", isDismissing && "sandwich-toast-item--dismissing", INGREDIENT_CLIP_CLASS[ingredient], className]
     .filter(Boolean)
