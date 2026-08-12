@@ -26,6 +26,9 @@ function App() {
       <button type="button" onClick={() => toast.loading("업로드 중...")}>
         toast.loading()
       </button>
+      <button type="button" onClick={() => toast.loading("업로드 중...", { ingredient: "lettuce" })}>
+        toast.loading() + ingredient override
+      </button>
       <button type="button" onClick={() => toast.dismiss()}>
         toast.dismiss() (전체 삭제)
       </button>
