@@ -18,6 +18,7 @@ export const INGREDIENT_CONTAINER_CLASS: Record<ToastIngredient, string> = {
   tomato: "sandwich-toast-ingredient--tomato",
   cheese: "sandwich-toast-ingredient--cheese",
   bread: "sandwich-toast-ingredient--bread",
+  scrambled: "sandwich-toast-ingredient--scrambled",
 };
 
 export const STYLE_KEY = "ingredient";
@@ -42,10 +43,11 @@ export const STYLE_CSS = `
   min-width: 0;
   height: auto;
 }
-/* bread는 타일링 없이 이미지 한 장 — 원본 비율(4:1)이 그대로면 다른
-   재료보다 훨씬 납작해서, 다른 재료와 같은 높이가 되도록 이미지 자체를
-   크롭한다(object-fit: contain — 잘림 없이 레터박스). */
-.sandwich-toast-ingredient--bread .sandwich-toast-ingredient-tile {
+/* bread/scrambled는 타일링 없이 이미지 한 장 — 원본 비율(4:1)이 그대로면
+   다른 재료보다 훨씬 납작해서, 다른 재료와 같은 높이가 되도록 이미지
+   자체를 크롭한다(object-fit: contain — 잘림 없이 레터박스). */
+.sandwich-toast-ingredient--bread .sandwich-toast-ingredient-tile,
+.sandwich-toast-ingredient--scrambled .sandwich-toast-ingredient-tile {
   height: ${TARGET_ROW_HEIGHT}px;
   object-fit: contain;
 }

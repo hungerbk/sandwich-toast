@@ -3,13 +3,14 @@ import type { ToastIngredient } from "../store";
 import breadSrc from "../assets/bread.webp";
 import cheeseSrc from "../assets/cheese.webp";
 import lettuceSrc from "../assets/lettuce.webp";
+import scrambledSrc from "../assets/scrambled.webp";
 import tomatoSrc from "../assets/tomato.webp";
 import { useInjectedStyle } from "../injectStyle";
 import { INGREDIENT_CONTAINER_CLASS, STYLE_KEY, STYLE_CSS } from "./Ingredient.styles";
 
 interface IngredientAsset {
   src: string;
-  // 가로로 몇 번 반복해서 겹쳐 배치할지. 지정 안 하면 1장(bread).
+  // 가로로 몇 번 반복해서 겹쳐 배치할지. 지정 안 하면 1장(bread, scrambled).
   repeat?: number;
 }
 
@@ -18,6 +19,7 @@ const INGREDIENT_ASSETS: Record<ToastIngredient, IngredientAsset> = {
   tomato: { src: tomatoSrc, repeat: 4 },
   cheese: { src: cheeseSrc, repeat: 4 },
   bread: { src: breadSrc },
+  scrambled: { src: scrambledSrc },
 };
 
 export interface IngredientProps {

@@ -2,7 +2,7 @@ import { toast, Toaster } from "../lib";
 import { Ingredient } from "../lib/components/Ingredient";
 import "./App.css";
 
-const ALL_INGREDIENTS = ["lettuce", "tomato", "cheese", "bread"] as const;
+const ALL_INGREDIENTS = ["lettuce", "tomato", "cheese", "bread", "scrambled"] as const;
 
 function App() {
   return (

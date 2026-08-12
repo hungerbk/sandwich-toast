@@ -1,5 +1,5 @@
 export type ToastType = 'success' | 'error' | 'warning' | 'info'
-export type ToastIngredient = 'lettuce' | 'tomato' | 'cheese' | 'bread'
+export type ToastIngredient = 'lettuce' | 'tomato' | 'cheese' | 'bread' | 'scrambled'
 
 export interface Toast {
   id: string
