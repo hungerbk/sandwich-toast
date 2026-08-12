@@ -3,10 +3,9 @@ import { subscribe, getSnapshot, removeToast } from '../store'
 import { ToastItem } from './ToastItem'
 import { TOAST_ITEM_TRANSITION_MS } from './ToastItem.styles'
 import { useInjectedStyle } from '../injectStyle'
-import { STYLE_KEY, STYLE_CSS } from './Toaster.styles'
+import { STYLE_KEY, STYLE_CSS, EXTRA_LIFT } from './Toaster.styles'
 
 const RESTING_GAP = 40
-const EXTRA_LIFT = 70
 // 재정렬(클릭으로 맨 앞 이동) 애니메이션이 끝날 때까지 호버 반응을 막는
 // 대기시간. ToastItem의 트랜지션 시간에 약간의 여유를 더한다.
 const SETTLE_MS = TOAST_ITEM_TRANSITION_MS + 20
@@ -91,7 +90,7 @@ export function Toaster() {
             onDismiss={() => removeToast(id)}
             duration={t.duration}
             isPaused={hoveredId === id}
-            liftOffset={hoveredRank >= 0 && rank < hoveredRank ? EXTRA_LIFT : 0}
+            liftOffset={hoveredRank >= 0 && rank >= hoveredRank ? EXTRA_LIFT : 0}
             style={{
               top: rank * RESTING_GAP,
               zIndex: order.length - rank,

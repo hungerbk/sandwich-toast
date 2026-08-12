@@ -8,9 +8,9 @@ import { LIFT_VAR, INGREDIENT_CLIP_CLASS, INGREDIENT_MESSAGE_CLASS, STYLE_KEY, S
 export interface ToastItemProps {
   message: string;
   ingredient: ToastIngredient;
-  // 호버 시 위 레이어들이 들리는 연출을 위해 부모(Toaster)가 위로 얼마나
-  // 밀어 올릴지 지정한다 (px). CSS 커스텀 속성으로 전달돼서, hover 확대와
-  // 함께 CSS 트랜지션으로만 처리된다(리플로우 없음).
+  // 다른 토스트가 호버됐을 때 이 토스트를 아래로 얼마나 밀어낼지 지정한다
+  // (px). CSS 커스텀 속성으로 전달돼서, hover 확대와 함께 CSS
+  // 트랜지션으로만 처리된다(리플로우 없음).
   liftOffset?: number;
   onMouseEnter?: MouseEventHandler<HTMLDivElement>;
   onMouseLeave?: MouseEventHandler<HTMLDivElement>;

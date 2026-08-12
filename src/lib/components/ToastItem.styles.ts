@@ -66,11 +66,15 @@ export const STYLE_CSS = `
   position: absolute;
   left: 0;
   width: ${TOAST_ITEM_WIDTH}px;
-  transform: translateY(calc(var(${LIFT_VAR}, 0px) * -1)) scale(1);
+  /* liftOffset(Toaster가 계산)은 이제 "아래로 얼마나 밀어낼지"라 부호를
+     그대로 쓴다 — 예전엔 위에 쌓인 토스트를 위로 들어올렸는데, 맨 앞
+     토스트가 뷰포트 위로 넘어가는 문제(issue #27)가 있어서 호버된
+     토스트와 그 뒤에 있는 토스트를 아래로 내리는 방식으로 바꿨다. */
+  transform: translateY(var(${LIFT_VAR}, 0px)) scale(1);
   transition: transform ${TOAST_ITEM_TRANSITION_MS}ms ease-in-out, top ${TOAST_ITEM_TRANSITION_MS}ms ease-in-out;
 }
 .sandwich-toast-item:hover {
-  transform: translateY(calc(var(${LIFT_VAR}, 0px) * -1)) scale(1.12);
+  transform: translateY(var(${LIFT_VAR}, 0px)) scale(1.12);
 }
 .sandwich-toast-item--clickable {
   cursor: pointer;
