@@ -65,6 +65,13 @@ export const toast = {
   cheese: (message: string, options?: IngredientToastOptions) => createToast(message, "warning", options),
   bread: (message: string, options?: IngredientToastOptions) => createToast(message, "info", options),
 
+  // 로딩 토스트 전용 진입점. 기본 재료는 scrambled(오믈렛)지만, 다른
+  // 재료를 골라도 케찹 애니메이션은 그대로 얹힌다(Ingredient가 isLoading을
+  // 보고 재료 종류와 무관하게 오버레이한다) — ingredient는 options로 자유롭게
+  // 덮어쓸 수 있게 열어두고, isLoading만은 이 진입점의 존재 의미이므로
+  // 항상 true로 고정한다.
+  loading: (message: string, options?: StandardToastOptions) => createToast(message, "info", { ingredient: "scrambled", ...options, isLoading: true }),
+
   // 인자를 아예 안 넘기면(dismiss()) 전체 삭제. id를 넘겼는데 값이 undefined인
   // 경우(예: toast.dismiss(ref.current)에서 ref.current가 아직 없을 때)는
   // 아무 것도 하지 않는다 — "0개 인자"와 "undefined 인자"를 구분해야 실수로

@@ -8,6 +8,9 @@ import { LIFT_VAR, INGREDIENT_CLIP_CLASS, INGREDIENT_MESSAGE_CLASS, STYLE_KEY, S
 export interface ToastItemProps {
   message: string;
   ingredient: ToastIngredient;
+  // true면 재료 위에 케찹 애니메이션을 얹는다 — scrambled뿐 아니라 어떤
+  // 재료든 로딩 중이면 같은 방식으로 표시된다.
+  isLoading?: boolean;
   // 다른 토스트가 호버됐을 때 이 토스트를 아래로 얼마나 밀어낼지 지정한다
   // (px). CSS 커스텀 속성으로 전달돼서, hover 확대와 함께 CSS
   // 트랜지션으로만 처리된다(리플로우 없음).
@@ -33,7 +36,7 @@ export interface ToastItemProps {
   style?: CSSProperties;
 }
 
-export function ToastItem({ message, ingredient, liftOffset = 0, onMouseEnter, onMouseLeave, onClick, onDismiss, duration, isPaused = false, className, style }: ToastItemProps) {
+export function ToastItem({ message, ingredient, isLoading = false, liftOffset = 0, onMouseEnter, onMouseLeave, onClick, onDismiss, duration, isPaused = false, className, style }: ToastItemProps) {
   useInjectedStyle(STYLE_KEY, STYLE_CSS);
 
   const [isDismissing, setIsDismissing] = useState(false);
@@ -150,7 +153,7 @@ export function ToastItem({ message, ingredient, liftOffset = 0, onMouseEnter, o
       onMouseLeave={onMouseLeave}
       onClick={handleClick}
       style={{ [LIFT_VAR]: `${liftOffset}px`, ...style } as CSSProperties}>
-      <Ingredient ingredient={ingredient} />
+      <Ingredient ingredient={ingredient} isLoading={isLoading} />
 
       <p className={messageClassName}>
         <span className="sandwich-toast-message-text">{message}</span>

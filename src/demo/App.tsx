@@ -2,7 +2,7 @@ import { toast, Toaster } from "../lib";
 import { Ingredient } from "../lib/components/Ingredient";
 import "./App.css";
 
-const ALL_INGREDIENTS = ["lettuce", "tomato", "cheese", "bread"] as const;
+const ALL_INGREDIENTS = ["lettuce", "tomato", "cheese", "bread", "scrambled"] as const;
 
 function App() {
   return (
@@ -23,6 +23,12 @@ function App() {
       <button type="button" onClick={() => toast.success("귀여운 성공", { ingredient: "tomato" })}>
         toast.success() + ingredient override
       </button>
+      <button type="button" onClick={() => toast.loading("업로드 중...")}>
+        toast.loading()
+      </button>
+      <button type="button" onClick={() => toast.loading("업로드 중...", { ingredient: "lettuce" })}>
+        toast.loading() + ingredient override
+      </button>
       <button type="button" onClick={() => toast.dismiss()}>
         toast.dismiss() (전체 삭제)
       </button>
@@ -31,7 +37,7 @@ function App() {
       <div style={{ display: "flex", flexDirection: "column", gap: "8px", width: "480px" }}>
         {ALL_INGREDIENTS.map((ingredient) => (
           <div key={ingredient} style={{ border: "1px solid #ddd" }}>
-            <Ingredient ingredient={ingredient} />
+            <Ingredient ingredient={ingredient} isLoading={ingredient === "scrambled"} />
           </div>
         ))}
       </div>

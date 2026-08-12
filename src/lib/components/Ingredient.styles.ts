@@ -18,20 +18,35 @@ export const INGREDIENT_CONTAINER_CLASS: Record<ToastIngredient, string> = {
   tomato: "sandwich-toast-ingredient--tomato",
   cheese: "sandwich-toast-ingredient--cheese",
   bread: "sandwich-toast-ingredient--bread",
+  scrambled: "sandwich-toast-ingredient--scrambled",
 };
 
 export const STYLE_KEY = "ingredient";
 export const STYLE_CSS = `
 .sandwich-toast-ingredient {
+  width: 100%;
+  /* 케찹 오버레이(.sandwich-toast-ingredient-ketchup)를 이 컨테이너
+     기준으로 절대 배치하기 위한 기준점. */
+  position: relative;
+}
+/* 케찹 오버레이는 타일과 같은 부모(.sandwich-toast-ingredient)의 형제라
+   .tile:nth-child/:only-child 선택자가 타일 개수를 셀 때 케찹까지 자식으로
+   세면 안 된다(케찹 유무에 따라 손그림 회전이 붙었다 떨어졌다 하게 됨) —
+   타일 전용 래퍼로 분리해서 그 선택자들이 항상 타일끼리만 보게 한다. */
+.sandwich-toast-ingredient-tiles {
   display: flex;
   width: 100%;
 }
 /* lettuce/tomato/cheese: 여러 장이 겹쳐 타일링되는 재료 — 개별 이미지에
    object-fit을 주는 대신(그러면 타일 겹침 비율이 깨져서 사이가 벌어져
-   보인다) 겹쳐진 행 전체를 감싸는 컨테이너를 이 높이로 자른다. */
-.sandwich-toast-ingredient--lettuce,
-.sandwich-toast-ingredient--tomato,
-.sandwich-toast-ingredient--cheese {
+   보인다) 겹쳐진 행 전체(.tiles, 실제 flex 컨테이너)를 이 높이로 자른다.
+   height는 반드시 실제 flex 컨테이너에 있어야 한다 — align-items:stretch가
+   그 높이를 기준으로 각 타일의 크기를 계산하기 때문에, 바깥
+   컨테이너(.sandwich-toast-ingredient)에 있으면 타일이 원본 비율대로
+   부풀어 오르고 overflow로 잘려서 개수/배치가 깨진다. */
+.sandwich-toast-ingredient--lettuce .sandwich-toast-ingredient-tiles,
+.sandwich-toast-ingredient--tomato .sandwich-toast-ingredient-tiles,
+.sandwich-toast-ingredient--cheese .sandwich-toast-ingredient-tiles {
   height: ${TARGET_ROW_HEIGHT}px;
   overflow: hidden;
 }
@@ -42,12 +57,51 @@ export const STYLE_CSS = `
   min-width: 0;
   height: auto;
 }
-/* bread는 타일링 없이 이미지 한 장 — 원본 비율(4:1)이 그대로면 다른
-   재료보다 훨씬 납작해서, 다른 재료와 같은 높이가 되도록 이미지 자체를
-   크롭한다(object-fit: contain — 잘림 없이 레터박스). */
-.sandwich-toast-ingredient--bread .sandwich-toast-ingredient-tile {
+/* bread/scrambled는 타일링 없이 이미지 한 장 — 원본 비율(4:1)이 그대로면
+   다른 재료보다 훨씬 납작해서, 다른 재료와 같은 높이가 되도록 이미지
+   자체를 크롭한다(object-fit: contain — 잘림 없이 레터박스). */
+.sandwich-toast-ingredient--bread .sandwich-toast-ingredient-tile,
+.sandwich-toast-ingredient--scrambled .sandwich-toast-ingredient-tile {
   height: ${TARGET_ROW_HEIGHT}px;
   object-fit: contain;
+}
+
+/* 케찹(ketchup.webp)은 scrambled.webp와 같은 800x200 캔버스라서 재료
+   이미지 위에 그대로 겹쳐도 지그재그 모양이 정확히 맞는다. scrambled뿐
+   아니라 어떤 재료가 로딩 중이든 이 위치 그대로 얹힌다(재료마다 실제
+   그림 구도는 다르지만, 로딩 표시는 장식적 가니시라 정확히 겹칠 필요는
+   없다). z-index는 타일 중 가장 높은 값(3)보다는 커야 하고(flex
+   아이템은 z-index:auto가 아니면(타일들이 손그림 회전용으로 그렇다)
+   position 없이도 자기 스택 컨텍스트를 만들어서, 케찹이 absolute이고
+   z-index가 auto인 채로는 z-index가 있는 타일들보다 뒤로 밀려 일부
+   타일에 가려진다), 메시지(ToastItem.styles.ts의 z-index: 5)보다는
+   작아야 한다 — 메시지 텍스트를 케찹이 덮으면 안 된다. */
+.sandwich-toast-ingredient-ketchup {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: ${TARGET_ROW_HEIGHT}px;
+  object-fit: contain;
+  z-index: 4;
+  pointer-events: none;
+  animation: sandwich-toast-ketchup-squeeze 2.4s ease-in-out infinite;
+}
+/* 케찹이 왼쪽에서 오른쪽으로 짜여 나오듯 그려지고(0%→50%), 잠깐 멈췄다가
+   (50%→80%), 다시 걷히고(80%→100%) 반복한다. 시작/끝 clip-path가 완전히
+   같아야(둘 다 전체 클립) 루프 경계에서 튐 없이 이어진다. */
+@keyframes sandwich-toast-ketchup-squeeze {
+  0% {
+    clip-path: inset(0 100% 0 0);
+  }
+  50% {
+    clip-path: inset(0 0% 0 0);
+  }
+  80% {
+    clip-path: inset(0 0% 0 0);
+  }
+  100% {
+    clip-path: inset(0 100% 0 0);
+  }
 }
 
 /* 같은 행 안에서 타일끼리 겹치는 비율 (가로, 음수 margin). */
