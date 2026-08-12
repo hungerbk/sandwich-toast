@@ -83,6 +83,7 @@ export function Toaster() {
           <ToastItem
             key={id}
             ingredient={t.ingredient}
+            isLoading={t.isLoading}
             message={t.message}
             onMouseEnter={() => setHoveredId(id)}
             onMouseLeave={() => setHoveredId(null)}

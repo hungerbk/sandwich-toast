@@ -26,11 +26,18 @@ handles the two rendering modes:
   scale-down so the rotated corners don't visually spill past the tile's
   box) to build up the full sandwich width rather than stretching one image.
 
-## Reserved (not part of the current ingredient type union)
+## Loading overlay (`ketchup.webp`)
 
-- `ketchup.webp` (800×200) — same canvas as `scrambled.webp` so it lines up
-  when layered directly on top of it. Kept as a separate file (rather than
-  baked into `scrambled.webp`) so it can be animated independently as a
-  loading indicator. Not wired up yet.
+`ketchup.webp` (800×200, ketchup-free) is the same canvas size as
+`scrambled.webp` (issue #12) so it lines up when layered directly on top of
+it — but it's not exclusive to `scrambled`. `Ingredient` overlays it on top
+of *whichever* ingredient is showing whenever `isLoading` is true (see
+`toast.loading()`), looping a clip-path "squeeze on, hold, wipe off"
+animation. It was kept as a separate file rather than baked into
+`scrambled.webp` specifically so it could be animated independently and
+reused across ingredients.
+
+## Not yet used
+
 - `bacon` — mentioned in the original spec as a future-extensibility
   example; no asset yet, no type union entry yet.
