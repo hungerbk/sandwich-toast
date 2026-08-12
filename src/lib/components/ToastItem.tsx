@@ -24,11 +24,16 @@ export interface ToastItemProps {
   // ms. 지정하면 그 시간 뒤 onDismiss와 똑같은 애니메이션으로 자동
   // 삭제된다. Infinity/미지정이면 자동 삭제하지 않는다(로딩 토스트 등).
   duration?: number;
+  // true면 자동 삭제 타이머를 멈춘다 — 사용자가 읽으려고 호버한 토스트가
+  // 다 읽기도 전에 사라지면 안 되기 때문. 형제 토스트를 알아야(지금 이
+  // 토스트가 호버된 그 토스트인지) 판단할 수 있어서 부모(Toaster)가
+  // 계산해서 넘긴다.
+  isPaused?: boolean;
   className?: string;
   style?: CSSProperties;
 }
 
-export function ToastItem({ message, ingredient, liftOffset = 0, onMouseEnter, onMouseLeave, onClick, onDismiss, duration, className, style }: ToastItemProps) {
+export function ToastItem({ message, ingredient, liftOffset = 0, onMouseEnter, onMouseLeave, onClick, onDismiss, duration, isPaused = false, className, style }: ToastItemProps) {
   useInjectedStyle(STYLE_KEY, STYLE_CSS);
 
   const [isDismissing, setIsDismissing] = useState(false);
@@ -81,11 +86,56 @@ export function ToastItem({ message, ingredient, liftOffset = 0, onMouseEnter, o
     handleDismissRef.current = handleDismiss;
   });
 
+  // 클릭해서 맨 앞으로 가져오면 duration을 처음부터 다시 센다. 이 카드가
+  // 직접 받는 클릭 이벤트로 트리거하므로(아래 handleClick) 호버 상태와는
+  // 무관하게 동작한다 — 스택을 가로질러 다른 토스트를 클릭하러 가는 길에
+  // 이 토스트를 스쳐 지나가는 것과 완전히 분리된 신호다.
+  const [resetSignal, setResetSignal] = useState(0);
+  const handleClick: MouseEventHandler<HTMLDivElement> = (e) => {
+    setResetSignal((n) => n + 1);
+    onClick?.(e);
+  };
+
+  // 자동 삭제까지 남은 시간을 "다음 dismiss 예정 시각"(절대 타임스탬프)으로
+  // 추적한다 — 그래야 호버로 멈췄다가 다시 풀렸을 때, 멈춰있던 만큼만
+  // 시각을 뒤로 미루면 되고(경과한 시간은 그대로 유지) setTimeout을 몇 ms로
+  // 다시 걸어야 하는지도 이 값에서 바로 계산된다. 스택이 겹쳐 있어서 다른
+  // 토스트로 가는 길에 이 토스트를 잠깐 스쳐 지나가는 것도 실제 호버로
+  // 잡히는데, 이 방식이면 그 찰나의 pause는 그만큼만 시각을 미룰 뿐이라
+  // 영향이 미미하다 — "언호버 시 무조건 처음부터 다시 시작"이었다면
+  // 그 찰나의 스침마저 매번 duration을 통째로 리셋시켜서, 스택을
+  // 가로지르기만 해도 지나친 토스트들이 한꺼번에 리셋되는 문제가 있었다.
+  const targetTimeRef = useRef(0);
+  // 멈춘 시각. 멈춰있지 않으면 null.
+  const pauseStartedAtRef = useRef<number | null>(null);
+  const prevResetSignalRef = useRef(resetSignal);
+
   useEffect(() => {
     if (duration === undefined || !Number.isFinite(duration)) return;
-    const timer = setTimeout(() => handleDismissRef.current(), duration);
+
+    const isReset = resetSignal !== prevResetSignalRef.current;
+    prevResetSignalRef.current = resetSignal;
+
+    if (isReset) {
+      targetTimeRef.current = Date.now() + duration;
+      pauseStartedAtRef.current = isPaused ? Date.now() : null;
+    } else if (isPaused) {
+      pauseStartedAtRef.current = Date.now();
+    } else if (pauseStartedAtRef.current !== null) {
+      // 멈췄다 풀린 경우: 멈춰있던 시간만큼 예정 시각을 뒤로 민다.
+      targetTimeRef.current += Date.now() - pauseStartedAtRef.current;
+      pauseStartedAtRef.current = null;
+    } else {
+      // 처음 시작하는 경우.
+      targetTimeRef.current = Date.now() + duration;
+    }
+
+    if (isPaused) return;
+
+    const remaining = Math.max(0, targetTimeRef.current - Date.now());
+    const timer = setTimeout(() => handleDismissRef.current(), remaining);
     return () => clearTimeout(timer);
-  }, [duration]);
+  }, [duration, isPaused, resetSignal]);
 
   const rootClassName = ["sandwich-toast-item", onClick && "sandwich-toast-item--clickable", isDismissing && "sandwich-toast-item--dismissing", INGREDIENT_CLIP_CLASS[ingredient], className]
     .filter(Boolean)
@@ -98,7 +148,7 @@ export function ToastItem({ message, ingredient, liftOffset = 0, onMouseEnter, o
       className={rootClassName}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
-      onClick={onClick}
+      onClick={handleClick}
       style={{ [LIFT_VAR]: `${liftOffset}px`, ...style } as CSSProperties}>
       <Ingredient ingredient={ingredient} />
 
