@@ -1,13 +1,29 @@
-import { toast, Toaster } from "../lib";
+import { useState } from "react";
+import { toast, Toaster, type ToasterPosition } from "../lib";
 import { Ingredient } from "../lib/components/Ingredient";
 import "./App.css";
 
 const ALL_INGREDIENTS = ["lettuce", "tomato", "cheese", "bread", "scrambled"] as const;
+const ALL_POSITIONS: ToasterPosition[] = ["top-left", "top-center", "top-right", "bottom-left", "bottom-center", "bottom-right"];
 
 function App() {
+  const [position, setPosition] = useState<ToasterPosition>("top-center");
+
   return (
     <div className="playground">
       <h1>sandwich-toast playground</h1>
+
+      <label>
+        position:{" "}
+        <select value={position} onChange={(e) => setPosition(e.target.value as ToasterPosition)}>
+          {ALL_POSITIONS.map((p) => (
+            <option key={p} value={p}>
+              {p}
+            </option>
+          ))}
+        </select>
+      </label>
+
       <button type="button" onClick={() => toast.success("제출 완료!")}>
         toast.success()
       </button>
@@ -42,7 +58,7 @@ function App() {
         ))}
       </div>
 
-      <Toaster />
+      <Toaster position={position} />
     </div>
   );
 }

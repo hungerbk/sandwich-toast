@@ -1,16 +1,25 @@
-import { useRef, useState, useSyncExternalStore } from 'react'
+import { useRef, useState, useSyncExternalStore, type CSSProperties } from 'react'
 import { subscribe, getSnapshot, removeToast } from '../store'
 import { ToastItem } from './ToastItem'
 import { TOAST_ITEM_TRANSITION_MS } from './ToastItem.styles'
 import { useInjectedStyle } from '../injectStyle'
 import { STYLE_KEY, STYLE_CSS, EXTRA_LIFT } from './Toaster.styles'
 
+export type ToasterPosition = 'top-left' | 'top-center' | 'top-right' | 'bottom-left' | 'bottom-center' | 'bottom-right'
+
+export interface ToasterProps {
+  // 토스트 스택이 화면의 어느 지점에 붙을지. 기본은 화면 중앙 상단.
+  position?: ToasterPosition
+}
+
+const DEFAULT_POSITION: ToasterPosition = 'top-center'
+
 const RESTING_GAP = 40
 // 재정렬(클릭으로 맨 앞 이동) 애니메이션이 끝날 때까지 호버 반응을 막는
 // 대기시간. ToastItem의 트랜지션 시간에 약간의 여유를 더한다.
 const SETTLE_MS = TOAST_ITEM_TRANSITION_MS + 20
 
-export function Toaster() {
+export function Toaster({ position = DEFAULT_POSITION }: ToasterProps) {
   useInjectedStyle(STYLE_KEY, STYLE_CSS)
 
   const toasts = useSyncExternalStore(subscribe, getSnapshot)
@@ -73,8 +82,14 @@ export function Toaster() {
     setTimeout(() => setIsSettling(false), SETTLE_MS)
   }
 
+  // position의 앞부분(top/bottom)이 스택이 화면 가장자리로부터 어느
+  // 방향으로 쌓이는지, 뒷부분(left/center/right)이 가로 정렬을 정한다.
+  const isBottom = position.startsWith('bottom')
+  const horizontal = position.endsWith('left') ? 'left' : position.endsWith('right') ? 'right' : 'center'
+  const containerClassName = ['sandwich-toaster', isBottom ? 'sandwich-toaster--bottom' : 'sandwich-toaster--top', `sandwich-toaster--${horizontal}`].join(' ')
+
   return (
-    <div className="sandwich-toaster">
+    <div className={containerClassName}>
       {order.map((id) => {
         const t = toasts.find((toast) => toast.id === id)
         if (!t) return null
@@ -91,12 +106,20 @@ export function Toaster() {
             onDismiss={() => removeToast(id)}
             duration={t.duration}
             isPaused={hoveredId === id}
-            liftOffset={hoveredRank >= 0 && rank >= hoveredRank ? EXTRA_LIFT : 0}
-            style={{
-              top: rank * RESTING_GAP,
-              zIndex: order.length - rank,
-              pointerEvents: isSettling ? 'none' : undefined,
-            }}
+            // 호버된 토스트 자신도 뒤에 있는 것들과 함께 밀려난다 — 그래야
+            // 앞쪽(z-index가 더 높은) 토스트와 겹치지 않는 위치로 이동하면서
+            // 자연스럽게 드러난다. 호버된 토스트가 제자리에 그대로 있으면
+            // (:hover scale로만 커지면) z-index가 더 높은 앞쪽 토스트에
+            // 가려진 채로 커지기만 해서 peek 효과가 안 보인다 — top/bottom
+            // 둘 다 이동해야 하는 이유가 같다.
+            liftOffset={hoveredRank >= 0 && rank >= hoveredRank ? (isBottom ? -EXTRA_LIFT : EXTRA_LIFT) : 0}
+            style={
+              {
+                [isBottom ? 'bottom' : 'top']: rank * RESTING_GAP,
+                zIndex: order.length - rank,
+                pointerEvents: isSettling ? 'none' : undefined,
+              } as CSSProperties
+            }
           />
         )
       })}

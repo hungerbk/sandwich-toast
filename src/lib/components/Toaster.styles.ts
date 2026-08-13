@@ -14,18 +14,34 @@ export const EXTRA_LIFT = 70;
 // Toaster.tsx의 인라인 style로 남아 있다. position/left는 ToastItem
 // 자신의 기본 클래스에 이미 있다(ToastItem은 Toaster 없이 단독으로 쓰이지
 // 않으므로 거기 있는 게 맞다) — 여기서 또 지정할 필요가 없다.
+// 화면 가장자리로부터의 여백. top/bottom/left/right 모디파이어가 전부
+// 공유하는 값이라 하나만 바꾸면 네 방향 다 같이 바뀐다.
+const EDGE_MARGIN = 24;
+
 export const STYLE_KEY = "toaster";
 export const STYLE_CSS = `
 .sandwich-toaster {
-  /* top:0 근처(맨 앞 토스트)가 화면 정중앙에 오도록 left:50% +
-     translateX(-50%)로 잡는다. 자식들은 이 컨테이너 기준 absolute라서
-     컨테이너 자체에 폭을 명시해야 translateX(-50%)가 카드 폭 기준으로
-     정확히 중앙 정렬된다. */
+  /* 자식들은 이 컨테이너 기준 absolute라서, translateX(-50%)로 가운데
+     정렬하려면(center) 컨테이너 자체에 폭이 명시돼 있어야 카드 폭
+     기준으로 정확히 중앙 정렬된다. */
   position: fixed;
-  top: 24px;
-  left: 50%;
-  transform: translateX(-50%);
   width: ${TOAST_ITEM_WIDTH}px;
   z-index: 2147483647;
+}
+.sandwich-toaster--top {
+  top: ${EDGE_MARGIN}px;
+}
+.sandwich-toaster--bottom {
+  bottom: ${EDGE_MARGIN}px;
+}
+.sandwich-toaster--left {
+  left: ${EDGE_MARGIN}px;
+}
+.sandwich-toaster--center {
+  left: 50%;
+  transform: translateX(-50%);
+}
+.sandwich-toaster--right {
+  right: ${EDGE_MARGIN}px;
 }
 `;

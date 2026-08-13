@@ -1,7 +1,7 @@
 import { addToast, clearToasts, removeToast, type Toast, type ToastIngredient, type ToastType } from "./store";
-import { Toaster } from "./components/Toaster";
+import { Toaster, type ToasterPosition } from "./components/Toaster";
 
-export type { ToastType, ToastIngredient };
+export type { ToastType, ToastIngredient, ToasterPosition };
 export { Toaster };
 
 export interface ToastOptions {

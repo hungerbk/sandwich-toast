@@ -66,12 +66,18 @@ export const STYLE_CSS = `
   position: absolute;
   left: 0;
   width: ${TOAST_ITEM_WIDTH}px;
-  /* liftOffset(Toaster가 계산)은 이제 "아래로 얼마나 밀어낼지"라 부호를
-     그대로 쓴다 — 예전엔 위에 쌓인 토스트를 위로 들어올렸는데, 맨 앞
-     토스트가 뷰포트 위로 넘어가는 문제(issue #27)가 있어서 호버된
-     토스트와 그 뒤에 있는 토스트를 아래로 내리는 방식으로 바꿨다. */
+  /* liftOffset(Toaster가 계산)은 "화면 가장자리 반대쪽으로 얼마나
+     밀어낼지"를 그대로 부호로 쓴다 — top 계열 포지션이면 양수(아래로),
+     bottom 계열이면 음수(위로)를 Toaster가 넘겨준다. 예전엔 위에 쌓인
+     토스트를 항상 위로 들어올렸는데, 맨 앞 토스트가 뷰포트 위로 넘어가는
+     문제(issue #27)가 있어서 호버된 토스트와 그 뒤에 있는 토스트를
+     가장자리 반대쪽(기본값인 top 포지션 기준 아래)으로 내리는 방식으로
+     바꿨다. */
   transform: translateY(var(${LIFT_VAR}, 0px)) scale(1);
-  transition: transform ${TOAST_ITEM_TRANSITION_MS}ms ease-in-out, top ${TOAST_ITEM_TRANSITION_MS}ms ease-in-out;
+  /* top/bottom 둘 다 트랜지션에 넣어둔다 — 인스턴스마다 Toaster의 position
+     설정에 따라 top 또는 bottom 중 하나만 쓰이므로 나머지는 트랜지션이
+     걸려도 실제로 값이 바뀔 일이 없어 무해하다. */
+  transition: transform ${TOAST_ITEM_TRANSITION_MS}ms ease-in-out, top ${TOAST_ITEM_TRANSITION_MS}ms ease-in-out, bottom ${TOAST_ITEM_TRANSITION_MS}ms ease-in-out;
 }
 .sandwich-toast-item:hover {
   transform: translateY(var(${LIFT_VAR}, 0px)) scale(1.12);
