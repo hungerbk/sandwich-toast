@@ -54,6 +54,9 @@ function App() {
       <button type="button" onClick={() => toast.loading("3초 뒤 자동 종료", { duration: 3000 })}>
         toast.loading() + duration override
       </button>
+      <button type="button" onClick={() => toast.success("케찹 고정 토핑", { ingredient: "scrambled", ketchup: true })}>
+        toast.success() + ketchup (로딩 아님, 애니메이션 없음)
+      </button>
       <button type="button" onClick={() => toast.dismiss()}>
         toast.dismiss() (전체 삭제)
       </button>
@@ -65,6 +68,9 @@ function App() {
             <Ingredient ingredient={ingredient} isLoading={ingredient === "scrambled"} />
           </div>
         ))}
+        <div style={{ border: "1px solid #ddd" }}>
+          <Ingredient ingredient="lettuce" ketchup />
+        </div>
       </div>
 
       <Toaster position={position} scale={scale} />

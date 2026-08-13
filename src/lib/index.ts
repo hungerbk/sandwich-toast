@@ -8,6 +8,10 @@ export interface ToastOptions {
   type?: ToastType;
   ingredient?: ToastIngredient;
   isLoading?: boolean;
+  // 로딩과 무관하게 재료 위에 케찹을 정적으로(애니메이션 없이) 얹고
+  // 싶을 때. isLoading이 true면 이 값과 무관하게 항상 애니메이션과
+  // 함께 얹힌다.
+  ketchup?: boolean;
   // ms. 명시 안 하면 isLoading 여부로 정해진다 (로딩 토스트는 시간이
   // 아니라 수동으로 종료되는 게 자연스러우니 기본 무제한).
   duration?: number;
@@ -42,6 +46,7 @@ function createToast(message: string, defaultType: ToastType, userOptions?: Toas
     type: userOptions?.type ?? defaultType,
     ingredient: userOptions?.ingredient ?? DEFAULT_INGREDIENT[defaultType],
     isLoading,
+    ketchup: userOptions?.ketchup ?? false,
     // 로딩 토스트는 시간이 아니라 수동으로 끝나는 게 자연스러우니
     // duration을 명시하지 않았다면 무제한으로 둔다.
     duration: userOptions?.duration ?? (isLoading ? Infinity : DEFAULT_DURATION_MS),

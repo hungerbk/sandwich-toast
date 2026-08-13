@@ -106,6 +106,7 @@ export function Toaster({ position = DEFAULT_POSITION, scale = DEFAULT_SCALE }: 
             key={id}
             ingredient={t.ingredient}
             isLoading={t.isLoading}
+            ketchup={t.ketchup}
             message={t.message}
             onMouseEnter={() => setHoveredId(id)}
             onMouseLeave={() => setHoveredId(null)}
