@@ -8,6 +8,7 @@ const ALL_POSITIONS: ToasterPosition[] = ["top-left", "top-center", "top-right",
 
 function App() {
   const [position, setPosition] = useState<ToasterPosition>("top-center");
+  const [scale, setScale] = useState(1);
 
   return (
     <div className="playground">
@@ -22,6 +23,11 @@ function App() {
             </option>
           ))}
         </select>
+      </label>
+
+      <label>
+        scale: {scale.toFixed(1)}
+        <input type="range" min="0.5" max="1.5" step="0.1" value={scale} onChange={(e) => setScale(Number(e.target.value))} />
       </label>
 
       <button type="button" onClick={() => toast.success("제출 완료!")}>
@@ -58,7 +64,7 @@ function App() {
         ))}
       </div>
 
-      <Toaster position={position} />
+      <Toaster position={position} scale={scale} />
     </div>
   );
 }

@@ -1,4 +1,5 @@
 import type { ToastIngredient } from "../store";
+import { scaled } from "../scale";
 
 // ToastItem이 useInjectedStyle로 주입하는 CSS + 그와 관련된 상수. 컴포넌트
 // 파일(ToastItem.tsx)과 분리한 이유는 (1) 스타일과 컴포넌트 로직을 나누기
@@ -6,6 +7,9 @@ import type { ToastIngredient } from "../store";
 // Fast Refresh가 깨지기 때문 — TOAST_ITEM_WIDTH/TOAST_ITEM_TRANSITION_MS는
 // Toaster.tsx도 가져다 쓰므로 어차피 ToastItem.tsx 밖에 있어야 한다.
 
+// scale 1 기준 카드 폭(px). 실제 CSS에는 scaled()를 거쳐 Toaster의 scale
+// prop만큼 곱해진 값이 들어간다 — Toaster.styles.ts도 컨테이너 폭을 맞추려고
+// 이 값을 그대로 가져다 쓴다.
 export const TOAST_ITEM_WIDTH = 320;
 
 // 위치(top)/리프트(transform) 이동에 쓰는 트랜지션 시간. Toaster가 재정렬
@@ -65,7 +69,7 @@ export const STYLE_CSS = `
      덮어쓰게 만들 이유가 없다. */
   position: absolute;
   left: 0;
-  width: ${TOAST_ITEM_WIDTH}px;
+  width: ${scaled(TOAST_ITEM_WIDTH)};
   /* liftOffset(Toaster가 계산)은 "화면 가장자리 반대쪽으로 얼마나
      밀어낼지"를 그대로 부호로 쓴다 — top 계열 포지션이면 양수(아래로),
      bottom 계열이면 음수(위로)를 Toaster가 넘겨준다. 예전엔 위에 쌓인
@@ -105,7 +109,7 @@ export const STYLE_CSS = `
      더 높은 값을 줘야 그 위로 확실히 온다. */
   z-index: 5;
   margin: 0;
-  padding: ${MESSAGE_PADDING_Y}px ${MESSAGE_PADDING_X}px;
+  padding: ${scaled(MESSAGE_PADDING_Y)} ${scaled(MESSAGE_PADDING_X)};
   overflow-wrap: break-word;
   box-sizing: border-box;
   /* 상속된 색/정렬을 그대로 쓰면 소비자 앱의 전역 스타일(회색 텍스트,
@@ -119,14 +123,14 @@ export const STYLE_CSS = `
   align-items: center;
 }
 .sandwich-toast-message--lettuce {
-  padding-left: 40px;
+  padding-left: ${scaled(40)};
 }
 .sandwich-toast-message--bread {
-  padding-left: 40px;
-  transform: translateY(-4px);
+  padding-left: ${scaled(40)};
+  transform: translateY(${scaled(-4)});
 }
 .sandwich-toast-message--cheese {
-  transform: translateY(-8px);
+  transform: translateY(${scaled(-8)});
 }
 
 .sandwich-toast-message-text {
@@ -139,8 +143,8 @@ export const STYLE_CSS = `
      반투명 흰 배경을 텍스트 뒤에만 깔아 가독성을 보장한다(카드 전체를
      덮지 않고 텍스트 영역만 감싸서 재료 그림은 그대로 보임). */
   background: rgba(255, 255, 255, 0.45);
-  border-radius: 8px;
-  padding: 4px 10px;
+  border-radius: ${scaled(8)};
+  padding: ${scaled(4)} ${scaled(10)};
   box-sizing: border-box;
   /* MAX_MESSAGE_LINES를 넘는 메시지는 여기서 말줄임표로 자른다. */
   display: -webkit-box;
@@ -157,10 +161,10 @@ export const STYLE_CSS = `
      기준 y 20~80% 구간은 안 잘라내므로 40%는 항상 히트테스트
      사각지대 밖이다. */
   top: 40%;
-  right: 4px;
+  right: ${scaled(4)};
   transform: translateY(-40%) scale(1);
-  width: 22px;
-  height: 22px;
+  width: ${scaled(22)};
+  height: ${scaled(22)};
   padding: 0;
   display: flex;
   align-items: center;
@@ -171,7 +175,7 @@ export const STYLE_CSS = `
      밝은 이미지(치즈/빵) 위에서도 경계가 보이도록 그림자를 준다. */
   background: rgba(255, 255, 255, 0.75);
   color: #1a1a1a;
-  font-size: 14px;
+  font-size: ${scaled(14)};
   line-height: 1;
   cursor: pointer;
   transition: transform 120ms ease-out, background 120ms ease-out, box-shadow 120ms ease-out;

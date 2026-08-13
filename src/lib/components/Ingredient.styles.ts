@@ -1,4 +1,5 @@
 import type { ToastIngredient } from "../store";
+import { scaled } from "../scale";
 
 // Ingredient가 useInjectedStyle로 주입하는 CSS + 관련 상수. 컴포넌트
 // 파일(Ingredient.tsx)과 분리한 이유는 (1) 스타일과 컴포넌트 로직을
@@ -47,7 +48,7 @@ export const STYLE_CSS = `
 .sandwich-toast-ingredient--lettuce .sandwich-toast-ingredient-tiles,
 .sandwich-toast-ingredient--tomato .sandwich-toast-ingredient-tiles,
 .sandwich-toast-ingredient--cheese .sandwich-toast-ingredient-tiles {
-  height: ${TARGET_ROW_HEIGHT}px;
+  height: ${scaled(TARGET_ROW_HEIGHT)};
   overflow: hidden;
 }
 
@@ -62,7 +63,7 @@ export const STYLE_CSS = `
    자체를 크롭한다(object-fit: contain — 잘림 없이 레터박스). */
 .sandwich-toast-ingredient--bread .sandwich-toast-ingredient-tile,
 .sandwich-toast-ingredient--scrambled .sandwich-toast-ingredient-tile {
-  height: ${TARGET_ROW_HEIGHT}px;
+  height: ${scaled(TARGET_ROW_HEIGHT)};
   object-fit: contain;
 }
 
@@ -80,7 +81,7 @@ export const STYLE_CSS = `
   position: absolute;
   inset: 0;
   width: 100%;
-  height: ${TARGET_ROW_HEIGHT}px;
+  height: ${scaled(TARGET_ROW_HEIGHT)};
   object-fit: contain;
   z-index: 4;
   pointer-events: none;

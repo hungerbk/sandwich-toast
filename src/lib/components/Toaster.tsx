@@ -3,6 +3,7 @@ import { subscribe, getSnapshot, removeToast } from '../store'
 import { ToastItem } from './ToastItem'
 import { TOAST_ITEM_TRANSITION_MS } from './ToastItem.styles'
 import { useInjectedStyle } from '../injectStyle'
+import { SCALE_VAR } from '../scale'
 import { STYLE_KEY, STYLE_CSS, EXTRA_LIFT } from './Toaster.styles'
 
 export type ToasterPosition = 'top-left' | 'top-center' | 'top-right' | 'bottom-left' | 'bottom-center' | 'bottom-right'
@@ -10,16 +11,22 @@ export type ToasterPosition = 'top-left' | 'top-center' | 'top-right' | 'bottom-
 export interface ToasterProps {
   // 토스트 스택이 화면의 어느 지점에 붙을지. 기본은 화면 중앙 상단.
   position?: ToasterPosition
+  // 카드 폭/재료 높이/padding/삭제 버튼 등 전체 크기 배율. 기본은 1(원래
+  // 크기). CSS 커스텀 속성(SCALE_VAR)으로 컨테이너에 지정해서 상속시키므로,
+  // 스택 간격(RESTING_GAP)·호버 밀림 거리(EXTRA_LIFT)처럼 JS에서 직접
+  // px로 계산하는 값들만 여기서 별도로 곱해준다.
+  scale?: number
 }
 
 const DEFAULT_POSITION: ToasterPosition = 'top-center'
+const DEFAULT_SCALE = 1
 
 const RESTING_GAP = 40
 // 재정렬(클릭으로 맨 앞 이동) 애니메이션이 끝날 때까지 호버 반응을 막는
 // 대기시간. ToastItem의 트랜지션 시간에 약간의 여유를 더한다.
 const SETTLE_MS = TOAST_ITEM_TRANSITION_MS + 20
 
-export function Toaster({ position = DEFAULT_POSITION }: ToasterProps) {
+export function Toaster({ position = DEFAULT_POSITION, scale = DEFAULT_SCALE }: ToasterProps) {
   useInjectedStyle(STYLE_KEY, STYLE_CSS)
 
   const toasts = useSyncExternalStore(subscribe, getSnapshot)
@@ -89,7 +96,7 @@ export function Toaster({ position = DEFAULT_POSITION }: ToasterProps) {
   const containerClassName = ['sandwich-toaster', isBottom ? 'sandwich-toaster--bottom' : 'sandwich-toaster--top', `sandwich-toaster--${horizontal}`].join(' ')
 
   return (
-    <div className={containerClassName}>
+    <div className={containerClassName} style={{ [SCALE_VAR]: scale } as CSSProperties}>
       {order.map((id) => {
         const t = toasts.find((toast) => toast.id === id)
         if (!t) return null
@@ -112,10 +119,10 @@ export function Toaster({ position = DEFAULT_POSITION }: ToasterProps) {
             // (:hover scale로만 커지면) z-index가 더 높은 앞쪽 토스트에
             // 가려진 채로 커지기만 해서 peek 효과가 안 보인다 — top/bottom
             // 둘 다 이동해야 하는 이유가 같다.
-            liftOffset={hoveredRank >= 0 && rank >= hoveredRank ? (isBottom ? -EXTRA_LIFT : EXTRA_LIFT) : 0}
+            liftOffset={hoveredRank >= 0 && rank >= hoveredRank ? (isBottom ? -EXTRA_LIFT : EXTRA_LIFT) * scale : 0}
             style={
               {
-                [isBottom ? 'bottom' : 'top']: rank * RESTING_GAP,
+                [isBottom ? 'bottom' : 'top']: rank * RESTING_GAP * scale,
                 zIndex: order.length - rank,
                 pointerEvents: isSettling ? 'none' : undefined,
               } as CSSProperties

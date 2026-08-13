@@ -1,4 +1,5 @@
 import { TOAST_ITEM_WIDTH } from "./ToastItem.styles";
+import { scaled } from "../scale";
 
 // 호버된 토스트와 그 뒤에 있는 토스트들을 아래로 얼마나 밀어낼지(peek
 // 연출, px). 예전엔 위에 쌓인 토스트를 위로 들어올렸는데, 맨 앞 토스트가
@@ -25,7 +26,7 @@ export const STYLE_CSS = `
      정렬하려면(center) 컨테이너 자체에 폭이 명시돼 있어야 카드 폭
      기준으로 정확히 중앙 정렬된다. */
   position: fixed;
-  width: ${TOAST_ITEM_WIDTH}px;
+  width: ${scaled(TOAST_ITEM_WIDTH)};
   z-index: 2147483647;
 }
 .sandwich-toaster--top {
