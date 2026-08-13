@@ -51,6 +51,9 @@ function App() {
       <button type="button" onClick={() => toast.loading("업로드 중...", { ingredient: "lettuce" })}>
         toast.loading() + ingredient override
       </button>
+      <button type="button" onClick={() => toast.loading("3초 뒤 자동 종료", { duration: 3000 })}>
+        toast.loading() + duration override
+      </button>
       <button type="button" onClick={() => toast.dismiss()}>
         toast.dismiss() (전체 삭제)
       </button>
