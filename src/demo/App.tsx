@@ -54,8 +54,11 @@ function App() {
       <button type="button" onClick={() => toast.loading("3초 뒤 자동 종료", { duration: 3000 })}>
         toast.loading() + duration override
       </button>
-      <button type="button" onClick={() => toast.success("케찹 고정 토핑", { ingredient: "scrambled", ketchup: true })}>
-        toast.success() + ketchup (로딩 아님, 애니메이션 없음)
+      <button type="button" onClick={() => toast.scrambled("toast.loading()과 기본값이 같아요")}>
+        toast.scrambled()
+      </button>
+      <button type="button" onClick={() => toast.scrambled("케찹 고정 토핑", { type: "success", ketchup: true })}>
+        toast.scrambled() + type/ketchup override (로딩 아님, 애니메이션 없음)
       </button>
       <button type="button" onClick={() => toast.dismiss()}>
         toast.dismiss() (전체 삭제)

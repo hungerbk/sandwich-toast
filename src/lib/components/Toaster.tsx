@@ -105,7 +105,7 @@ export function Toaster({ position = DEFAULT_POSITION, scale = DEFAULT_SCALE }: 
           <ToastItem
             key={id}
             ingredient={t.ingredient}
-            isLoading={t.isLoading}
+            isLoading={t.type === 'loading'}
             ketchup={t.ketchup}
             message={t.message}
             onMouseEnter={() => setHoveredId(id)}
