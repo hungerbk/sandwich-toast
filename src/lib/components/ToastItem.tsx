@@ -11,6 +11,9 @@ export interface ToastItemProps {
   // true면 재료 위에 케찹 애니메이션을 얹는다 — scrambled뿐 아니라 어떤
   // 재료든 로딩 중이면 같은 방식으로 표시된다.
   isLoading?: boolean;
+  // 로딩 여부와 무관하게 케찹을 정적으로(애니메이션 없이) 얹고 싶을 때.
+  // isLoading이 true면 이 값과 무관하게 항상 애니메이션과 함께 얹힌다.
+  ketchup?: boolean;
   // 다른 토스트가 호버됐을 때 이 토스트를 아래로 얼마나 밀어낼지 지정한다
   // (px). CSS 커스텀 속성으로 전달돼서, hover 확대와 함께 CSS
   // 트랜지션으로만 처리된다(리플로우 없음).
@@ -36,7 +39,7 @@ export interface ToastItemProps {
   style?: CSSProperties;
 }
 
-export function ToastItem({ message, ingredient, isLoading = false, liftOffset = 0, onMouseEnter, onMouseLeave, onClick, onDismiss, duration, isPaused = false, className, style }: ToastItemProps) {
+export function ToastItem({ message, ingredient, isLoading = false, ketchup = false, liftOffset = 0, onMouseEnter, onMouseLeave, onClick, onDismiss, duration, isPaused = false, className, style }: ToastItemProps) {
   useInjectedStyle(STYLE_KEY, STYLE_CSS);
 
   const [isDismissing, setIsDismissing] = useState(false);
@@ -153,7 +156,7 @@ export function ToastItem({ message, ingredient, isLoading = false, liftOffset =
       onMouseLeave={onMouseLeave}
       onClick={handleClick}
       style={{ [LIFT_VAR]: `${liftOffset}px`, ...style } as CSSProperties}>
-      <Ingredient ingredient={ingredient} isLoading={isLoading} />
+      <Ingredient ingredient={ingredient} isLoading={isLoading} ketchup={ketchup} />
 
       <p className={messageClassName}>
         <span className="sandwich-toast-message-text">{message}</span>

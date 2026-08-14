@@ -1,13 +1,35 @@
-import { toast, Toaster } from "../lib";
+import { useState } from "react";
+import { toast, Toaster, type ToasterPosition } from "../lib";
 import { Ingredient } from "../lib/components/Ingredient";
 import "./App.css";
 
 const ALL_INGREDIENTS = ["lettuce", "tomato", "cheese", "bread", "scrambled"] as const;
+const ALL_POSITIONS: ToasterPosition[] = ["top-left", "top-center", "top-right", "bottom-left", "bottom-center", "bottom-right"];
 
 function App() {
+  const [position, setPosition] = useState<ToasterPosition>("top-center");
+  const [scale, setScale] = useState(1);
+
   return (
     <div className="playground">
       <h1>sandwich-toast playground</h1>
+
+      <label>
+        position:{" "}
+        <select value={position} onChange={(e) => setPosition(e.target.value as ToasterPosition)}>
+          {ALL_POSITIONS.map((p) => (
+            <option key={p} value={p}>
+              {p}
+            </option>
+          ))}
+        </select>
+      </label>
+
+      <label>
+        scale: {scale.toFixed(1)}
+        <input type="range" min="0.5" max="1.5" step="0.1" value={scale} onChange={(e) => setScale(Number(e.target.value))} />
+      </label>
+
       <button type="button" onClick={() => toast.success("제출 완료!")}>
         toast.success()
       </button>
@@ -29,6 +51,12 @@ function App() {
       <button type="button" onClick={() => toast.loading("업로드 중...", { ingredient: "lettuce" })}>
         toast.loading() + ingredient override
       </button>
+      <button type="button" onClick={() => toast.loading("3초 뒤 자동 종료", { duration: 3000 })}>
+        toast.loading() + duration override
+      </button>
+      <button type="button" onClick={() => toast.success("케찹 고정 토핑", { ingredient: "scrambled", ketchup: true })}>
+        toast.success() + ketchup (로딩 아님, 애니메이션 없음)
+      </button>
       <button type="button" onClick={() => toast.dismiss()}>
         toast.dismiss() (전체 삭제)
       </button>
@@ -40,9 +68,12 @@ function App() {
             <Ingredient ingredient={ingredient} isLoading={ingredient === "scrambled"} />
           </div>
         ))}
+        <div style={{ border: "1px solid #ddd" }}>
+          <Ingredient ingredient="lettuce" ketchup />
+        </div>
       </div>
 
-      <Toaster />
+      <Toaster position={position} scale={scale} />
     </div>
   );
 }

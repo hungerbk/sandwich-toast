@@ -28,16 +28,21 @@ export interface IngredientProps {
   // true면 재료 위에 케찹 애니메이션을 겹쳐 그린다. scrambled 전용이
   // 아니라 어떤 재료든 로딩 중이면 같은 방식으로 얹힌다.
   isLoading?: boolean;
+  // 로딩 여부와 무관하게 케찹을 정적으로(애니메이션 없이) 얹고 싶을 때.
+  // isLoading이 true면 이 값과 무관하게 항상 애니메이션과 함께 얹힌다.
+  ketchup?: boolean;
   className?: string;
   style?: CSSProperties;
 }
 
-export function Ingredient({ ingredient, isLoading = false, className, style }: IngredientProps) {
+export function Ingredient({ ingredient, isLoading = false, ketchup = false, className, style }: IngredientProps) {
   useInjectedStyle(STYLE_KEY, STYLE_CSS);
 
   const asset = INGREDIENT_ASSETS[ingredient];
   const repeat = asset.repeat ?? 1;
   const containerClassName = ["sandwich-toast-ingredient", INGREDIENT_CONTAINER_CLASS[ingredient], className].filter(Boolean).join(" ");
+  const showKetchup = isLoading || ketchup;
+  const ketchupClassName = ["sandwich-toast-ingredient-ketchup", isLoading && "sandwich-toast-ingredient-ketchup--animated"].filter(Boolean).join(" ");
 
   return (
     <div className={containerClassName} style={style}>
@@ -46,7 +51,7 @@ export function Ingredient({ ingredient, isLoading = false, className, style }: 
           <img key={`${ingredient}-${c}`} className="sandwich-toast-ingredient-tile" src={asset.src} alt="" />
         ))}
       </div>
-      {isLoading && <img className="sandwich-toast-ingredient-ketchup" src={ketchupSrc} alt="" />}
+      {showKetchup && <img className={ketchupClassName} src={ketchupSrc} alt="" />}
     </div>
   );
 }

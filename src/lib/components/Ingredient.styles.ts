@@ -1,4 +1,5 @@
 import type { ToastIngredient } from "../store";
+import { scaled } from "../scale";
 
 // Ingredient가 useInjectedStyle로 주입하는 CSS + 관련 상수. 컴포넌트
 // 파일(Ingredient.tsx)과 분리한 이유는 (1) 스타일과 컴포넌트 로직을
@@ -47,7 +48,7 @@ export const STYLE_CSS = `
 .sandwich-toast-ingredient--lettuce .sandwich-toast-ingredient-tiles,
 .sandwich-toast-ingredient--tomato .sandwich-toast-ingredient-tiles,
 .sandwich-toast-ingredient--cheese .sandwich-toast-ingredient-tiles {
-  height: ${TARGET_ROW_HEIGHT}px;
+  height: ${scaled(TARGET_ROW_HEIGHT)};
   overflow: hidden;
 }
 
@@ -62,28 +63,33 @@ export const STYLE_CSS = `
    자체를 크롭한다(object-fit: contain — 잘림 없이 레터박스). */
 .sandwich-toast-ingredient--bread .sandwich-toast-ingredient-tile,
 .sandwich-toast-ingredient--scrambled .sandwich-toast-ingredient-tile {
-  height: ${TARGET_ROW_HEIGHT}px;
+  height: ${scaled(TARGET_ROW_HEIGHT)};
   object-fit: contain;
 }
 
 /* 케찹(ketchup.webp)은 scrambled.webp와 같은 800x200 캔버스라서 재료
    이미지 위에 그대로 겹쳐도 지그재그 모양이 정확히 맞는다. scrambled뿐
-   아니라 어떤 재료가 로딩 중이든 이 위치 그대로 얹힌다(재료마다 실제
-   그림 구도는 다르지만, 로딩 표시는 장식적 가니시라 정확히 겹칠 필요는
-   없다). z-index는 타일 중 가장 높은 값(3)보다는 커야 하고(flex
-   아이템은 z-index:auto가 아니면(타일들이 손그림 회전용으로 그렇다)
-   position 없이도 자기 스택 컨텍스트를 만들어서, 케찹이 absolute이고
-   z-index가 auto인 채로는 z-index가 있는 타일들보다 뒤로 밀려 일부
-   타일에 가려진다), 메시지(ToastItem.styles.ts의 z-index: 5)보다는
-   작아야 한다 — 메시지 텍스트를 케찹이 덮으면 안 된다. */
+   아니라 어떤 재료 위에도 이 위치 그대로 얹힌다(재료마다 실제 그림
+   구도는 다르지만, 케찹은 장식적 가니시라 정확히 겹칠 필요는 없다).
+   기본은 애니메이션 없이 항상 완전히 보이는 정적 상태이고(clip-path로
+   전혀 가리지 않음), 로딩 중일 때만 --animated 모디파이어로 애니메이션을
+   켠다. z-index는 타일 중 가장 높은 값(3)보다는 커야 하고(flex 아이템은
+   z-index:auto가 아니면(타일들이 손그림 회전용으로 그렇다) position
+   없이도 자기 스택 컨텍스트를 만들어서, 케찹이 absolute이고 z-index가
+   auto인 채로는 z-index가 있는 타일들보다 뒤로 밀려 일부 타일에
+   가려진다), 메시지(ToastItem.styles.ts의 z-index: 5)보다는 작아야
+   한다 — 메시지 텍스트를 케찹이 덮으면 안 된다. */
 .sandwich-toast-ingredient-ketchup {
   position: absolute;
   inset: 0;
   width: 100%;
-  height: ${TARGET_ROW_HEIGHT}px;
+  height: ${scaled(TARGET_ROW_HEIGHT)};
   object-fit: contain;
   z-index: 4;
   pointer-events: none;
+  clip-path: inset(0 0% 0 0);
+}
+.sandwich-toast-ingredient-ketchup--animated {
   animation: sandwich-toast-ketchup-squeeze 2.4s ease-in-out infinite;
 }
 /* 케찹이 왼쪽에서 오른쪽으로 짜여 나오듯 그려지고(0%→50%), 잠깐 멈췄다가
