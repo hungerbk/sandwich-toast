@@ -15,9 +15,7 @@ export interface Toast {
 export interface ToastOptions {
   type?: ToastType;
   ingredient?: ToastIngredient;
-  // loading 외의 타입에 정적 케찹 토핑을 표시한다.
   ketchup?: boolean;
-  // ms. 기본 4000, loading은 Infinity(수동 종료).
   duration?: number;
 }
 

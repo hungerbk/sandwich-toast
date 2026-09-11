@@ -1,5 +1,4 @@
 import { useInsertionEffect } from "react";
-// key별 CSS는 고정이며, 같은 모듈에서 한 번만 주입한다.
 const injectedKeys = new Set<string>();
 
 export function useInjectedStyle(key: string, css: string) {
