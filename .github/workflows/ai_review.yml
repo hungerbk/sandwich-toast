@@ -1,0 +1,16 @@
+name: Call AI Reviewer
+
+on:
+  pull_request:
+    types: [opened, synchronize, ready_for_review]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  ai-review:
+    if: github.event.pull_request.draft == false
+    uses: hungerbk/my-github-actions/.github/workflows/ai-review.yml@main
+    secrets:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
