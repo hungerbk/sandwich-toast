@@ -1,5 +1,5 @@
 import type { CSSProperties } from "react";
-import type { ToastIngredient } from "../store";
+import type { ToastIngredient } from "../types";
 import breadSrc from "../assets/bread.webp";
 import cheeseSrc from "../assets/cheese.webp";
 import ketchupSrc from "../assets/ketchup.webp";

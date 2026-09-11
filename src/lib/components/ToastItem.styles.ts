@@ -1,4 +1,4 @@
-import type { ToastIngredient } from "../store";
+import type { ToastIngredient } from "../types";
 import { scaled } from "../scale";
 
 // ToastItem이 useInjectedStyle로 주입하는 CSS + 그와 관련된 상수. 컴포넌트

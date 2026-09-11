@@ -5,18 +5,7 @@ import { TOAST_ITEM_TRANSITION_MS } from './ToastItem.styles'
 import { useInjectedStyle } from '../injectStyle'
 import { SCALE_VAR } from '../scale'
 import { STYLE_KEY, STYLE_CSS, EXTRA_LIFT } from './Toaster.styles'
-
-export type ToasterPosition = 'top-left' | 'top-center' | 'top-right' | 'bottom-left' | 'bottom-center' | 'bottom-right'
-
-export interface ToasterProps {
-  // 토스트 스택이 화면의 어느 지점에 붙을지. 기본은 화면 중앙 상단.
-  position?: ToasterPosition
-  // 카드 폭/재료 높이/padding/삭제 버튼 등 전체 크기 배율. 기본은 1(원래
-  // 크기). CSS 커스텀 속성(SCALE_VAR)으로 컨테이너에 지정해서 상속시키므로,
-  // 스택 간격(RESTING_GAP)·호버 밀림 거리(EXTRA_LIFT)처럼 JS에서 직접
-  // px로 계산하는 값들만 여기서 별도로 곱해준다.
-  scale?: number
-}
+import type { ToasterPosition, ToasterProps } from '../types'
 
 const DEFAULT_POSITION: ToasterPosition = 'top-center'
 const DEFAULT_SCALE = 1

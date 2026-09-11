@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type CSSProperties, type MouseEventHandler } from "react";
-import type { ToastIngredient } from "../store";
+import type { ToastIngredient } from "../types";
 import { bitePolygon, NO_BITES, DISMISS_ANIMATION_MS } from "../dismissBite";
 import { Ingredient } from "./Ingredient";
 import { useInjectedStyle } from "../injectStyle";

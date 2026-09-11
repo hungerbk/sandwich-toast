@@ -1,18 +1,4 @@
-export type ToastType = 'success' | 'error' | 'warning' | 'info' | 'loading'
-export type ToastIngredient = 'lettuce' | 'tomato' | 'cheese' | 'bread' | 'scrambled'
-
-export interface Toast {
-  id: string
-  message: string
-  type: ToastType
-  ingredient: ToastIngredient
-  // 로딩 여부와 무관하게 재료 위에 케찹을 얹을지. type이 'loading'이면 이
-  // 값과 무관하게 항상 케찹이 얹히고(애니메이션까지), 'loading'이 아닐 때
-  // ketchup만 true면 애니메이션 없이 정적으로 얹힌다.
-  ketchup: boolean
-  // ms. Infinity면 자동으로 사라지지 않는다(로딩 토스트 기본값).
-  duration: number
-}
+import type { Toast } from './types'
 
 type Listener = () => void
 
