@@ -1,96 +1,20 @@
-import { useRef, useState, useSyncExternalStore, type CSSProperties } from 'react'
-import { subscribe, getSnapshot, removeToast } from '../store'
+import type { CSSProperties } from 'react'
+import { removeToast } from '../store'
+import { useToastStack } from '../hooks/useToastStack'
 import { ToastItem } from './ToastItem'
-import { TOAST_ITEM_TRANSITION_MS } from './ToastItem.styles'
 import { useInjectedStyle } from '../injectStyle'
 import { SCALE_VAR } from '../scale'
 import { STYLE_KEY, STYLE_CSS, EXTRA_LIFT } from './Toaster.styles'
-
-export type ToasterPosition = 'top-left' | 'top-center' | 'top-right' | 'bottom-left' | 'bottom-center' | 'bottom-right'
-
-export interface ToasterProps {
-  // 토스트 스택이 화면의 어느 지점에 붙을지. 기본은 화면 중앙 상단.
-  position?: ToasterPosition
-  // 카드 폭/재료 높이/padding/삭제 버튼 등 전체 크기 배율. 기본은 1(원래
-  // 크기). CSS 커스텀 속성(SCALE_VAR)으로 컨테이너에 지정해서 상속시키므로,
-  // 스택 간격(RESTING_GAP)·호버 밀림 거리(EXTRA_LIFT)처럼 JS에서 직접
-  // px로 계산하는 값들만 여기서 별도로 곱해준다.
-  scale?: number
-}
+import type { ToasterPosition, ToasterProps } from '../types'
 
 const DEFAULT_POSITION: ToasterPosition = 'top-center'
 const DEFAULT_SCALE = 1
 
 const RESTING_GAP = 40
-// 재정렬(클릭으로 맨 앞 이동) 애니메이션이 끝날 때까지 호버 반응을 막는
-// 대기시간. ToastItem의 트랜지션 시간에 약간의 여유를 더한다.
-const SETTLE_MS = TOAST_ITEM_TRANSITION_MS + 20
-
 export function Toaster({ position = DEFAULT_POSITION, scale = DEFAULT_SCALE }: ToasterProps) {
   useInjectedStyle(STYLE_KEY, STYLE_CSS)
 
-  const toasts = useSyncExternalStore(subscribe, getSnapshot)
-
-  // order는 순전히 리액트 리스트 렌더링용 "존재하는 토스트 id 목록"이고,
-  // 추가/삭제될 때만 바뀐다 — 클릭으로 맨 앞에 가져와도 이 배열 자체의
-  // 순서는 절대 바꾸지 않는다. 화면 표시 순서(맨 앞이 어느 토스트인지)는
-  // 아래 priority로 별도 계산한다.
-  //
-  // 예전엔 order 배열 자체를 재정렬해서 화면 순서를 표현했는데, 배열의
-  // 첫 요소가 바뀌는 재정렬을 하면 React가(StrictMode에서, 실제
-  // 프로덕션 빌드에서도 재현됨) 위치 이동이 아니라 언마운트 후
-  // 리마운트로 처리하는 경우가 있었다 — 그 바람에 재정렬로 밀려난
-  // 다른 토스트들의 로컬 state(자동 삭제 타이머 등)가 전부 초기화돼서,
-  // 하나를 맨 앞으로 가져올 때마다 나머지가 다같이 리셋되는 버그가
-  // 있었다. order 배열의 순서 자체를 절대 바꾸지 않으면 이 문제가
-  // 원천적으로 생기지 않는다.
-  const [order, setOrder] = useState<string[]>(() => toasts.map((t) => t.id))
-  const [priority, setPriority] = useState<Record<string, number>>(() => Object.fromEntries(toasts.map((t, i) => [t.id, i])))
-  // priority에 쓸 다음 값. 클릭하거나 새 토스트가 추가될 때마다 하나씩
-  // 올려서, 항상 "가장 최근에 앞으로 온(또는 도착한) 토스트가 가장 크다"를
-  // 유지한다.
-  const prioritySeqRef = useRef(toasts.length)
-
-  const [hoveredId, setHoveredId] = useState<string | null>(null)
-  const [isSettling, setIsSettling] = useState(false)
-
-  // toasts가 바뀐 뒤에 useEffect로 order를 동기화하면, 새 토스트가 아직
-  // order에 없는 채로 한 번 렌더 및 페인트된 다음에야(그 프레임엔 새
-  // 토스트가 안 보임) effect가 실행되어 다시 렌더링되는 깜빡임이 생긴다.
-  // 렌더링 도중 상태를 바로 맞추면(React 공식 문서의 "Adjusting state
-  // when a prop changes" 패턴) 커밋 전에 다시 렌더링돼서 깜빡임 없이 첫
-  // 프레임부터 정확하다.
-  const [prevToasts, setPrevToasts] = useState(toasts)
-  if (toasts !== prevToasts) {
-    setPrevToasts(toasts)
-    const currentIds = new Set(toasts.map((t) => t.id))
-    const kept = order.filter((id) => currentIds.has(id))
-    const newIds = toasts.map((t) => t.id).filter((id) => !order.includes(id))
-    setOrder([...kept, ...newIds])
-    if (newIds.length > 0) {
-      const nextPriority = { ...priority }
-      for (const id of newIds) {
-        nextPriority[id] = ++prioritySeqRef.current
-      }
-      setPriority(nextPriority)
-    }
-  }
-
-  // 화면 표시 순서(맨 앞이 rank 0)는 priority가 큰 순.
-  const visualOrder = [...order].sort((a, b) => (priority[b] ?? 0) - (priority[a] ?? 0))
-  const rankOf = new Map(visualOrder.map((id, i) => [id, i]))
-
-  const hoveredRank = hoveredId ? (rankOf.get(hoveredId) ?? -1) : -1
-
-  const bringToFront = (id: string) => {
-    setHoveredId(null)
-    setIsSettling(true)
-    setPriority((prev) => ({ ...prev, [id]: ++prioritySeqRef.current }))
-    setTimeout(() => setIsSettling(false), SETTLE_MS)
-  }
-
-  // position의 앞부분(top/bottom)이 스택이 화면 가장자리로부터 어느
-  // 방향으로 쌓이는지, 뒷부분(left/center/right)이 가로 정렬을 정한다.
+  const { toasts, order, rankOf, hoveredId, hoveredRank, isSettling, setHoveredId, bringToFront } = useToastStack()
   const isBottom = position.startsWith('bottom')
   const horizontal = position.endsWith('left') ? 'left' : position.endsWith('right') ? 'right' : 'center'
   const containerClassName = ['sandwich-toaster', isBottom ? 'sandwich-toaster--bottom' : 'sandwich-toaster--top', `sandwich-toaster--${horizontal}`].join(' ')
@@ -114,12 +38,6 @@ export function Toaster({ position = DEFAULT_POSITION, scale = DEFAULT_SCALE }: 
             onDismiss={() => removeToast(id)}
             duration={t.duration}
             isPaused={hoveredId === id}
-            // 호버된 토스트 자신도 뒤에 있는 것들과 함께 밀려난다 — 그래야
-            // 앞쪽(z-index가 더 높은) 토스트와 겹치지 않는 위치로 이동하면서
-            // 자연스럽게 드러난다. 호버된 토스트가 제자리에 그대로 있으면
-            // (:hover scale로만 커지면) z-index가 더 높은 앞쪽 토스트에
-            // 가려진 채로 커지기만 해서 peek 효과가 안 보인다 — top/bottom
-            // 둘 다 이동해야 하는 이유가 같다.
             liftOffset={hoveredRank >= 0 && rank >= hoveredRank ? (isBottom ? -EXTRA_LIFT : EXTRA_LIFT) * scale : 0}
             style={
               {
