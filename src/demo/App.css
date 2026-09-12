@@ -18,20 +18,20 @@
 .clear-button { margin-left: auto; background: transparent; border: 1px solid #9da990; padding: 11px 15px; border-radius: 8px; white-space: nowrap; font-size: 14px; }
 .position-control select:hover, .clear-button:hover { background: #dce5ce; border-color: #526d43; color: #243e2b; }
 .clear-button span { margin-left: 14px; }
-.storefront { border: 1px solid #aeb99e; border-radius: 18px 18px 5px 5px; background: #f8f3e4; overflow: hidden; }
+.storefront { border: 1px solid #365846; border-radius: 18px 18px 5px 5px; background: #365846; overflow: hidden; }
 .awning { height: 36px; background: repeating-linear-gradient(90deg,#365b40 0,#365b40 42px,#f2eedb 42px,#f2eedb 84px); border-bottom: 5px solid #d9dbc7; }
-.shop-intro { position: relative; text-align: center; padding: 35px 160px 32px; }
+.shop-intro { color: #fff8e7; position: relative; text-align: center; padding: 35px 160px 32px; }
 .eyebrow { font-size: 12px; font-weight: 700; letter-spacing: 2px; }
 .shop-intro h1 { font-size: clamp(36px,4.5vw,58px); line-height: 1.17; letter-spacing: -3px; margin: 17px 0; font-weight: 800; }
-.shop-intro h1 em { font-style: normal; color: #ad4831; }
-.intro-description { font-size: 16px; line-height: 1.7; color: #69705c; margin-bottom: 0; }
-.open-sign { position: absolute; left: 38px; top: 50px; padding: 15px; border: 1px solid #496245; border-radius: 4px; transform: rotate(-9deg); font: 13px/1.7 Georgia,serif; background: #f2ead3; }
+.shop-intro h1 em { font-style: normal; color: #f4cd86; }
+.intro-description { font-size: 16px; line-height: 1.7; color: #e0e7d5; margin-bottom: 0; }
+.open-sign { color: #293d30; position: absolute; left: 38px; top: 50px; padding: 15px; border: 1px solid #496245; border-radius: 4px; transform: rotate(-9deg); font: 13px/1.7 Georgia,serif; background: #f2ead3; }
 .open-sign strong { font-size: 12px; letter-spacing: 1px; }
-.shop-stamp { position: absolute; right: 35px; top: 70px; border: 1px dashed #a24b36; border-radius: 50%; width: 115px; height: 115px; display: flex; flex-direction: column; justify-content: center; transform: rotate(12deg); font-size: 12px; color: #a24b36; letter-spacing: 1px; }
+.shop-stamp { position: absolute; right: 35px; top: 70px; border: 1px dashed #f4cd86; border-radius: 50%; width: 115px; height: 115px; display: flex; flex-direction: column; justify-content: center; transform: rotate(12deg); font-size: 12px; color: #f4cd86; letter-spacing: 1px; }
 .shop-stamp strong { font: italic 26px Georgia,serif; }
-.menu-heading { display: flex; justify-content: space-between; align-items: baseline; margin: 0 28px 16px; border-top: 1px solid #d7d5bf; padding-top: 18px; }
+.menu-heading { color: #fff8e7; display: flex; justify-content: space-between; align-items: baseline; margin: 0 28px 16px; border-top: 1px solid #69816a; padding-top: 18px; }
 .menu-heading h2 { font-size: 16px; margin: 0; }
-.menu-heading > span { color: #70745f; font-size: 13px; }
+.menu-heading > span { color: #e0e7d5; font-size: 13px; }
 .ingredient-menu { display: grid; grid-template-columns: repeat(5,minmax(0,1fr)); gap: 12px; padding: 0 24px 28px; }
 .menu-item { position: relative; padding: 15px 12px 12px; border: 1px solid #d2d0b8; border-radius: 12px; background: #fffdf5; display: flex; flex-direction: column; align-items: center; transition: transform 150ms ease, border-color 150ms ease; }
 .menu-item--info { --selection-border: #8a7954; --selection-bg: #f3edde; }
