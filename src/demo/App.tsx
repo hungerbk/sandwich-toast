@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { toast, Toaster, type ToastIngredient, type ToasterPosition } from "../lib";
+import { toast, Toaster, type ToastIngredient, type ToastType, type ToasterPosition } from "../lib";
 import bread from "../lib/assets/bread.webp";
 import lettuce from "../lib/assets/lettuce.webp";
 import tomato from "../lib/assets/tomato.webp";
@@ -7,7 +7,7 @@ import cheese from "../lib/assets/cheese.webp";
 import scrambled from "../lib/assets/scrambled.webp";
 import "./App.css";
 
-const MENU: { ingredient: ToastIngredient; name: string; caption: string; message: string; image: string; status: string }[] = [
+const MENU: { ingredient: ToastIngredient; name: string; caption: string; message: string; image: string; status: ToastType }[] = [
   { ingredient: "bread", name: "폭신한 빵", caption: "따끈따끈한 새 소식", message: "따끈따끈한 새 소식이 도착했어요!", image: bread, status: "info" },
   { ingredient: "lettuce", name: "아삭한 상추", caption: "기분 좋은 초록빛", message: "아삭한 상추, 주문에 추가했어요!", image: lettuce, status: "success" },
   { ingredient: "tomato", name: "싱싱한 토마토", caption: "잠깐, 확인해주세요", message: "앗, 토마토가 굴러갔어요! 다시 시도해주세요.", image: tomato, status: "error" },
@@ -25,11 +25,13 @@ function App() {
   const [position, setPosition] = useState<ToasterPosition>("top-center");
   const [scale, setScale] = useState(SCALE.default);
   const [selected, setSelected] = useState(MENU[0]);
+  const [apiMode, setApiMode] = useState<"ingredient" | "status">("ingredient");
   const [orders, setOrders] = useState(0);
   const [copyMessage, setCopyMessage] = useState("");
   const loadingId = useRef<string | null>(null);
   const copyRequest = useRef(0);
-  const code = `import { toast, Toaster } from "sandwich-toast";\n\n<Toaster position="${position}" scale={${scale}} />\n\ntoast.${selected.ingredient}(${JSON.stringify(selected.message)});`;
+  const method = apiMode === "ingredient" ? selected.ingredient : selected.status;
+  const code = `import { toast, Toaster } from "sandwich-toast";\n\n<Toaster position="${position}" scale={${scale}} />\n\ntoast.${method}(${JSON.stringify(selected.message)});`;
 
   const choose = (item: typeof MENU[number]) => {
     setSelected(item);
@@ -98,7 +100,13 @@ function App() {
         </section>
         <section className="recipe" aria-labelledby="recipe-title">
           <div className="recipe-intro"><span className="eyebrow">TAKE THE RECIPE HOME</span><h2 id="recipe-title">마음에 드셨나요?<br />코드도 챙겨가세요.</h2><p>방금 고른 재료와 서빙 설정 그대로.<br />당신의 React 앱에서도 만나보세요.</p><span className="recipe-tag">오늘의 선택 · {selected.name}</span></div>
-          <div className="code-panel"><div className="code-heading"><span>your-order.tsx</span><button onClick={copy}>코드 복사</button></div><pre tabIndex={0} aria-label="선택한 토스트 사용 코드"><code>{code}</code></pre><p className="copy-feedback" role="status">{copyMessage || "재료와 설정을 바꾸면 코드도 함께 바뀌어요."}</p></div>
+          <div className="code-panel">
+            <fieldset className="api-mode">
+              <legend className="visually-hidden">코드 호출 방식</legend>
+              <label><input type="radio" name="api-mode" value="ingredient" checked={apiMode === "ingredient"} onChange={() => { setApiMode("ingredient"); resetCopy(); }} /><span>재료로 사용</span></label>
+              <label><input type="radio" name="api-mode" value="status" checked={apiMode === "status"} onChange={() => { setApiMode("status"); resetCopy(); }} /><span>상태로 사용</span></label>
+            </fieldset>
+            <div className="code-heading"><span>your-order.tsx</span><button onClick={copy}>코드 복사</button></div><pre tabIndex={0} aria-label="선택한 토스트 사용 코드"><code>{code}</code></pre><p className="copy-feedback" role="status">{copyMessage}</p></div>
         </section>
       </main>
       <footer className="shop-footer"><span>sandwich-toast</span><span>작은 알림에도, 취향 한 조각.</span><a href="https://github.com/hungerbk/sandwich-toast">소스 코드 보기 ↗</a></footer>
