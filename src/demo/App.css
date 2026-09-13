@@ -30,6 +30,7 @@
 .shop-stamp { position: absolute; right: 35px; top: 70px; border: 1px dashed #f4cd86; border-radius: 50%; width: 115px; height: 115px; display: flex; flex-direction: column; justify-content: center; transform: rotate(12deg); font-size: 12px; color: #f4cd86; letter-spacing: 1px; }
 .shop-stamp strong { font: italic 26px Georgia,serif; }
 .menu-heading { color: #fff8e7; display: flex; justify-content: space-between; align-items: baseline; margin: 0 28px 16px; border-top: 1px solid #69816a; padding-top: 18px; }
+.menu-heading:focus-visible { outline: 3px solid #edbf77; outline-offset: 5px; }
 .menu-heading h2 { font-size: 16px; margin: 0; }
 .menu-heading > span { color: #e0e7d5; font-size: 13px; }
 .ingredient-menu { display: grid; grid-template-columns: repeat(5,minmax(0,1fr)); gap: 12px; padding: 0 24px 28px; }

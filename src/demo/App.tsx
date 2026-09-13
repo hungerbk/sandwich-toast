@@ -75,7 +75,7 @@ function App() {
           <label className="scale-control">한 입 크기 <output>{scale.toFixed(1)}×</output>
             <input type="range" min={SCALE.min} max={SCALE.max} step={SCALE.step} value={scale} onChange={e => { setScale(Number(e.target.value)); resetCopy(); }} />
           </label>
-          <button className="clear-button" onClick={() => { toast.dismiss(); loadingId.current = null; }}>전체 비우기 <span aria-hidden="true">×</span></button>
+          <button type="button" className="clear-button" onClick={() => { toast.dismiss(); loadingId.current = null; }}>전체 비우기 <span aria-hidden="true">×</span></button>
         </section>
 
         <section className="storefront" aria-labelledby="shop-title">
@@ -87,9 +87,9 @@ function App() {
             <p className="intro-description">좋아하는 재료를 톡!<br className="mobile-break" /> 나만의 샌드위치 알림이 쌓여요.</p>
             <span className="shop-stamp" aria-hidden="true">MADE WITH<br /><strong>React</strong><br />SERVED WITH JOY</span>
           </div>
-          <div className="menu-heading" id="ingredients"><h2>오늘의 재료</h2><span>하나씩 눌러 맛보세요</span></div>
+          <div className="menu-heading" id="ingredients" tabIndex={-1}><h2>오늘의 재료</h2><span>하나씩 눌러 맛보세요</span></div>
           <div className="ingredient-menu">
-            {MENU.map((item, index) => <button key={item.ingredient} className={`menu-item menu-item--${item.status} ${selected.ingredient === item.ingredient ? "is-selected" : ""}`} onClick={() => choose(item)}>
+            {MENU.map((item, index) => <button key={item.ingredient} type="button" aria-pressed={selected.ingredient === item.ingredient} className={`menu-item menu-item--${item.status} ${selected.ingredient === item.ingredient ? "is-selected" : ""}`} onClick={() => choose(item)}>
               <span className="menu-number">0{index + 1}</span>
               <span className="ingredient-dish"><img src={item.image} alt="" width="180" height="130" /></span>
               <strong>{item.name}</strong><span className="menu-caption">{item.caption}</span>
@@ -106,7 +106,7 @@ function App() {
               <label><input type="radio" name="api-mode" value="ingredient" checked={apiMode === "ingredient"} onChange={() => { setApiMode("ingredient"); resetCopy(); }} /><span>재료로 사용</span></label>
               <label><input type="radio" name="api-mode" value="status" checked={apiMode === "status"} onChange={() => { setApiMode("status"); resetCopy(); }} /><span>상태로 사용</span></label>
             </fieldset>
-            <div className="code-heading"><span>your-order.tsx</span><button onClick={copy}>코드 복사</button></div><pre tabIndex={0} aria-label="선택한 토스트 사용 코드"><code>{code}</code></pre><p className="copy-feedback" role="status">{copyMessage}</p></div>
+            <div className="code-heading"><span>your-order.tsx</span><button type="button" onClick={copy}>코드 복사</button></div><pre tabIndex={0} aria-label="선택한 토스트 사용 코드"><code>{code}</code></pre><p className="copy-feedback" role="status">{copyMessage}</p></div>
         </section>
       </main>
       <footer className="shop-footer"><span>sandwich-toast</span><span>작은 알림에도, 취향 한 조각.</span><a href="https://github.com/hungerbk/sandwich-toast">소스 코드 보기 ↗</a></footer>
