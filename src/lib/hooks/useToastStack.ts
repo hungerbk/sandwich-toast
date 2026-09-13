@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
+import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from 'react'
 import { subscribe, getSnapshot } from '../store'
 import { TOAST_ITEM_TRANSITION_MS } from '../components/ToastItem.styles'
 
@@ -12,14 +12,14 @@ export function useToastStack() {
   const prioritySeqRef = useRef(toasts.length)
   const settleTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
-  useEffect(() => {
-    return () => {
-      if (settleTimerRef.current !== null) {
-        clearTimeout(settleTimerRef.current)
-        settleTimerRef.current = null
-      }
+  const clearSettleTimer = useCallback(() => {
+    if (settleTimerRef.current !== null) {
+      clearTimeout(settleTimerRef.current)
+      settleTimerRef.current = null
     }
   }, [])
+
+  useEffect(() => clearSettleTimer, [clearSettleTimer])
 
   const [hoveredId, setHoveredId] = useState<string | null>(null)
   const [isSettling, setIsSettling] = useState(false)
@@ -51,9 +51,7 @@ export function useToastStack() {
     setHoveredId(null)
     setIsSettling(true)
     setPriority((prev) => ({ ...prev, [id]: ++prioritySeqRef.current }))
-    if (settleTimerRef.current !== null) {
-      clearTimeout(settleTimerRef.current)
-    }
+    clearSettleTimer()
     settleTimerRef.current = setTimeout(() => {
       settleTimerRef.current = null
       setIsSettling(false)
