@@ -21,12 +21,15 @@ export function useToastStack() {
     const kept = order.filter((id) => currentIds.has(id))
     const newIds = toasts.map((t) => t.id).filter((id) => !order.includes(id))
     setOrder([...kept, ...newIds])
-    if (newIds.length > 0) {
-      const nextPriority = { ...priority }
+    if (newIds.length > 0 || kept.length !== order.length) {
+      const nextPriority = Object.fromEntries(kept.map((id) => [id, priority[id]]))
       for (const id of newIds) {
         nextPriority[id] = ++prioritySeqRef.current
       }
       setPriority(nextPriority)
+    }
+    if (hoveredId !== null && !currentIds.has(hoveredId)) {
+      setHoveredId(null)
     }
   }
   const visualOrder = [...order].sort((a, b) => (priority[b] ?? 0) - (priority[a] ?? 0))
