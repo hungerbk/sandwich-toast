@@ -1,4 +1,4 @@
-import { useRef, useState, useSyncExternalStore } from 'react'
+import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
 import { subscribe, getSnapshot } from '../store'
 import { TOAST_ITEM_TRANSITION_MS } from '../components/ToastItem.styles'
 
@@ -10,6 +10,16 @@ export function useToastStack() {
   const [order, setOrder] = useState<string[]>(() => toasts.map((t) => t.id))
   const [priority, setPriority] = useState<Record<string, number>>(() => Object.fromEntries(toasts.map((t, i) => [t.id, i])))
   const prioritySeqRef = useRef(toasts.length)
+  const settleTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  useEffect(() => {
+    return () => {
+      if (settleTimerRef.current !== null) {
+        clearTimeout(settleTimerRef.current)
+        settleTimerRef.current = null
+      }
+    }
+  }, [])
 
   const [hoveredId, setHoveredId] = useState<string | null>(null)
   const [isSettling, setIsSettling] = useState(false)
@@ -41,7 +51,13 @@ export function useToastStack() {
     setHoveredId(null)
     setIsSettling(true)
     setPriority((prev) => ({ ...prev, [id]: ++prioritySeqRef.current }))
-    setTimeout(() => setIsSettling(false), SETTLE_MS)
+    if (settleTimerRef.current !== null) {
+      clearTimeout(settleTimerRef.current)
+    }
+    settleTimerRef.current = setTimeout(() => {
+      settleTimerRef.current = null
+      setIsSettling(false)
+    }, SETTLE_MS)
   }
 
   return { toasts, order, rankOf, hoveredId, hoveredRank, isSettling, setHoveredId, bringToFront }
