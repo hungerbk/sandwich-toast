@@ -14,7 +14,7 @@ export function useToastTimer({ duration, isPaused, onElapsed: handleDismiss }: 
   });
   const [resetSignal, setResetSignal] = useState(0);
   // 호버 해제 시 남은 시간을 유지하고, 클릭 시에만 전체 시간을 다시 센다.
-  const targetTimeRef = useRef(0);
+  const targetTimeRef = useRef<number | null>(null);
   const pauseStartedAtRef = useRef<number | null>(null);
   const prevResetSignalRef = useRef(resetSignal);
 
@@ -24,7 +24,7 @@ export function useToastTimer({ duration, isPaused, onElapsed: handleDismiss }: 
     const isReset = resetSignal !== prevResetSignalRef.current;
     prevResetSignalRef.current = resetSignal;
 
-    if (isReset) {
+    if (isReset || targetTimeRef.current === null) {
       targetTimeRef.current = Date.now() + duration;
       pauseStartedAtRef.current = isPaused ? Date.now() : null;
     } else if (isPaused) {
