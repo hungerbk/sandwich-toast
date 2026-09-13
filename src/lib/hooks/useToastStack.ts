@@ -13,7 +13,7 @@ export function useToastStack() {
 
   const [hoveredId, setHoveredId] = useState<string | null>(null)
   const [isSettling, setIsSettling] = useState(false)
-  // 새 토스트가 첫 커밋에서 빠지지 않도록 렌더 중 목록을 동기화한다.
+  // 새 토스트가 첫 화면 반영에서 누락되지 않도록 렌더 중 목록을 동기화한다.
   const [prevToasts, setPrevToasts] = useState(toasts)
   if (toasts !== prevToasts) {
     setPrevToasts(toasts)
