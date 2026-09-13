@@ -1,4 +1,4 @@
-import { useRef, useState, type CSSProperties, type MouseEventHandler } from "react";
+import { useEffect, useRef, useState, type CSSProperties, type MouseEventHandler } from "react";
 import { useToastTimer } from "../hooks/useToastTimer";
 import type { ToastIngredient } from "../types";
 import { bitePolygon, NO_BITES, DISMISS_ANIMATION_MS } from "../dismissBite";
@@ -27,8 +27,20 @@ export function ToastItem({ message, ingredient, isLoading = false, ketchup = fa
 
   const [isDismissing, setIsDismissing] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
+  const dismissAnimationRef = useRef<Animation | null>(null);
   // 수동 닫기와 자동 종료가 겹쳐도 애니메이션은 한 번만 실행한다.
   const dismissedRef = useRef(false);
+
+  useEffect(() => {
+    return () => {
+      const animation = dismissAnimationRef.current;
+      if (animation) {
+        animation.onfinish = null;
+        animation.cancel();
+        dismissAnimationRef.current = null;
+      }
+    };
+  }, []);
 
   const handleDismiss = () => {
     if (dismissedRef.current) return;
@@ -52,7 +64,12 @@ export function ToastItem({ message, ingredient, isLoading = false, ketchup = fa
       ],
       { duration: DISMISS_ANIMATION_MS, easing: "ease-out" },
     );
-    animation.onfinish = () => onDismiss?.();
+    dismissAnimationRef.current = animation;
+    animation.onfinish = () => {
+      animation.onfinish = null;
+      dismissAnimationRef.current = null;
+      onDismiss?.();
+    };
   };
 
   const { resetTimer } = useToastTimer({ duration, isPaused, onElapsed: handleDismiss });
