@@ -14,16 +14,15 @@ const RESTING_GAP = 40
 export function Toaster({ position = DEFAULT_POSITION, scale = DEFAULT_SCALE }: ToasterProps) {
   useInjectedStyle(STYLE_KEY, STYLE_CSS)
 
-  const { toasts, order, rankOf, hoveredId, hoveredRank, isSettling, setHoveredId, bringToFront } = useToastStack()
+  const { toasts, rankOf, hoveredId, hoveredRank, isSettling, setHoveredId, bringToFront } = useToastStack()
   const isBottom = position.startsWith('bottom')
   const horizontal = position.endsWith('left') ? 'left' : position.endsWith('right') ? 'right' : 'center'
   const containerClassName = ['sandwich-toaster', isBottom ? 'sandwich-toaster--bottom' : 'sandwich-toaster--top', `sandwich-toaster--${horizontal}`].join(' ')
 
   return (
     <div className={containerClassName} style={{ [SCALE_VAR]: scale } as CSSProperties}>
-      {order.map((id) => {
-        const t = toasts.find((toast) => toast.id === id)
-        if (!t) return null
+      {toasts.map((t) => {
+        const id = t.id
         const rank = rankOf.get(id) ?? 0
         return (
           <ToastItem
@@ -42,7 +41,7 @@ export function Toaster({ position = DEFAULT_POSITION, scale = DEFAULT_SCALE }: 
             style={
               {
                 [isBottom ? 'bottom' : 'top']: rank * RESTING_GAP * scale,
-                zIndex: order.length - rank,
+                zIndex: toasts.length - rank,
                 pointerEvents: isSettling ? 'none' : undefined,
               } as CSSProperties
             }

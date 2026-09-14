@@ -6,10 +6,8 @@ const SETTLE_MS = TOAST_ITEM_TRANSITION_MS + 20
 
 export function useToastStack() {
   const toasts = useSyncExternalStore(subscribe, getSnapshot)
-  // DOM 순서는 유지하고 시각적 순서는 priority로 계산한다.
-  const [order, setOrder] = useState<string[]>(() => toasts.map((t) => t.id))
-  const [priority, setPriority] = useState<Record<string, number>>(() => Object.fromEntries(toasts.map((t, i) => [t.id, i])))
-  const prioritySeqRef = useRef(toasts.length)
+  // DOM 순서는 스토어를 따르고, 화면에 쌓이는 순서만 별도로 관리한다.
+  const [visualOrder, setVisualOrder] = useState<string[]>(() => toasts.map((t) => t.id).reverse())
   const settleTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const clearSettleTimer = useCallback(() => {
@@ -28,21 +26,14 @@ export function useToastStack() {
   if (toasts !== prevToasts) {
     setPrevToasts(toasts)
     const currentIds = new Set(toasts.map((t) => t.id))
-    const kept = order.filter((id) => currentIds.has(id))
-    const newIds = toasts.map((t) => t.id).filter((id) => !order.includes(id))
-    setOrder([...kept, ...newIds])
-    if (newIds.length > 0 || kept.length !== order.length) {
-      const nextPriority = Object.fromEntries(kept.map((id) => [id, priority[id]]))
-      for (const id of newIds) {
-        nextPriority[id] = ++prioritySeqRef.current
-      }
-      setPriority(nextPriority)
-    }
+    const previousIds = new Set(visualOrder)
+    const kept = visualOrder.filter((id) => currentIds.has(id))
+    const newIds = toasts.map((t) => t.id).filter((id) => !previousIds.has(id))
+    setVisualOrder([...newIds.reverse(), ...kept])
     if (hoveredId !== null && !currentIds.has(hoveredId)) {
       setHoveredId(null)
     }
   }
-  const visualOrder = [...order].sort((a, b) => (priority[b] ?? 0) - (priority[a] ?? 0))
   const rankOf = new Map(visualOrder.map((id, i) => [id, i]))
 
   const hoveredRank = hoveredId ? (rankOf.get(hoveredId) ?? -1) : -1
@@ -50,7 +41,7 @@ export function useToastStack() {
   const bringToFront = (id: string) => {
     setHoveredId(null)
     setIsSettling(true)
-    setPriority((prev) => ({ ...prev, [id]: ++prioritySeqRef.current }))
+    setVisualOrder((prev) => [id, ...prev.filter((toastId) => toastId !== id)])
     clearSettleTimer()
     settleTimerRef.current = setTimeout(() => {
       settleTimerRef.current = null
@@ -58,5 +49,5 @@ export function useToastStack() {
     }, SETTLE_MS)
   }
 
-  return { toasts, order, rankOf, hoveredId, hoveredRank, isSettling, setHoveredId, bringToFront }
+  return { toasts, rankOf, hoveredId, hoveredRank, isSettling, setHoveredId, bringToFront }
 }
