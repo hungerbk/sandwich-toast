@@ -2,6 +2,7 @@ import { addToast, clearToasts, removeToast } from "./store";
 import type { Toast, ToastIngredient, ToastType, ToastOptions, StandardToastOptions, IngredientToastOptions } from "./types";
 
 const DEFAULT_DURATION_MS = 4000;
+const MAX_TIMEOUT_MS = 2 ** 31 - 1;
 const DEFAULT_INGREDIENT: Record<ToastType, ToastIngredient> = {
   success: "lettuce",
   error: "tomato",
@@ -9,6 +10,14 @@ const DEFAULT_INGREDIENT: Record<ToastType, ToastIngredient> = {
   info: "bread",
   loading: "scrambled",
 };
+
+function resolveDuration(duration: number | undefined, type: ToastType): number {
+  if (duration === Infinity) return duration;
+  if (duration !== undefined && Number.isFinite(duration) && duration >= 0 && duration <= MAX_TIMEOUT_MS) {
+    return duration;
+  }
+  return type === "loading" ? Infinity : DEFAULT_DURATION_MS;
+}
 
 let toastIdCounter = 0;
 
@@ -22,7 +31,7 @@ function createToast(message: string, defaultType: ToastType, userOptions?: Toas
     // 재료 메서드는 type을 덮어써도 자신의 기본 재료를 유지한다.
     ingredient: userOptions?.ingredient ?? DEFAULT_INGREDIENT[defaultType],
     ketchup: userOptions?.ketchup ?? false,
-    duration: userOptions?.duration ?? (type === "loading" ? Infinity : DEFAULT_DURATION_MS),
+    duration: resolveDuration(userOptions?.duration, type),
   };
   addToast(finalToast);
   return id;
