@@ -1,5 +1,7 @@
 # 🥪 sandwich-toast
 
+<img width="1162" height="771" alt="스크린샷 2026-09-15 오전 2 07 34" src="https://github.com/user-attachments/assets/4a120279-3021-445f-8465-457e9d05c511" />
+
 A React toast library that stacks notifications as sandwich ingredients, with a bite animation when they close.
 
 [한국어](./README.md) · **English**
