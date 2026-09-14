@@ -31,7 +31,21 @@ function App() {
   const loadingId = useRef<string | null>(null);
   const copyRequest = useRef(0);
   const method = apiMode === "ingredient" ? selected.ingredient : selected.status;
-  const code = `import { toast, Toaster } from "sandwich-toast";\n\n<Toaster position="${position}" scale={${scale}} />\n\ntoast.${method}(${JSON.stringify(selected.message)});`;
+  const code = `import { toast, Toaster } from "sandwich-toast";
+
+export default function App() {
+  return (
+    <>
+      <Toaster position="${position}" scale={${scale}} />
+      <button
+        type="button"
+        onClick={() => toast.${method}(${JSON.stringify(selected.message)})}
+      >
+        토스트 띄우기
+      </button>
+    </>
+  );
+}`;
 
   const choose = (item: typeof MENU[number]) => {
     setSelected(item);
@@ -106,7 +120,7 @@ function App() {
               <label><input type="radio" name="api-mode" value="ingredient" checked={apiMode === "ingredient"} onChange={() => { setApiMode("ingredient"); resetCopy(); }} /><span>재료로 사용</span></label>
               <label><input type="radio" name="api-mode" value="status" checked={apiMode === "status"} onChange={() => { setApiMode("status"); resetCopy(); }} /><span>상태로 사용</span></label>
             </fieldset>
-            <div className="code-heading"><span>your-order.tsx</span><button type="button" onClick={copy}>코드 복사</button></div><pre tabIndex={0} aria-label="선택한 토스트 사용 코드"><code>{code}</code></pre><p className="copy-feedback" role="status">{copyMessage}</p></div>
+            <div className="code-heading"><span>App.tsx</span><button type="button" onClick={copy}>코드 복사</button></div><pre tabIndex={0} aria-label="선택한 토스트 사용 코드"><code>{code}</code></pre><p className="copy-feedback" role="status">{copyMessage}</p></div>
         </section>
       </main>
       <footer className="shop-footer"><span>sandwich-toast</span><span>작은 알림에도, 취향 한 조각.</span><a href="https://github.com/hungerbk/sandwich-toast">소스 코드 보기 ↗</a></footer>
