@@ -31,3 +31,17 @@ src/
 - `Infinity` disables automatic dismissal.
 - Negative values, `NaN`, and values above the maximum (except `Infinity`) fall back to the toast type’s default duration.
 - Ingredient methods use the final `type` to determine the default when the type is overridden.
+
+## Dismissing toasts
+
+- Automatic dismissal and the close button play the bite animation before removing the toast. If Web Animations is unavailable, removal is immediate.
+- `toast.dismiss(id)` immediately removes the specified toast without an animation.
+- `toast.dismiss()` immediately removes all toasts without an animation, including loading toasts.
+
+```ts
+const id = toast.loading("Preparing your sandwich…");
+toast.dismiss(id);
+
+// Clear all toasts.
+toast.dismiss();
+```
