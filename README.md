@@ -45,3 +45,9 @@ toast.dismiss(id);
 // Clear all toasts.
 toast.dismiss();
 ```
+
+## Toast limits
+
+There is no display limit or waiting queue. All active toasts are rendered.
+
+Loading toasts default to `duration: Infinity`. Dismiss them when the associated work finishes using `toast.dismiss(id)`. Any toast with `duration: Infinity` remains until manually dismissed; loading toasts with an explicit finite duration dismiss automatically.
