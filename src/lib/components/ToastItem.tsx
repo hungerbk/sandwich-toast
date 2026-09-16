@@ -27,6 +27,7 @@ export function ToastItem({ message, ingredient, isLoading = false, ketchup = fa
   useInjectedStyle(STYLE_KEY, STYLE_CSS);
 
   const [isDismissing, setIsDismissing] = useState(false);
+  const [isFocusWithin, setIsFocusWithin] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
   const dismissAnimationRef = useRef<Animation | null>(null);
   // 수동 닫기와 자동 종료가 겹쳐도 애니메이션은 한 번만 실행한다.
@@ -78,7 +79,7 @@ export function ToastItem({ message, ingredient, isLoading = false, ketchup = fa
     if (dismissRequested) handleDismiss();
   });
 
-  const { resetTimer } = useToastTimer({ duration, isPaused: isPaused || isDismissing || dismissRequested, onElapsed: handleDismiss });
+  const { resetTimer } = useToastTimer({ duration, isPaused: isPaused || isFocusWithin || isDismissing || dismissRequested, onElapsed: handleDismiss });
   const handleClick: MouseEventHandler<HTMLDivElement> = (e) => {
     resetTimer();
     onClick?.(e);
@@ -96,6 +97,10 @@ export function ToastItem({ message, ingredient, isLoading = false, ketchup = fa
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
       onClick={handleClick}
+      onFocus={() => setIsFocusWithin(true)}
+      onBlur={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget)) setIsFocusWithin(false);
+      }}
       style={{ [LIFT_VAR]: `${liftOffset}px`, ...style } as CSSProperties}>
       <Ingredient ingredient={ingredient} isLoading={isLoading} ketchup={ketchup} />
 
