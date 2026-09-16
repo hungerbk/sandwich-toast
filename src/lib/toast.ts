@@ -1,4 +1,4 @@
-import { addToast, clearToasts, removeToast } from "./store";
+import { addToast, clearToasts, requestDismiss } from "./store";
 import type { Toast, ToastIngredient, ToastType, ToastOptions, StandardToastOptions, IngredientToastOptions } from "./types";
 
 const DEFAULT_DURATION_MS = 4000;
@@ -55,6 +55,6 @@ export const toast = {
       return;
     }
     const [id] = args;
-    if (id) removeToast(id);
+    if (id) requestDismiss(id);
   },
 };

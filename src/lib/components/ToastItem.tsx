@@ -16,13 +16,14 @@ export interface ToastItemProps {
   onMouseLeave?: MouseEventHandler<HTMLDivElement>;
   onClick?: MouseEventHandler<HTMLDivElement>;
   onDismiss?: () => void;
+  dismissRequested?: boolean;
   duration?: number;
   isPaused?: boolean;
   className?: string;
   style?: CSSProperties;
 }
 
-export function ToastItem({ message, ingredient, isLoading = false, ketchup = false, liftOffset = 0, onMouseEnter, onMouseLeave, onClick, onDismiss, duration, isPaused = false, className, style }: ToastItemProps) {
+export function ToastItem({ message, ingredient, isLoading = false, ketchup = false, liftOffset = 0, onMouseEnter, onMouseLeave, onClick, onDismiss, dismissRequested = false, duration, isPaused = false, className, style }: ToastItemProps) {
   useInjectedStyle(STYLE_KEY, STYLE_CSS);
 
   const [isDismissing, setIsDismissing] = useState(false);
@@ -38,6 +39,7 @@ export function ToastItem({ message, ingredient, isLoading = false, ketchup = fa
         animation.onfinish = null;
         animation.cancel();
         dismissAnimationRef.current = null;
+        dismissedRef.current = false;
       }
     };
   }, []);
@@ -72,7 +74,11 @@ export function ToastItem({ message, ingredient, isLoading = false, ketchup = fa
     };
   };
 
-  const { resetTimer } = useToastTimer({ duration, isPaused, onElapsed: handleDismiss });
+  useEffect(() => {
+    if (dismissRequested) handleDismiss();
+  });
+
+  const { resetTimer } = useToastTimer({ duration, isPaused: isPaused || isDismissing || dismissRequested, onElapsed: handleDismiss });
   const handleClick: MouseEventHandler<HTMLDivElement> = (e) => {
     resetTimer();
     onClick?.(e);

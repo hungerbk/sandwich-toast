@@ -116,7 +116,7 @@ async function saveWithToast(saveData: () => Promise<void>) {
 ```
 
 - Automatic dismissal and the close button play the bite animation before removal. If Web Animations is unavailable, removal is immediate.
-- `toast.dismiss(id)` removes that toast immediately without an animation.
+- `toast.dismiss(id)` removes that toast after the bite animation. Removal is immediate when no Toaster is mounted or Web Animations is unavailable.
 - `toast.dismiss()` immediately removes all toasts, including loading toasts.
 
 There is no display limit or waiting queue. All active toasts are rendered. Toasts with `duration: Infinity` must be dismissed manually.

@@ -35,6 +35,7 @@ export function Toaster({ position = DEFAULT_POSITION, scale = DEFAULT_SCALE }: 
             onMouseLeave={() => setHoveredId(null)}
             onClick={() => bringToFront(id)}
             onDismiss={() => removeToast(id)}
+            dismissRequested={t.dismissRequested}
             duration={t.duration}
             isPaused={hoveredId === id}
             liftOffset={hoveredRank >= 0 && rank >= hoveredRank ? (isBottom ? -EXTRA_LIFT : EXTRA_LIFT) * scale : 0}

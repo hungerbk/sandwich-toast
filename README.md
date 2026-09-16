@@ -117,7 +117,7 @@ async function saveWithToast(saveData: () => Promise<void>) {
 ```
 
 - 자동 종료·닫기 버튼: 한입 애니메이션 후 삭제합니다. Web Animations 미지원 시 즉시 삭제합니다.
-- `toast.dismiss(id)`: 해당 토스트를 애니메이션 없이 즉시 삭제합니다.
+- `toast.dismiss(id)`: 해당 토스트를 한입 애니메이션 후 삭제합니다. Toaster가 없거나 Web Animations를 지원하지 않으면 즉시 삭제합니다.
 - `toast.dismiss()`: loading을 포함한 모든 토스트를 즉시 삭제합니다.
 
 표시 개수 제한과 대기열은 없습니다. 모든 활성 토스트를 표시하며, `duration: Infinity`인 토스트는 수동으로 삭제해야 합니다.

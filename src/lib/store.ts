@@ -12,7 +12,17 @@ function emitChange() {
 }
 export function subscribe(listener: Listener) {
   listeners.add(listener)
-  return () => listeners.delete(listener)
+  return () => {
+    listeners.delete(listener)
+    if (listeners.size === 0) {
+      // Strict Mode의 재구독을 기다린 뒤 표시할 곳이 없는 닫기 요청을 정리한다.
+      queueMicrotask(() => {
+        if (listeners.size !== 0) return
+        const nextToasts = toasts.filter((toast) => !toast.dismissRequested)
+        if (nextToasts.length !== toasts.length) toasts = nextToasts
+      })
+    }
+  }
 }
 // 변경이 없으면 같은 배열 참조를 반환한다.
 export function getSnapshot(): StoredToast[] {
