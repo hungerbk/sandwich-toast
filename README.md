@@ -31,6 +31,8 @@ npm run dev
 
 ## 기본 사용법
 
+한 앱에서 동시에 마운트된 `<Toaster />` 하나만 지원합니다. 여러 컴포넌트에서 같은 `toast` API를 호출할 수 있습니다. 각 토스트의 자동 종료 타이머는 해당 Toaster 내부에서 관리합니다. 중복 Toaster를 런타임에서 차단하지는 않지만, 여러 개를 동시에 사용하는 동작은 보장하지 않습니다.
+
 `<Toaster />`는 앱 최상단에 한 번 배치하고, 이벤트 핸들러에서 `toast`를 호출합니다. 아래 예시는 저장소의 `src/demo` 기준입니다.
 
 ```tsx
@@ -117,7 +119,7 @@ async function saveWithToast(saveData: () => Promise<void>) {
 ```
 
 - 자동 종료·닫기 버튼: 한입 애니메이션 후 삭제합니다. Web Animations 미지원 시 즉시 삭제합니다.
-- `toast.dismiss(id)`: 해당 토스트를 애니메이션 없이 즉시 삭제합니다.
+- `toast.dismiss(id)`: 해당 토스트를 한입 애니메이션 후 삭제합니다. Toaster가 없거나 Web Animations를 지원하지 않으면 즉시 삭제합니다.
 - `toast.dismiss()`: loading을 포함한 모든 토스트를 즉시 삭제합니다.
 
 표시 개수 제한과 대기열은 없습니다. 모든 활성 토스트를 표시하며, `duration: Infinity`인 토스트는 수동으로 삭제해야 합니다.

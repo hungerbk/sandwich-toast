@@ -30,6 +30,8 @@ npm run dev
 
 ## Basic usage
 
+Only one mounted `<Toaster />` per app is supported. Multiple components can call the same `toast` API. Each toast’s automatic dismissal timer is managed inside that Toaster. Duplicate Toasters are not blocked at runtime, but using multiple instances simultaneously is unsupported.
+
 Place one `<Toaster />` at the top level of your app and call `toast` from event handlers. This example uses the import path for `src/demo` in this repository.
 
 ```tsx
@@ -116,7 +118,7 @@ async function saveWithToast(saveData: () => Promise<void>) {
 ```
 
 - Automatic dismissal and the close button play the bite animation before removal. If Web Animations is unavailable, removal is immediate.
-- `toast.dismiss(id)` removes that toast immediately without an animation.
+- `toast.dismiss(id)` removes that toast after the bite animation. Removal is immediate when no Toaster is mounted or Web Animations is unavailable.
 - `toast.dismiss()` immediately removes all toasts, including loading toasts.
 
 There is no display limit or waiting queue. All active toasts are rendered. Toasts with `duration: Infinity` must be dismissed manually.
