@@ -2,7 +2,9 @@ import type { Toast } from './types'
 
 type Listener = () => void
 
-let toasts: Toast[] = []
+type StoredToast = Toast & { dismissRequested?: boolean }
+
+let toasts: StoredToast[] = []
 const listeners = new Set<Listener>()
 
 function emitChange() {
@@ -13,12 +15,23 @@ export function subscribe(listener: Listener) {
   return () => listeners.delete(listener)
 }
 // 변경이 없으면 같은 배열 참조를 반환한다.
-export function getSnapshot(): Toast[] {
+export function getSnapshot(): StoredToast[] {
   return toasts
 }
 
 export function addToast(toast: Toast) {
   toasts = [...toasts, toast]
+  emitChange()
+}
+
+export function requestDismiss(id: string) {
+  if (listeners.size === 0) {
+    removeToast(id)
+    return
+  }
+  const toast = toasts.find((toast) => toast.id === id)
+  if (!toast || toast.dismissRequested) return
+  toasts = toasts.map((toast) => toast.id === id ? { ...toast, dismissRequested: true } : toast)
   emitChange()
 }
 
