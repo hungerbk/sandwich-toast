@@ -90,6 +90,14 @@ toast.cheese("With ketchup!", { ketchup: true });
 <Toaster position="bottom-right" scale={0.8} />
 ```
 
+## Close button language
+
+Set `closeButtonLabel` to customize the close button’s accessible name. It defaults to `닫기` (Korean for “Close”). Use a non-empty label in your app’s language. The visible × remains unchanged.
+
+```tsx
+<Toaster closeButtonLabel="Close notification" />
+```
+
 ## Duration
 
 `duration` is measured in milliseconds. The default is `4000`, or `Infinity` for loading toasts.

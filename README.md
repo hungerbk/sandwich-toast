@@ -91,6 +91,14 @@ toast.cheese("케첩도 추가했어요.", { ketchup: true });
 <Toaster position="bottom-right" scale={0.8} />
 ```
 
+## 닫기 버튼 언어
+
+`closeButtonLabel`로 스크린리더가 읽는 닫기 버튼 이름을 지정할 수 있습니다. 기본값은 `닫기`이며, 앱 언어에 맞는 비어 있지 않은 문구를 사용하세요. 화면의 × 표시는 유지됩니다.
+
+```tsx
+<Toaster closeButtonLabel="알림 닫기" />
+```
+
 ## 표시 시간
 
 `duration`의 단위는 ms입니다. 기본값은 일반 토스트 `4000`, loading 타입 `Infinity`입니다.

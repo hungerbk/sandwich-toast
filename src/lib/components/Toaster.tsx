@@ -11,7 +11,7 @@ const DEFAULT_POSITION: ToasterPosition = 'top-center'
 const DEFAULT_SCALE = 1
 
 const RESTING_GAP = 40
-export function Toaster({ position = DEFAULT_POSITION, scale = DEFAULT_SCALE }: ToasterProps) {
+export function Toaster({ position = DEFAULT_POSITION, scale = DEFAULT_SCALE, closeButtonLabel = '닫기' }: ToasterProps) {
   useInjectedStyle(STYLE_KEY, STYLE_CSS)
 
   const { toasts, rankOf, hoveredId, hoveredRank, isSettling, setHoveredId, bringToFront } = useToastStack()
@@ -35,6 +35,7 @@ export function Toaster({ position = DEFAULT_POSITION, scale = DEFAULT_SCALE }: 
             onMouseLeave={() => setHoveredId(null)}
             onClick={() => bringToFront(id)}
             onDismiss={() => removeToast(id)}
+            closeButtonLabel={closeButtonLabel}
             dismissRequested={t.dismissRequested}
             duration={t.duration}
             isPaused={hoveredId === id}
