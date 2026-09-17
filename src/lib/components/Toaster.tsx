@@ -24,6 +24,8 @@ export function Toaster({ position = DEFAULT_POSITION, scale = DEFAULT_SCALE }: 
       {toasts.map((t) => {
         const id = t.id
         const rank = rankOf.get(id) ?? 0
+        const offsetRank = isBottom ? toasts.length - 1 - rank : rank
+        const isExpanded = hoveredRank >= 0 && (isBottom ? rank < hoveredRank : rank >= hoveredRank)
         return (
           <ToastItem
             key={id}
@@ -38,10 +40,10 @@ export function Toaster({ position = DEFAULT_POSITION, scale = DEFAULT_SCALE }: 
             dismissRequested={t.dismissRequested}
             duration={t.duration}
             isPaused={hoveredId === id}
-            liftOffset={hoveredRank >= 0 && rank >= hoveredRank ? (isBottom ? -EXTRA_LIFT : EXTRA_LIFT) * scale : 0}
+            liftOffset={isExpanded ? (isBottom ? -EXTRA_LIFT : EXTRA_LIFT) * scale : 0}
             style={
               {
-                [isBottom ? 'bottom' : 'top']: rank * RESTING_GAP * scale,
+                [isBottom ? 'bottom' : 'top']: offsetRank * RESTING_GAP * scale,
                 zIndex: toasts.length - rank,
                 pointerEvents: isSettling ? 'none' : undefined,
               } as CSSProperties
