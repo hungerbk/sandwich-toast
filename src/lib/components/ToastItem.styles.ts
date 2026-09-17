@@ -119,4 +119,16 @@ export const STYLE_CSS = `
   background: rgba(255, 255, 255, 0.95);
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
 }
+@media (prefers-reduced-motion: reduce) {
+  .sandwich-toast-item,
+  .sandwich-toast-dismiss-button {
+    transition: none;
+  }
+  .sandwich-toast-item:hover {
+    transform: translateY(var(${LIFT_VAR}, 0px));
+  }
+  .sandwich-toast-dismiss-button:hover {
+    transform: translateY(-40%);
+  }
+}
 `;

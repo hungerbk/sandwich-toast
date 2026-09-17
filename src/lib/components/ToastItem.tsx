@@ -52,8 +52,8 @@ export function ToastItem({ message, ingredient, isLoading = false, ketchup = fa
     setIsDismissing(true);
 
     const el = rootRef.current;
-    // Web Animations 미지원 환경에서는 즉시 삭제한다.
-    if (!el || typeof el.animate !== "function") {
+    const reduceMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false;
+    if (reduceMotion || !el || typeof el.animate !== "function") {
       onDismiss?.();
       return;
     }

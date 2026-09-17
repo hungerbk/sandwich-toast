@@ -131,6 +131,10 @@ async function saveWithToast(saveData: () => Promise<void>) {
 
 There is no display limit or waiting queue. All active toasts are rendered. Toasts with `duration: Infinity` must be dismissed manually.
 
+## Reduced motion
+
+The library respects `prefers-reduced-motion: reduce`. Ketchup remains static, and hover enlargement and position transitions are disabled. If reduced motion is enabled when dismissal starts, the toast is removed without the bite animation. Duration and pause behavior are unchanged.
+
 ## Development
 
 ```bash
