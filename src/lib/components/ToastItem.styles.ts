@@ -5,6 +5,9 @@ export const TOAST_ITEM_TRANSITION_MS = 320;
 const MAX_MESSAGE_LINES = 2;
 const MESSAGE_PADDING_Y = 18;
 const MESSAGE_PADDING_X = 28;
+const DISMISS_BUTTON_SIZE = `max(32px, ${scaled(32)})`;
+const DISMISS_BUTTON_RIGHT = scaled(4);
+const DISMISS_MESSAGE_GAP = `max(8px, ${scaled(8)})`;
 export const LIFT_VAR = "--sandwich-toast-lift";
 export const INGREDIENT_CLIP_CLASS: Partial<Record<ToastIngredient, string>> = {
   lettuce: "sandwich-toast-item--lettuce",
@@ -54,6 +57,7 @@ export const STYLE_CSS = `
   z-index: 5;
   margin: 0;
   padding: ${scaled(MESSAGE_PADDING_Y)} ${scaled(MESSAGE_PADDING_X)};
+  padding-right: calc(${DISMISS_BUTTON_RIGHT} + ${DISMISS_BUTTON_SIZE} + ${DISMISS_MESSAGE_GAP});
   overflow-wrap: break-word;
   box-sizing: border-box;
 
@@ -75,6 +79,7 @@ export const STYLE_CSS = `
 
 .sandwich-toast-message-text {
 
+  min-width: 0;
   width: fit-content;
   max-width: 100%;
 
@@ -95,10 +100,10 @@ export const STYLE_CSS = `
   z-index: 10;
 
   top: 40%;
-  right: ${scaled(4)};
+  right: ${DISMISS_BUTTON_RIGHT};
   transform: translateY(-40%) scale(1);
-  width: ${scaled(22)};
-  height: ${scaled(22)};
+  width: ${DISMISS_BUTTON_SIZE};
+  height: ${DISMISS_BUTTON_SIZE};
   padding: 0;
   display: flex;
   align-items: center;
@@ -108,7 +113,7 @@ export const STYLE_CSS = `
 
   background: rgba(255, 255, 255, 0.75);
   color: #1a1a1a;
-  font-size: ${scaled(14)};
+  font-size: max(14px, ${scaled(14)});
   line-height: 1;
   cursor: pointer;
   transition: transform 120ms ease-out, background 120ms ease-out, box-shadow 120ms ease-out;
