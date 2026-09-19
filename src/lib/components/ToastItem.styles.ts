@@ -31,7 +31,8 @@ export const STYLE_CSS = `
 
   transition: transform ${TOAST_ITEM_TRANSITION_MS}ms ease-in-out, top ${TOAST_ITEM_TRANSITION_MS}ms ease-in-out, bottom ${TOAST_ITEM_TRANSITION_MS}ms ease-in-out;
 }
-.sandwich-toast-item:hover {
+.sandwich-toast-item:hover,
+.sandwich-toast-item:focus-within {
   transform: translateY(var(${LIFT_VAR}, 0px)) scale(1.12);
 }
 .sandwich-toast-item--clickable {
@@ -95,6 +96,14 @@ export const STYLE_CSS = `
   text-overflow: ellipsis;
 }
 
+.sandwich-toast-message-button {
+  border: none;
+  font: inherit;
+  color: inherit;
+  text-align: inherit;
+  cursor: pointer;
+}
+
 .sandwich-toast-dismiss-button {
   position: absolute;
   z-index: 10;
@@ -124,12 +133,20 @@ export const STYLE_CSS = `
   background: rgba(255, 255, 255, 0.95);
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
 }
+.sandwich-toast-message-button:focus-visible,
+.sandwich-toast-dismiss-button:focus-visible {
+  outline: 4px solid #0047ff;
+  outline-offset: -4px;
+  box-shadow: inset 0 0 0 6px #fff;
+  background: #fff;
+}
 @media (prefers-reduced-motion: reduce) {
   .sandwich-toast-item,
   .sandwich-toast-dismiss-button {
     transition: none;
   }
-  .sandwich-toast-item:hover {
+  .sandwich-toast-item:hover,
+.sandwich-toast-item:focus-within {
     transform: translateY(var(${LIFT_VAR}, 0px));
   }
   .sandwich-toast-dismiss-button:hover {

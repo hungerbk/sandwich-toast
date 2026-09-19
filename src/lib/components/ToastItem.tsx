@@ -16,6 +16,7 @@ export interface ToastItemProps {
   onMouseLeave?: MouseEventHandler<HTMLDivElement>;
   onClick?: MouseEventHandler<HTMLDivElement>;
   onDismiss?: () => void;
+  onFocusWithinChange?: (focused: boolean) => void;
   closeButtonLabel?: string;
   dismissRequested?: boolean;
   duration?: number;
@@ -24,7 +25,7 @@ export interface ToastItemProps {
   style?: CSSProperties;
 }
 
-export function ToastItem({ message, ingredient, isLoading = false, ketchup = false, liftOffset = 0, onMouseEnter, onMouseLeave, onClick, onDismiss, closeButtonLabel = "닫기", dismissRequested = false, duration, isPaused = false, className, style }: ToastItemProps) {
+export function ToastItem({ message, ingredient, isLoading = false, ketchup = false, liftOffset = 0, onMouseEnter, onMouseLeave, onClick, onDismiss, onFocusWithinChange, closeButtonLabel = "닫기", dismissRequested = false, duration, isPaused = false, className, style }: ToastItemProps) {
   useInjectedStyle(STYLE_KEY, STYLE_CSS);
 
   const [isDismissing, setIsDismissing] = useState(false);
@@ -82,6 +83,7 @@ export function ToastItem({ message, ingredient, isLoading = false, ketchup = fa
 
   const { resetTimer } = useToastTimer({ duration, isPaused: isPaused || isFocusWithin || isDismissing || dismissRequested, onElapsed: handleDismiss });
   const handleClick: MouseEventHandler<HTMLDivElement> = (e) => {
+    if (dismissedRef.current) return;
     resetTimer();
     onClick?.(e);
   };
@@ -98,15 +100,27 @@ export function ToastItem({ message, ingredient, isLoading = false, ketchup = fa
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
       onClick={handleClick}
-      onFocus={() => setIsFocusWithin(true)}
+      onFocus={(event) => {
+        if (event.currentTarget.contains(event.relatedTarget)) return;
+        setIsFocusWithin(true);
+        onFocusWithinChange?.(true);
+      }}
       onBlur={(event) => {
-        if (!event.currentTarget.contains(event.relatedTarget)) setIsFocusWithin(false);
+        if (event.currentTarget.contains(event.relatedTarget)) return;
+        setIsFocusWithin(false);
+        onFocusWithinChange?.(false);
       }}
       style={{ [LIFT_VAR]: `${liftOffset}px`, ...style } as CSSProperties}>
       <Ingredient ingredient={ingredient} isLoading={isLoading} ketchup={ketchup} />
 
       <p className={messageClassName}>
-        <span className="sandwich-toast-message-text">{message}</span>
+        {onClick ? (
+          <button type="button" className="sandwich-toast-message-text sandwich-toast-message-button">
+            {message}
+          </button>
+        ) : (
+          <span className="sandwich-toast-message-text">{message}</span>
+        )}
       </p>
 
       {onDismiss && (
