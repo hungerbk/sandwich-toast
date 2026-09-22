@@ -1,6 +1,7 @@
 import { useState, type CSSProperties } from 'react'
 import { removeToast } from '../store'
 import { useToastStack } from '../hooks/useToastStack'
+import { useToastFocus } from '../hooks/useToastFocus'
 import { ToastItem } from './ToastItem'
 import { useInjectedStyle } from '../injectStyle'
 import { SCALE_VAR } from '../scale'
@@ -15,6 +16,7 @@ export function Toaster({ position = DEFAULT_POSITION, scale = DEFAULT_SCALE, cl
   useInjectedStyle(STYLE_KEY, STYLE_CSS)
 
   const { toasts, rankOf, hoveredId, hoveredRank, isSettling, setHoveredId, bringToFront } = useToastStack()
+  const { containerRef, onFocusCapture, onBlurCapture } = useToastFocus()
   const [focusedId, setFocusedId] = useState<string | null>(null)
   const focusedRank = focusedId === null ? -1 : (rankOf.get(focusedId) ?? -1)
   const expandedRank = focusedRank >= 0 ? focusedRank : hoveredRank
@@ -23,7 +25,7 @@ export function Toaster({ position = DEFAULT_POSITION, scale = DEFAULT_SCALE, cl
   const containerClassName = ['sandwich-toaster', isBottom ? 'sandwich-toaster--bottom' : 'sandwich-toaster--top', `sandwich-toaster--${horizontal}`].join(' ')
 
   return (
-    <div className={containerClassName} style={{ [SCALE_VAR]: scale } as CSSProperties}>
+    <div ref={containerRef} onFocusCapture={onFocusCapture} onBlurCapture={onBlurCapture} className={containerClassName} style={{ [SCALE_VAR]: scale } as CSSProperties}>
       {toasts.map((t) => {
         const id = t.id
         const rank = rankOf.get(id) ?? 0
