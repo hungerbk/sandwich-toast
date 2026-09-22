@@ -39,7 +39,7 @@ export function useToastFocus() {
     const candidates = [...cards.slice(focused.index), ...cards.slice(0, focused.index).reverse()]
     for (const card of candidates) {
       if (card.classList.contains('sandwich-toast-item--dismissing')) continue
-      const button = card.querySelector<HTMLButtonElement>('button:not(:disabled)')
+      const button = card.querySelector<HTMLButtonElement>('.sandwich-toast-message-button:not(:disabled)')
       button?.focus({ preventScroll: true })
       if (button && document.activeElement === button) return
     }
