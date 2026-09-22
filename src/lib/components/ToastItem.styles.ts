@@ -52,13 +52,16 @@ export const STYLE_CSS = `
 }
 
 .sandwich-toast-message {
+  --message-padding-left: ${scaled(MESSAGE_PADDING_X)};
+  --message-padding-right: calc(${DISMISS_BUTTON_RIGHT} + ${DISMISS_BUTTON_SIZE} + ${DISMISS_MESSAGE_GAP});
   position: absolute;
   inset: 0;
 
   z-index: 5;
   margin: 0;
   padding: ${scaled(MESSAGE_PADDING_Y)} ${scaled(MESSAGE_PADDING_X)};
-  padding-right: calc(${DISMISS_BUTTON_RIGHT} + ${DISMISS_BUTTON_SIZE} + ${DISMISS_MESSAGE_GAP});
+  padding-left: var(--message-padding-left);
+  padding-right: var(--message-padding-right);
   overflow-wrap: break-word;
   box-sizing: border-box;
 
@@ -68,10 +71,10 @@ export const STYLE_CSS = `
   align-items: center;
 }
 .sandwich-toast-message--lettuce {
-  padding-left: ${scaled(40)};
+  --message-padding-left: ${scaled(40)};
 }
 .sandwich-toast-message--bread {
-  padding-left: ${scaled(40)};
+  --message-padding-left: ${scaled(40)};
   transform: translateY(${scaled(-4)});
 }
 .sandwich-toast-message--cheese {
@@ -96,6 +99,37 @@ export const STYLE_CSS = `
   text-overflow: ellipsis;
 }
 
+.sandwich-toast-message-action {
+  position: relative;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+}
+.sandwich-toast-keyboard-hint {
+  display: none;
+  position: absolute;
+  top: calc(100% + ${scaled(2)});
+  left: calc(50% + (var(--message-padding-right) - var(--message-padding-left)) / 2);
+  transform: translateX(-50%);
+  z-index: 6;
+  width: max-content;
+  max-width: 100%;
+  min-height: ${scaled(20)};
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  box-sizing: border-box;
+  padding: ${scaled(2)} ${scaled(6)};
+  border-radius: ${scaled(4)};
+  background: #fff;
+  color: #1a1a1a;
+  font-size: ${scaled(11)};
+  line-height: 1.3;
+  pointer-events: none;
+}
+.sandwich-toast-message-button:focus-visible + .sandwich-toast-keyboard-hint {
+  display: flex;
+}
 .sandwich-toast-message-button {
   border: none;
   font: inherit;

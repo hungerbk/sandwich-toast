@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type CSSProperties, type MouseEventHandler } from "react";
+import { useEffect, useId, useRef, useState, type CSSProperties, type MouseEventHandler } from "react";
 import { useToastTimer } from "../hooks/useToastTimer";
 import type { ToastIngredient } from "../types";
 import { bitePolygon, NO_BITES, DISMISS_ANIMATION_MS } from "../dismissBite";
@@ -30,6 +30,7 @@ export function ToastItem({ message, ingredient, isLoading = false, ketchup = fa
 
   const [isDismissing, setIsDismissing] = useState(false);
   const [isFocusWithin, setIsFocusWithin] = useState(false);
+  const keyboardHintId = useId();
   const rootRef = useRef<HTMLDivElement>(null);
   const dismissAnimationRef = useRef<Animation | null>(null);
   // 수동 닫기와 자동 종료가 겹쳐도 애니메이션은 한 번만 실행한다.
@@ -115,9 +116,12 @@ export function ToastItem({ message, ingredient, isLoading = false, ketchup = fa
 
       <p className={messageClassName}>
         {onClick ? (
-          <button type="button" className="sandwich-toast-message-text sandwich-toast-message-button">
-            {message}
-          </button>
+          <span className="sandwich-toast-message-action">
+            <button type="button" aria-describedby={keyboardHintId} className="sandwich-toast-message-text sandwich-toast-message-button">
+              {message}
+            </button>
+            <span id={keyboardHintId} className="sandwich-toast-keyboard-hint">Enter/Space 키로 맨 앞으로 이동</span>
+          </span>
         ) : (
           <span className="sandwich-toast-message-text">{message}</span>
         )}
