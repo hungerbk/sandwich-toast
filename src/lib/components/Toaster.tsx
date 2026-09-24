@@ -1,6 +1,7 @@
-import type { CSSProperties } from 'react'
+import { useState, type CSSProperties } from 'react'
 import { removeToast } from '../store'
 import { useToastStack } from '../hooks/useToastStack'
+import { useToastFocus } from '../hooks/useToastFocus'
 import { ToastItem } from './ToastItem'
 import { useInjectedStyle } from '../injectStyle'
 import { SCALE_VAR } from '../scale'
@@ -11,21 +12,25 @@ const DEFAULT_POSITION: ToasterPosition = 'top-center'
 const DEFAULT_SCALE = 1
 
 const RESTING_GAP = 40
-export function Toaster({ position = DEFAULT_POSITION, scale = DEFAULT_SCALE }: ToasterProps) {
+export function Toaster({ position = DEFAULT_POSITION, scale = DEFAULT_SCALE, closeButtonLabel = '닫기' }: ToasterProps) {
   useInjectedStyle(STYLE_KEY, STYLE_CSS)
 
   const { toasts, rankOf, hoveredId, hoveredRank, isSettling, setHoveredId, bringToFront } = useToastStack()
+  const { containerRef, onFocusCapture, onBlurCapture } = useToastFocus()
+  const [focusedId, setFocusedId] = useState<string | null>(null)
+  const focusedRank = focusedId === null ? -1 : (rankOf.get(focusedId) ?? -1)
+  const expandedRank = focusedRank >= 0 ? focusedRank : hoveredRank
   const isBottom = position.startsWith('bottom')
   const horizontal = position.endsWith('left') ? 'left' : position.endsWith('right') ? 'right' : 'center'
   const containerClassName = ['sandwich-toaster', isBottom ? 'sandwich-toaster--bottom' : 'sandwich-toaster--top', `sandwich-toaster--${horizontal}`].join(' ')
 
   return (
-    <div className={containerClassName} style={{ [SCALE_VAR]: scale } as CSSProperties}>
+    <div ref={containerRef} onFocusCapture={onFocusCapture} onBlurCapture={onBlurCapture} className={containerClassName} style={{ [SCALE_VAR]: scale } as CSSProperties}>
       {toasts.map((t) => {
         const id = t.id
         const rank = rankOf.get(id) ?? 0
         const offsetRank = isBottom ? toasts.length - 1 - rank : rank
-        const isExpanded = hoveredRank >= 0 && (isBottom ? rank < hoveredRank : rank >= hoveredRank)
+        const isExpanded = expandedRank >= 0 && (isBottom ? rank < expandedRank : rank >= expandedRank)
         return (
           <ToastItem
             key={id}
@@ -35,8 +40,10 @@ export function Toaster({ position = DEFAULT_POSITION, scale = DEFAULT_SCALE }: 
             message={t.message}
             onMouseEnter={() => setHoveredId(id)}
             onMouseLeave={() => setHoveredId(null)}
+            onFocusWithinChange={(focused) => setFocusedId((current) => focused ? id : current === id ? null : current)}
             onClick={() => bringToFront(id)}
             onDismiss={() => removeToast(id)}
+            closeButtonLabel={closeButtonLabel}
             dismissRequested={t.dismissRequested}
             duration={t.duration}
             isPaused={hoveredId === id}

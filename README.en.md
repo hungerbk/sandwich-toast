@@ -90,6 +90,14 @@ toast.cheese("With ketchup!", { ketchup: true });
 <Toaster position="bottom-right" scale={0.8} />
 ```
 
+## Close button language
+
+Set `closeButtonLabel` to customize the close button’s accessible name. It defaults to `닫기` (Korean for “Close”). Use a non-empty label in your app’s language. The visible × remains unchanged.
+
+```tsx
+<Toaster closeButtonLabel="Close notification" />
+```
+
 ## Duration
 
 `duration` is measured in milliseconds. The default is `4000`, or `Infinity` for loading toasts.
@@ -122,6 +130,10 @@ async function saveWithToast(saveData: () => Promise<void>) {
 - `toast.dismiss()` immediately removes all toasts, including loading toasts.
 
 There is no display limit or waiting queue. All active toasts are rendered. Toasts with `duration: Infinity` must be dismissed manually.
+
+## Reduced motion
+
+The library respects `prefers-reduced-motion: reduce`. Ketchup remains static, and hover enlargement and position transitions are disabled. If reduced motion is enabled when dismissal starts, the toast is removed without the bite animation. Duration and pause behavior are unchanged.
 
 ## Development
 

@@ -91,4 +91,9 @@ export const STYLE_CSS = `
   z-index: 3;
   transform: rotate(4deg) scale(0.95);
 }
+@media (prefers-reduced-motion: reduce) {
+  .sandwich-toast-ingredient-ketchup--animated {
+    animation: none;
+  }
+}
 `;

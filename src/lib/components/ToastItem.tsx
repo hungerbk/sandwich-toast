@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type CSSProperties, type MouseEventHandler } from "react";
+import { useEffect, useId, useRef, useState, type CSSProperties, type MouseEventHandler } from "react";
 import { useToastTimer } from "../hooks/useToastTimer";
 import type { ToastIngredient } from "../types";
 import { bitePolygon, NO_BITES, DISMISS_ANIMATION_MS } from "../dismissBite";
@@ -16,6 +16,8 @@ export interface ToastItemProps {
   onMouseLeave?: MouseEventHandler<HTMLDivElement>;
   onClick?: MouseEventHandler<HTMLDivElement>;
   onDismiss?: () => void;
+  onFocusWithinChange?: (focused: boolean) => void;
+  closeButtonLabel?: string;
   dismissRequested?: boolean;
   duration?: number;
   isPaused?: boolean;
@@ -23,10 +25,12 @@ export interface ToastItemProps {
   style?: CSSProperties;
 }
 
-export function ToastItem({ message, ingredient, isLoading = false, ketchup = false, liftOffset = 0, onMouseEnter, onMouseLeave, onClick, onDismiss, dismissRequested = false, duration, isPaused = false, className, style }: ToastItemProps) {
+export function ToastItem({ message, ingredient, isLoading = false, ketchup = false, liftOffset = 0, onMouseEnter, onMouseLeave, onClick, onDismiss, onFocusWithinChange, closeButtonLabel = "닫기", dismissRequested = false, duration, isPaused = false, className, style }: ToastItemProps) {
   useInjectedStyle(STYLE_KEY, STYLE_CSS);
 
   const [isDismissing, setIsDismissing] = useState(false);
+  const [isFocusWithin, setIsFocusWithin] = useState(false);
+  const keyboardHintId = useId();
   const rootRef = useRef<HTMLDivElement>(null);
   const dismissAnimationRef = useRef<Animation | null>(null);
   // 수동 닫기와 자동 종료가 겹쳐도 애니메이션은 한 번만 실행한다.
@@ -50,8 +54,8 @@ export function ToastItem({ message, ingredient, isLoading = false, ketchup = fa
     setIsDismissing(true);
 
     const el = rootRef.current;
-    // Web Animations 미지원 환경에서는 즉시 삭제한다.
-    if (!el || typeof el.animate !== "function") {
+    const reduceMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false;
+    if (reduceMotion || !el || typeof el.animate !== "function") {
       onDismiss?.();
       return;
     }
@@ -78,8 +82,9 @@ export function ToastItem({ message, ingredient, isLoading = false, ketchup = fa
     if (dismissRequested) handleDismiss();
   });
 
-  const { resetTimer } = useToastTimer({ duration, isPaused: isPaused || isDismissing || dismissRequested, onElapsed: handleDismiss });
+  const { resetTimer } = useToastTimer({ duration, isPaused: isPaused || isFocusWithin || isDismissing || dismissRequested, onElapsed: handleDismiss });
   const handleClick: MouseEventHandler<HTMLDivElement> = (e) => {
+    if (dismissedRef.current) return;
     resetTimer();
     onClick?.(e);
   };
@@ -96,17 +101,36 @@ export function ToastItem({ message, ingredient, isLoading = false, ketchup = fa
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
       onClick={handleClick}
+      onFocus={(event) => {
+        if (event.currentTarget.contains(event.relatedTarget)) return;
+        setIsFocusWithin(true);
+        onFocusWithinChange?.(true);
+      }}
+      onBlur={(event) => {
+        if (event.currentTarget.contains(event.relatedTarget)) return;
+        setIsFocusWithin(false);
+        onFocusWithinChange?.(false);
+      }}
       style={{ [LIFT_VAR]: `${liftOffset}px`, ...style } as CSSProperties}>
       <Ingredient ingredient={ingredient} isLoading={isLoading} ketchup={ketchup} />
 
       <p className={messageClassName}>
-        <span className="sandwich-toast-message-text">{message}</span>
+        {onClick ? (
+          <span className="sandwich-toast-message-action">
+            <button type="button" aria-describedby={keyboardHintId} className="sandwich-toast-message-text sandwich-toast-message-button">
+              {message}
+            </button>
+            <span id={keyboardHintId} className="sandwich-toast-keyboard-hint">Enter/Space 키로 맨 앞으로 이동</span>
+          </span>
+        ) : (
+          <span className="sandwich-toast-message-text">{message}</span>
+        )}
       </p>
 
       {onDismiss && (
         <button
           type="button"
-          aria-label="닫기"
+          aria-label={closeButtonLabel}
           className="sandwich-toast-dismiss-button"
           onClick={(e) => {
             e.stopPropagation();

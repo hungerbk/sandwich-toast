@@ -91,6 +91,14 @@ toast.cheese("케첩도 추가했어요.", { ketchup: true });
 <Toaster position="bottom-right" scale={0.8} />
 ```
 
+## 닫기 버튼 언어
+
+`closeButtonLabel`로 스크린리더가 읽는 닫기 버튼 이름을 지정할 수 있습니다. 기본값은 `닫기`이며, 앱 언어에 맞는 비어 있지 않은 문구를 사용하세요. 화면의 × 표시는 유지됩니다.
+
+```tsx
+<Toaster closeButtonLabel="알림 닫기" />
+```
+
 ## 표시 시간
 
 `duration`의 단위는 ms입니다. 기본값은 일반 토스트 `4000`, loading 타입 `Infinity`입니다.
@@ -123,6 +131,10 @@ async function saveWithToast(saveData: () => Promise<void>) {
 - `toast.dismiss()`: loading을 포함한 모든 토스트를 즉시 삭제합니다.
 
 표시 개수 제한과 대기열은 없습니다. 모든 활성 토스트를 표시하며, `duration: Infinity`인 토스트는 수동으로 삭제해야 합니다.
+
+## 모션 감소
+
+기기의 모션 감소 설정(`prefers-reduced-motion: reduce`)을 따릅니다. 케첩은 정적으로 표시하고, 호버 확대와 위치 전환 애니메이션을 사용하지 않습니다. 닫기 시 모션 감소가 설정되어 있으면 한입 애니메이션 없이 제거합니다. 표시 시간과 일시정지 동작은 유지됩니다.
 
 ## 개발
 

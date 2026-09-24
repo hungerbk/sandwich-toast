@@ -11,7 +11,10 @@
 - For tasks with multiple implementation steps, create `.tasks.md` before implementation.
 - Use the repository's existing GitHub Issue template as the format for `.tasks.md`.
 - Fill it based on the requested task and the current codebase.
-- Keep its checklist updated as implementation progresses.
+- Preserve the full agreed task or issue scope in `.tasks.md`; do not replace it with only the current implementation step.
+- Reuse existing user-written content and update the original checklist as implementation progresses.
+- Once issue details are available locally, use `.tasks.md` as the working reference instead of repeatedly fetching GitHub Issues.
+- Append detailed changes, verification results, and decisions to a progress log at the bottom without overwriting the overall task list.
 - For small tasks that do not benefit from a checklist, do not create `.tasks.md`.
 - `.tasks.md` is temporary local working state and must never be committed.
 
