@@ -91,12 +91,35 @@ toast.cheese("케첩도 추가했어요.", { ketchup: true });
 <Toaster position="bottom-right" scale={0.8} />
 ```
 
-## 닫기 버튼 언어
+## 안내 문구와 언어
 
-`closeButtonLabel`로 스크린리더가 읽는 닫기 버튼 이름을 지정할 수 있습니다. 기본값은 `닫기`이며, 앱 언어에 맞는 비어 있지 않은 문구를 사용하세요. 화면의 × 표시는 유지됩니다.
+`toastLabels`는 한국어(`ko`)와 영어(`en`) 프리셋을 제공합니다. 기본값은 한국어이며 언어를 자동으로 감지하지 않습니다. 아래 import 경로는 저장소의 `src/demo` 기준입니다.
 
 ```tsx
-<Toaster closeButtonLabel="알림 닫기" />
+import { Toaster, toastLabels } from '../lib';
+
+<Toaster {...toastLabels.en} />
+```
+
+프리셋 하나를 전달하면 닫기 버튼 이름과 키보드 안내 문구가 함께 적용됩니다. 위 예시는 두 문구를 모두 영어로 설정합니다. 한국어는 기본값이므로 `<Toaster />`만 사용해도 됩니다.
+
+- `closeButtonLabel`: 스크린 리더가 읽는 닫기 버튼 이름입니다. 화면의 × 표시는 유지됩니다.
+- `reorderHint`: 메시지 버튼에 키보드 포커스가 있을 때 표시하는 안내이며, 스크린 리더의 버튼 설명에도 사용합니다.
+
+개별 속성으로 문구를 덮어쓸 수 있습니다. 앱 언어에 맞는 비어 있지 않은 문구를 사용하세요. 토스트 본문은 `toast` 호출 시 전달한 문구를 그대로 사용합니다.
+
+다른 언어는 라이브러리 소스를 수정하지 않고, 앱의 라벨 파일에 객체를 추가해 전달하세요. 기존 프리셋과 함께 관리할 수도 있습니다.
+
+```tsx
+const appToastLabels = {
+  ...toastLabels,
+  ja: {
+    closeButtonLabel: '閉じる',
+    reorderHint: 'Enter/Space キーで最前面に移動',
+  },
+};
+
+<Toaster {...appToastLabels.ja} />
 ```
 
 ## 표시 시간

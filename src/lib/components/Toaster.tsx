@@ -1,4 +1,5 @@
 import { useState, type CSSProperties } from 'react'
+import { toastLabels } from '../labels'
 import { removeToast } from '../store'
 import { useToastStack } from '../hooks/useToastStack'
 import { useToastFocus } from '../hooks/useToastFocus'
@@ -12,7 +13,7 @@ const DEFAULT_POSITION: ToasterPosition = 'top-center'
 const DEFAULT_SCALE = 1
 
 const RESTING_GAP = 40
-export function Toaster({ position = DEFAULT_POSITION, scale = DEFAULT_SCALE, closeButtonLabel = '닫기' }: ToasterProps) {
+export function Toaster({ position = DEFAULT_POSITION, scale = DEFAULT_SCALE, closeButtonLabel = toastLabels.ko.closeButtonLabel, reorderHint = toastLabels.ko.reorderHint }: ToasterProps) {
   useInjectedStyle(STYLE_KEY, STYLE_CSS)
 
   const { toasts, rankOf, hoveredId, hoveredRank, isSettling, setHoveredId, bringToFront } = useToastStack()
@@ -44,6 +45,7 @@ export function Toaster({ position = DEFAULT_POSITION, scale = DEFAULT_SCALE, cl
             onClick={() => bringToFront(id)}
             onDismiss={() => removeToast(id)}
             closeButtonLabel={closeButtonLabel}
+            reorderHint={reorderHint}
             dismissRequested={t.dismissRequested}
             duration={t.duration}
             isPaused={hoveredId === id}
