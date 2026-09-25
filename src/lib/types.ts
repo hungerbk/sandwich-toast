@@ -26,6 +26,7 @@ export type ToasterPosition = 'top-left' | 'top-center' | 'top-right' | 'bottom-
 
 export interface ToasterProps {
   closeButtonLabel?: string
+  reorderHint?: string
   position?: ToasterPosition
   scale?: number
 }

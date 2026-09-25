@@ -90,12 +90,35 @@ toast.cheese("With ketchup!", { ketchup: true });
 <Toaster position="bottom-right" scale={0.8} />
 ```
 
-## Close button language
+## Labels and language
 
-Set `closeButtonLabel` to customize the close button’s accessible name. It defaults to `닫기` (Korean for “Close”). Use a non-empty label in your app’s language. The visible × remains unchanged.
+`toastLabels` provides Korean (`ko`) and English (`en`) presets. Korean is the default; language is not detected automatically. The import path below is relative to this repository's `src/demo` directory.
 
 ```tsx
-<Toaster closeButtonLabel="Close notification" />
+import { Toaster, toastLabels } from '../lib';
+
+<Toaster {...toastLabels.en} />
+```
+
+A single preset sets both the close button label and the keyboard hint. The example above sets both to English. Use `<Toaster />` for the Korean defaults.
+
+- `closeButtonLabel`: the close button's accessible name. The visible × remains unchanged.
+- `reorderHint`: the hint shown when the message button has keyboard focus, also used as its screen reader description.
+
+Override either prop to customize the wording. Use non-empty labels in your app's language. Toast messages use the text supplied to the `toast` call without translation.
+
+For other languages, add a label object in your app and pass it to `Toaster`; no library source changes are needed. You can keep custom languages alongside the built-in presets.
+
+```tsx
+const appToastLabels = {
+  ...toastLabels,
+  ja: {
+    closeButtonLabel: '閉じる',
+    reorderHint: 'Enter/Space キーで最前面に移動',
+  },
+};
+
+<Toaster {...appToastLabels.ja} />
 ```
 
 ## Duration

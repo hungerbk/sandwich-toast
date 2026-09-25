@@ -1,4 +1,5 @@
 import { useEffect, useId, useRef, useState, type CSSProperties, type MouseEventHandler } from "react";
+import { toastLabels } from "../labels";
 import { useToastTimer } from "../hooks/useToastTimer";
 import type { ToastIngredient } from "../types";
 import { bitePolygon, NO_BITES, DISMISS_ANIMATION_MS } from "../dismissBite";
@@ -18,6 +19,7 @@ export interface ToastItemProps {
   onDismiss?: () => void;
   onFocusWithinChange?: (focused: boolean) => void;
   closeButtonLabel?: string;
+  reorderHint?: string;
   dismissRequested?: boolean;
   duration?: number;
   isPaused?: boolean;
@@ -25,7 +27,7 @@ export interface ToastItemProps {
   style?: CSSProperties;
 }
 
-export function ToastItem({ message, ingredient, isLoading = false, ketchup = false, liftOffset = 0, onMouseEnter, onMouseLeave, onClick, onDismiss, onFocusWithinChange, closeButtonLabel = "닫기", dismissRequested = false, duration, isPaused = false, className, style }: ToastItemProps) {
+export function ToastItem({ message, ingredient, isLoading = false, ketchup = false, liftOffset = 0, onMouseEnter, onMouseLeave, onClick, onDismiss, onFocusWithinChange, closeButtonLabel = toastLabels.ko.closeButtonLabel, reorderHint = toastLabels.ko.reorderHint, dismissRequested = false, duration, isPaused = false, className, style }: ToastItemProps) {
   useInjectedStyle(STYLE_KEY, STYLE_CSS);
 
   const [isDismissing, setIsDismissing] = useState(false);
@@ -120,7 +122,7 @@ export function ToastItem({ message, ingredient, isLoading = false, ketchup = fa
             <button type="button" aria-describedby={keyboardHintId} className="sandwich-toast-message-text sandwich-toast-message-button">
               {message}
             </button>
-            <span id={keyboardHintId} className="sandwich-toast-keyboard-hint">Enter/Space 키로 맨 앞으로 이동</span>
+            <span id={keyboardHintId} className="sandwich-toast-keyboard-hint">{reorderHint}</span>
           </span>
         ) : (
           <span className="sandwich-toast-message-text">{message}</span>
