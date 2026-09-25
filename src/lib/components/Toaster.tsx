@@ -4,6 +4,7 @@ import { removeToast } from '../store'
 import { useToastStack } from '../hooks/useToastStack'
 import { useToastFocus } from '../hooks/useToastFocus'
 import { ToastItem } from './ToastItem'
+import { ToastAnnouncements } from './ToastAnnouncements'
 import { useInjectedStyle } from '../injectStyle'
 import { SCALE_VAR } from '../scale'
 import { STYLE_KEY, STYLE_CSS, EXTRA_LIFT } from './Toaster.styles'
@@ -27,6 +28,7 @@ export function Toaster({ position = DEFAULT_POSITION, scale = DEFAULT_SCALE, cl
 
   return (
     <div ref={containerRef} onFocusCapture={onFocusCapture} onBlurCapture={onBlurCapture} className={containerClassName} style={{ [SCALE_VAR]: scale } as CSSProperties}>
+      <ToastAnnouncements toasts={toasts} />
       {toasts.map((t) => {
         const id = t.id
         const rank = rankOf.get(id) ?? 0
