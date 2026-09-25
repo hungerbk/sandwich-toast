@@ -154,6 +154,12 @@ async function saveWithToast(saveData: () => Promise<void>) {
 
 There is no display limit or waiting queue. All active toasts are rendered. Toasts with `duration: Infinity` must be dismissed manually.
 
+## Screen reader announcements
+
+New toast messages are announced without moving focus. `error` uses an assertive `alert`; `success`, `info`, `warning`, and `loading` use a polite `status`. Removal and visual reordering do not trigger automatic announcements. Focusing a message button with the keyboard lets users read it again.
+
+Rapid consecutive announcements may be skipped or interrupted depending on the browser and screen reader. This behavior was observed with VoiceOver; improvements are tracked separately. Sequential reading of every message is not guaranteed.
+
 ## Reduced motion
 
 The library respects `prefers-reduced-motion: reduce`. Ketchup remains static, and hover enlargement and position transitions are disabled. If reduced motion is enabled when dismissal starts, the toast is removed without the bite animation. Duration and pause behavior are unchanged.
