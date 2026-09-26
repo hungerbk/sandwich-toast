@@ -1,7 +1,8 @@
-import { useState, type CSSProperties, type KeyboardEventHandler } from 'react'
+import { useState, type CSSProperties } from 'react'
 import { toastLabels } from '../labels'
 import { removeToast } from '../store'
 import { useToastStack } from '../hooks/useToastStack'
+import { useToastKeyboardNavigation } from '../hooks/useToastKeyboardNavigation'
 import { useToastFocus } from '../hooks/useToastFocus'
 import { ToastItem } from './ToastItem'
 import { ToastAnnouncements } from './ToastAnnouncements'
@@ -17,8 +18,9 @@ const RESTING_GAP = 40
 export function Toaster({ position = DEFAULT_POSITION, scale = DEFAULT_SCALE, closeButtonLabel = toastLabels.ko.closeButtonLabel, reorderHint = toastLabels.ko.reorderHint }: ToasterProps) {
   useInjectedStyle(STYLE_KEY, STYLE_CSS)
 
-  const { toasts, rankOf, hoveredId, hoveredRank, isSettling, setHoveredId, bringToFront } = useToastStack()
+  const { toasts, visualOrder, rankOf, hoveredId, hoveredRank, isSettling, setHoveredId, bringToFront } = useToastStack()
   const { containerRef, onFocusCapture, onBlurCapture } = useToastFocus()
+  const { handleKeyDown } = useToastKeyboardNavigation(toasts, visualOrder)
   const [focusedId, setFocusedId] = useState<string | null>(null)
   const focusedRank = focusedId === null ? -1 : (rankOf.get(focusedId) ?? -1)
   const expandedRank = focusedRank >= 0 ? focusedRank : hoveredRank
@@ -26,36 +28,6 @@ export function Toaster({ position = DEFAULT_POSITION, scale = DEFAULT_SCALE, cl
   const horizontal = position.endsWith('left') ? 'left' : position.endsWith('right') ? 'right' : 'center'
   const containerClassName = ['sandwich-toaster', isBottom ? 'sandwich-toaster--bottom' : 'sandwich-toaster--top', `sandwich-toaster--${horizontal}`].join(' ')
 
-  const handleKeyDown: KeyboardEventHandler<HTMLDivElement> = (event) => {
-    if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey || event.shiftKey || event.nativeEvent.isComposing) return
-    if (!['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(event.key)) return
-    if (!(event.target instanceof HTMLButtonElement) || !event.target.matches('.sandwich-toast-message-button, .sandwich-toast-dismiss-button')) return
-
-    const currentCard = event.target.closest<HTMLElement>('[data-toast-id]')
-    if (!currentCard) return
-    if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
-      event.preventDefault()
-      const toast = toasts.find((toast) => toast.id === currentCard.dataset.toastId)
-      if (!toast || toast.dismissRequested || currentCard.classList.contains('sandwich-toast-item--dismissing')) return
-      const selector = event.key === 'ArrowRight' ? '.sandwich-toast-dismiss-button:not(:disabled)' : '.sandwich-toast-message-button:not(:disabled)'
-      currentCard.querySelector<HTMLButtonElement>(selector)?.focus({ preventScroll: true })
-      return
-    }
-    const orderedToasts = [...toasts].sort((a, b) => (rankOf.get(a.id) ?? 0) - (rankOf.get(b.id) ?? 0))
-    const currentIndex = orderedToasts.findIndex((toast) => toast.id === currentCard?.dataset.toastId)
-    if (currentIndex < 0) return
-    event.preventDefault()
-    const cards = new Map(Array.from(event.currentTarget.querySelectorAll<HTMLElement>('[data-toast-id]')).map((card) => [card.dataset.toastId, card]))
-    const direction = event.key === 'ArrowDown' ? 1 : -1
-    for (let index = currentIndex + direction; index >= 0 && index < orderedToasts.length; index += direction) {
-      const toast = orderedToasts[index]
-      const card = cards.get(toast.id)
-      if (toast.dismissRequested || !card || card.classList.contains('sandwich-toast-item--dismissing')) continue
-      const button = card.querySelector<HTMLButtonElement>('.sandwich-toast-message-button:not(:disabled)')
-      button?.focus({ preventScroll: true })
-      if (button && document.activeElement === button) return
-    }
-  }
 
   return (
     <div onKeyDown={handleKeyDown} ref={containerRef} onFocusCapture={onFocusCapture} onBlurCapture={onBlurCapture} className={containerClassName} style={{ [SCALE_VAR]: scale } as CSSProperties}>
