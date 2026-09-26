@@ -28,10 +28,19 @@ export function Toaster({ position = DEFAULT_POSITION, scale = DEFAULT_SCALE, cl
 
   const handleKeyDown: KeyboardEventHandler<HTMLDivElement> = (event) => {
     if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey || event.shiftKey || event.nativeEvent.isComposing) return
-    if (event.key !== 'ArrowUp' && event.key !== 'ArrowDown') return
+    if (!['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(event.key)) return
     if (!(event.target instanceof HTMLButtonElement) || !event.target.matches('.sandwich-toast-message-button, .sandwich-toast-dismiss-button')) return
 
     const currentCard = event.target.closest<HTMLElement>('[data-toast-id]')
+    if (!currentCard) return
+    if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+      event.preventDefault()
+      const toast = toasts.find((toast) => toast.id === currentCard.dataset.toastId)
+      if (!toast || toast.dismissRequested || currentCard.classList.contains('sandwich-toast-item--dismissing')) return
+      const selector = event.key === 'ArrowRight' ? '.sandwich-toast-dismiss-button:not(:disabled)' : '.sandwich-toast-message-button:not(:disabled)'
+      currentCard.querySelector<HTMLButtonElement>(selector)?.focus({ preventScroll: true })
+      return
+    }
     const orderedToasts = [...toasts].sort((a, b) => (rankOf.get(a.id) ?? 0) - (rankOf.get(b.id) ?? 0))
     const currentIndex = orderedToasts.findIndex((toast) => toast.id === currentCard?.dataset.toastId)
     if (currentIndex < 0) return
