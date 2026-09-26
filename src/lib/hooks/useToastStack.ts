@@ -49,5 +49,5 @@ export function useToastStack() {
     }, SETTLE_MS)
   }
 
-  return { toasts, rankOf, hoveredId, hoveredRank, isSettling, setHoveredId, bringToFront }
+  return { toasts, visualOrder, rankOf, hoveredId, hoveredRank, isSettling, setHoveredId, bringToFront }
 }

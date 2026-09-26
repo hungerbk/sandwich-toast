@@ -8,6 +8,7 @@ import { useInjectedStyle } from "../injectStyle";
 import { LIFT_VAR, INGREDIENT_CLIP_CLASS, INGREDIENT_MESSAGE_CLASS, STYLE_KEY, STYLE_CSS } from "./ToastItem.styles";
 
 export interface ToastItemProps {
+  toastId?: string;
   message: string;
   ingredient: ToastIngredient;
   isLoading?: boolean;
@@ -27,7 +28,7 @@ export interface ToastItemProps {
   style?: CSSProperties;
 }
 
-export function ToastItem({ message, ingredient, isLoading = false, ketchup = false, liftOffset = 0, onMouseEnter, onMouseLeave, onClick, onDismiss, onFocusWithinChange, closeButtonLabel = toastLabels.ko.closeButtonLabel, reorderHint = toastLabels.ko.reorderHint, dismissRequested = false, duration, isPaused = false, className, style }: ToastItemProps) {
+export function ToastItem({ toastId, message, ingredient, isLoading = false, ketchup = false, liftOffset = 0, onMouseEnter, onMouseLeave, onClick, onDismiss, onFocusWithinChange, closeButtonLabel = toastLabels.ko.closeButtonLabel, reorderHint = toastLabels.ko.reorderHint, dismissRequested = false, duration, isPaused = false, className, style }: ToastItemProps) {
   useInjectedStyle(STYLE_KEY, STYLE_CSS);
 
   const [isDismissing, setIsDismissing] = useState(false);
@@ -99,6 +100,7 @@ export function ToastItem({ message, ingredient, isLoading = false, ketchup = fa
   return (
     <div
       ref={rootRef}
+      data-toast-id={toastId}
       className={rootClassName}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}

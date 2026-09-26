@@ -2,6 +2,7 @@ import { useState, type CSSProperties } from 'react'
 import { toastLabels } from '../labels'
 import { removeToast } from '../store'
 import { useToastStack } from '../hooks/useToastStack'
+import { useToastKeyboardNavigation } from '../hooks/useToastKeyboardNavigation'
 import { useToastFocus } from '../hooks/useToastFocus'
 import { ToastItem } from './ToastItem'
 import { ToastAnnouncements } from './ToastAnnouncements'
@@ -17,8 +18,9 @@ const RESTING_GAP = 40
 export function Toaster({ position = DEFAULT_POSITION, scale = DEFAULT_SCALE, closeButtonLabel = toastLabels.ko.closeButtonLabel, reorderHint = toastLabels.ko.reorderHint }: ToasterProps) {
   useInjectedStyle(STYLE_KEY, STYLE_CSS)
 
-  const { toasts, rankOf, hoveredId, hoveredRank, isSettling, setHoveredId, bringToFront } = useToastStack()
+  const { toasts, visualOrder, rankOf, hoveredId, hoveredRank, isSettling, setHoveredId, bringToFront } = useToastStack()
   const { containerRef, onFocusCapture, onBlurCapture } = useToastFocus()
+  const { handleKeyDown } = useToastKeyboardNavigation(toasts, visualOrder)
   const [focusedId, setFocusedId] = useState<string | null>(null)
   const focusedRank = focusedId === null ? -1 : (rankOf.get(focusedId) ?? -1)
   const expandedRank = focusedRank >= 0 ? focusedRank : hoveredRank
@@ -26,8 +28,9 @@ export function Toaster({ position = DEFAULT_POSITION, scale = DEFAULT_SCALE, cl
   const horizontal = position.endsWith('left') ? 'left' : position.endsWith('right') ? 'right' : 'center'
   const containerClassName = ['sandwich-toaster', isBottom ? 'sandwich-toaster--bottom' : 'sandwich-toaster--top', `sandwich-toaster--${horizontal}`].join(' ')
 
+
   return (
-    <div ref={containerRef} onFocusCapture={onFocusCapture} onBlurCapture={onBlurCapture} className={containerClassName} style={{ [SCALE_VAR]: scale } as CSSProperties}>
+    <div onKeyDown={handleKeyDown} ref={containerRef} onFocusCapture={onFocusCapture} onBlurCapture={onBlurCapture} className={containerClassName} style={{ [SCALE_VAR]: scale } as CSSProperties}>
       <ToastAnnouncements toasts={toasts} />
       {toasts.map((t) => {
         const id = t.id
@@ -37,6 +40,7 @@ export function Toaster({ position = DEFAULT_POSITION, scale = DEFAULT_SCALE, cl
         return (
           <ToastItem
             key={id}
+            toastId={id}
             ingredient={t.ingredient}
             isLoading={t.type === 'loading'}
             ketchup={t.ketchup}

@@ -154,6 +154,14 @@ async function saveWithToast(saveData: () => Promise<void>) {
 
 There is no display limit or waiting queue. All active toasts are rendered. Toasts with `duration: Infinity` must be dismissed manually.
 
+## Keyboard navigation
+
+Use Tab/Shift+Tab to navigate message and close buttons. From either button, Up/Down moves to the previous/next card's message button in visual stack order. The direction is the same for top and bottom placement; reordering updates navigation order. Navigation stops at either end and skips dismissing cards.
+
+Within a card, Right moves to the close button and Left moves to the message button. If that button already has focus, focus stays there; horizontal navigation never moves to another card.
+
+Press Enter/Space on a message button to bring its toast to the front. Focus expands the card and pauses automatic dismissal. Arrow keys with modifiers are left untouched. If a screen reader uses arrow keys for its own navigation, it must pass the keys through to the page for this feature to work.
+
 ## Screen reader announcements
 
 New toast messages are announced without moving focus. `error` uses an assertive `alert`; `success`, `info`, `warning`, and `loading` use a polite `status`. Removal and visual reordering do not trigger automatic announcements. Focusing a message button with the keyboard lets users read it again.
