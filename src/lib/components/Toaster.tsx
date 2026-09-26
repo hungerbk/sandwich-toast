@@ -1,4 +1,4 @@
-import { useState, type CSSProperties } from 'react'
+import { useState, type CSSProperties, type KeyboardEventHandler } from 'react'
 import { toastLabels } from '../labels'
 import { removeToast } from '../store'
 import { useToastStack } from '../hooks/useToastStack'
@@ -26,8 +26,30 @@ export function Toaster({ position = DEFAULT_POSITION, scale = DEFAULT_SCALE, cl
   const horizontal = position.endsWith('left') ? 'left' : position.endsWith('right') ? 'right' : 'center'
   const containerClassName = ['sandwich-toaster', isBottom ? 'sandwich-toaster--bottom' : 'sandwich-toaster--top', `sandwich-toaster--${horizontal}`].join(' ')
 
+  const handleKeyDown: KeyboardEventHandler<HTMLDivElement> = (event) => {
+    if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey || event.shiftKey || event.nativeEvent.isComposing) return
+    if (event.key !== 'ArrowUp' && event.key !== 'ArrowDown') return
+    if (!(event.target instanceof HTMLButtonElement) || !event.target.matches('.sandwich-toast-message-button, .sandwich-toast-dismiss-button')) return
+
+    const currentCard = event.target.closest<HTMLElement>('[data-toast-id]')
+    const orderedToasts = [...toasts].sort((a, b) => (rankOf.get(a.id) ?? 0) - (rankOf.get(b.id) ?? 0))
+    const currentIndex = orderedToasts.findIndex((toast) => toast.id === currentCard?.dataset.toastId)
+    if (currentIndex < 0) return
+    event.preventDefault()
+    const cards = new Map(Array.from(event.currentTarget.querySelectorAll<HTMLElement>('[data-toast-id]')).map((card) => [card.dataset.toastId, card]))
+    const direction = event.key === 'ArrowDown' ? 1 : -1
+    for (let index = currentIndex + direction; index >= 0 && index < orderedToasts.length; index += direction) {
+      const toast = orderedToasts[index]
+      const card = cards.get(toast.id)
+      if (toast.dismissRequested || !card || card.classList.contains('sandwich-toast-item--dismissing')) continue
+      const button = card.querySelector<HTMLButtonElement>('.sandwich-toast-message-button:not(:disabled)')
+      button?.focus({ preventScroll: true })
+      if (button && document.activeElement === button) return
+    }
+  }
+
   return (
-    <div ref={containerRef} onFocusCapture={onFocusCapture} onBlurCapture={onBlurCapture} className={containerClassName} style={{ [SCALE_VAR]: scale } as CSSProperties}>
+    <div onKeyDown={handleKeyDown} ref={containerRef} onFocusCapture={onFocusCapture} onBlurCapture={onBlurCapture} className={containerClassName} style={{ [SCALE_VAR]: scale } as CSSProperties}>
       <ToastAnnouncements toasts={toasts} />
       {toasts.map((t) => {
         const id = t.id
@@ -37,6 +59,7 @@ export function Toaster({ position = DEFAULT_POSITION, scale = DEFAULT_SCALE, cl
         return (
           <ToastItem
             key={id}
+            toastId={id}
             ingredient={t.ingredient}
             isLoading={t.type === 'loading'}
             ketchup={t.ketchup}
