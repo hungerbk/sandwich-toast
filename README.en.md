@@ -79,6 +79,14 @@ toast.bread("Getting ready…", { type: "loading" });
 toast.cheese("With ketchup!", { ketchup: true });
 ```
 
+## Writing messages
+
+Toasts are intended for short notifications. Messages display up to two lines, with overflowing text truncated by an ellipsis. Font size is inherited from the app, so the amount of visible text depends on the font, font size, and scale.
+
+A Korean message checked in the demo displayed approximately 34 characters, including spaces and punctuation. For Korean notifications, aim for **around 30 characters** as a starting point and verify in your app. This is a guideline, not a character limit or a guaranteed fit; English and other languages have different visible lengths.
+
+Put the key result or required action first, and make details available elsewhere in your app. Expanding truncated messages visually is not currently supported.
+
 ## Position and scale
 
 `position` defaults to `top-center`, and `scale` defaults to `1`.
