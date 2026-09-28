@@ -92,6 +92,10 @@ export const STYLE_CSS = `
   padding: ${scaled(4)} ${scaled(10)};
   box-sizing: border-box;
 
+  display: block;
+}
+
+.sandwich-toast-message-content {
   display: -webkit-box;
   -webkit-line-clamp: ${MAX_MESSAGE_LINES};
   -webkit-box-orient: vertical;

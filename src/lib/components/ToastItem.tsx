@@ -122,12 +122,12 @@ export function ToastItem({ toastId, message, ingredient, isLoading = false, ket
         {onClick ? (
           <span className="sandwich-toast-message-action">
             <button type="button" aria-describedby={keyboardHintId} className="sandwich-toast-message-text sandwich-toast-message-button">
-              {message}
+              <span className="sandwich-toast-message-content">{message}</span>
             </button>
             <span id={keyboardHintId} className="sandwich-toast-keyboard-hint">{reorderHint}</span>
           </span>
         ) : (
-          <span className="sandwich-toast-message-text">{message}</span>
+          <span className="sandwich-toast-message-text"><span className="sandwich-toast-message-content">{message}</span></span>
         )}
       </p>
 
