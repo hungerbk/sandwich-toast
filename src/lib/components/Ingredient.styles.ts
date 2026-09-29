@@ -1,5 +1,5 @@
 import type { ToastIngredient } from "../types";
-import { scaled } from "../scale";
+import { SCALE_VAR, scaled } from "../scale";
 const TARGET_ROW_HEIGHT = 110;
 export const INGREDIENT_CONTAINER_CLASS: Record<ToastIngredient, string> = {
   lettuce: "sandwich-toast-ingredient--lettuce",
@@ -15,6 +15,10 @@ export const STYLE_CSS = `
   width: 100%;
 
   position: relative;
+}
+
+.sandwich-toast-ingredient--scrambled {
+  transform: scale(clamp(0.96, calc(1.08 - var(${SCALE_VAR}, 1) * 0.08), 1));
 }
 
 .sandwich-toast-ingredient-tiles {
