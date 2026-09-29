@@ -92,6 +92,8 @@ toast.cheese("케첩도 추가했어요.", { ketchup: true });
 
 `position`의 기본값은 `top-center`, `scale`의 기본값은 `1`입니다.
 
+`scale`의 범위는 `0.5~1.5`입니다. 유한한 양수가 범위를 벗어나면 가장 가까운 경계값으로 보정합니다(예: `0.2` → `0.5`, `2` → `1.5`). `0`, 음수, `NaN`, `Infinity` 등 유효하지 않은 값은 기본값 `1`로 처리합니다. 범위 안에서도 글꼴이나 화면 크기에 따라 가독성과 배치를 확인해주세요.
+
 - `top-left`, `top-center`, `top-right`
 - `bottom-left`, `bottom-center`, `bottom-right`
 

@@ -91,6 +91,8 @@ Put the key result or required action first, and make details available elsewher
 
 `position` defaults to `top-center`, and `scale` defaults to `1`.
 
+`scale` ranges from `0.5` to `1.5`. Finite positive values outside this range are clamped to the nearest bound (for example, `0.2` → `0.5`, `2` → `1.5`). Invalid values such as `0`, negative numbers, `NaN`, and `Infinity` fall back to `1`. Check readability and layout with your app’s font and viewport even within this range.
+
 - `top-left`, `top-center`, `top-right`
 - `bottom-left`, `bottom-center`, `bottom-right`
 
