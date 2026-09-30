@@ -31,6 +31,9 @@ export const STYLE_CSS = `
 
   transition: transform ${TOAST_ITEM_TRANSITION_MS}ms ease-in-out, top ${TOAST_ITEM_TRANSITION_MS}ms ease-in-out, bottom ${TOAST_ITEM_TRANSITION_MS}ms ease-in-out;
 }
+.sandwich-toast-surface {
+  position: relative;
+}
 .sandwich-toast-item:hover,
 .sandwich-toast-item:focus-within {
   transform: translateY(var(${LIFT_VAR}, 0px)) scale(1.12);
@@ -92,6 +95,10 @@ export const STYLE_CSS = `
   padding: ${scaled(4)} ${scaled(10)};
   box-sizing: border-box;
 
+  display: block;
+}
+
+.sandwich-toast-message-content {
   display: -webkit-box;
   -webkit-line-clamp: ${MAX_MESSAGE_LINES};
   -webkit-box-orient: vertical;
@@ -108,26 +115,26 @@ export const STYLE_CSS = `
 .sandwich-toast-keyboard-hint {
   display: none;
   position: absolute;
-  top: calc(100% + ${scaled(2)});
+  top: calc(100% + 2px);
   left: calc(50% + (var(--message-padding-right) - var(--message-padding-left)) / 2);
   transform: translateX(-50%);
   z-index: 6;
   width: max-content;
-  max-width: 100%;
-  min-height: ${scaled(20)};
+  min-height: 16px;
   align-items: center;
   justify-content: center;
   text-align: center;
   box-sizing: border-box;
-  padding: ${scaled(2)} ${scaled(6)};
+  padding: 2px 6px;
   border-radius: ${scaled(4)};
   background: #fff;
   color: #1a1a1a;
-  font-size: ${scaled(11)};
+  font-size: 0.6875rem;
+  white-space: nowrap;
   line-height: 1.3;
   pointer-events: none;
 }
-.sandwich-toast-message-button:focus-visible + .sandwich-toast-keyboard-hint {
+.sandwich-toast-item:not(.sandwich-toast-item--dismissing) .sandwich-toast-message-button:focus-visible + .sandwich-toast-keyboard-hint {
   display: flex;
 }
 .sandwich-toast-message-button {

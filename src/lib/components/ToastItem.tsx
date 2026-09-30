@@ -92,7 +92,7 @@ export function ToastItem({ toastId, message, ingredient, isLoading = false, ket
     onClick?.(e);
   };
 
-  const rootClassName = ["sandwich-toast-item", onClick && "sandwich-toast-item--clickable", isDismissing && "sandwich-toast-item--dismissing", INGREDIENT_CLIP_CLASS[ingredient], className]
+  const rootClassName = ["sandwich-toast-item", onClick && "sandwich-toast-item--clickable", isDismissing && "sandwich-toast-item--dismissing", className]
     .filter(Boolean)
     .join(" ");
   const messageClassName = ["sandwich-toast-message", INGREDIENT_MESSAGE_CLASS[ingredient]].filter(Boolean).join(" ");
@@ -116,18 +116,20 @@ export function ToastItem({ toastId, message, ingredient, isLoading = false, ket
         onFocusWithinChange?.(false);
       }}
       style={{ [LIFT_VAR]: `${liftOffset}px`, ...style } as CSSProperties}>
-      <Ingredient ingredient={ingredient} isLoading={isLoading} ketchup={ketchup} />
+      <div className={["sandwich-toast-surface", INGREDIENT_CLIP_CLASS[ingredient]].filter(Boolean).join(" ")}>
+        <Ingredient ingredient={ingredient} isLoading={isLoading} ketchup={ketchup} />
+      </div>
 
       <p className={messageClassName}>
         {onClick ? (
           <span className="sandwich-toast-message-action">
             <button type="button" aria-describedby={keyboardHintId} className="sandwich-toast-message-text sandwich-toast-message-button">
-              {message}
+              <span className="sandwich-toast-message-content">{message}</span>
             </button>
             <span id={keyboardHintId} className="sandwich-toast-keyboard-hint">{reorderHint}</span>
           </span>
         ) : (
-          <span className="sandwich-toast-message-text">{message}</span>
+          <span className="sandwich-toast-message-text"><span className="sandwich-toast-message-content">{message}</span></span>
         )}
       </p>
 

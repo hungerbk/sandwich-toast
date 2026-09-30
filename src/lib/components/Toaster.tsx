@@ -13,10 +13,15 @@ import type { ToasterPosition, ToasterProps } from '../types'
 
 const DEFAULT_POSITION: ToasterPosition = 'top-center'
 const DEFAULT_SCALE = 1
+const MIN_SCALE = 0.5
+const MAX_SCALE = 1.5
 
 const RESTING_GAP = 40
 export function Toaster({ position = DEFAULT_POSITION, scale = DEFAULT_SCALE, closeButtonLabel = toastLabels.ko.closeButtonLabel, reorderHint = toastLabels.ko.reorderHint }: ToasterProps) {
   useInjectedStyle(STYLE_KEY, STYLE_CSS)
+  const resolvedScale = Number.isFinite(scale) && scale > 0
+    ? Math.min(MAX_SCALE, Math.max(MIN_SCALE, scale))
+    : DEFAULT_SCALE
 
   const { toasts, visualOrder, rankOf, hoveredId, hoveredRank, isSettling, setHoveredId, bringToFront } = useToastStack()
   const { containerRef, onFocusCapture, onBlurCapture } = useToastFocus()
@@ -30,7 +35,7 @@ export function Toaster({ position = DEFAULT_POSITION, scale = DEFAULT_SCALE, cl
 
 
   return (
-    <div onKeyDown={handleKeyDown} ref={containerRef} onFocusCapture={onFocusCapture} onBlurCapture={onBlurCapture} className={containerClassName} style={{ [SCALE_VAR]: scale } as CSSProperties}>
+    <div onKeyDown={handleKeyDown} ref={containerRef} onFocusCapture={onFocusCapture} onBlurCapture={onBlurCapture} className={containerClassName} style={{ [SCALE_VAR]: resolvedScale } as CSSProperties}>
       <ToastAnnouncements toasts={toasts} />
       {toasts.map((t) => {
         const id = t.id
@@ -55,10 +60,10 @@ export function Toaster({ position = DEFAULT_POSITION, scale = DEFAULT_SCALE, cl
             dismissRequested={t.dismissRequested}
             duration={t.duration}
             isPaused={hoveredId === id}
-            liftOffset={isExpanded ? (isBottom ? -EXTRA_LIFT : EXTRA_LIFT) * scale : 0}
+            liftOffset={isExpanded ? (isBottom ? -EXTRA_LIFT : EXTRA_LIFT) * resolvedScale : 0}
             style={
               {
-                [isBottom ? 'bottom' : 'top']: offsetRank * RESTING_GAP * scale,
+                [isBottom ? 'bottom' : 'top']: offsetRank * RESTING_GAP * resolvedScale,
                 zIndex: toasts.length - rank,
                 pointerEvents: isSettling ? 'none' : undefined,
               } as CSSProperties
