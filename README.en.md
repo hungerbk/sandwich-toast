@@ -49,6 +49,16 @@ export default function App() {
 }
 ```
 
+## Portal and style inheritance
+
+After mounting in the browser, `<Toaster />` renders through a Portal into `document.body`. No Provider or Portal container configuration is required. Server rendering and the initial client render produce no toast DOM.
+
+Toasts escape the `transform`, `overflow`, and stacking context of their JSX wrapper. Fonts, font sizes, and inheritable CSS custom properties follow the actual DOM parent, `body`. Define shared fonts and theme variables on `html` or `body`. Styles and theme classes scoped to `#root` or another container do not automatically carry over. Styles on `html` and `body` themselves can still affect toasts.
+
+React context and event propagation still follow the React tree. Toast clicks can reach ancestor click handlers, so placing `<Toaster />` at the top level of the app remains recommended. [React Portal documentation](https://react.dev/reference/react-dom/createPortal)
+
+Ordering relative to ordinary layers follows CSS stacking contexts and `z-index`. A native `<dialog>` opened with `showModal()` occupies the browser's top layer and makes the rest of the document inert. Displaying or interacting with body-level toasts above that modal is unsupported; show essential feedback inside the modal instead. Other modal libraries may also restrict toast interaction through focus traps or by making outside content inert. [MDN showModal documentation](https://developer.mozilla.org/en-US/docs/Web/API/HTMLDialogElement/showModal)
+
 ## Status and ingredient APIs
 
 Status methods use a default ingredient.
@@ -81,7 +91,7 @@ toast.cheese("With ketchup!", { ketchup: true });
 
 ## Writing messages
 
-Toasts are intended for short notifications. Messages display up to two lines, with overflowing text truncated by an ellipsis. Font size is inherited from the app, so the amount of visible text depends on the font, font size, and scale.
+Toasts are intended for short notifications. Messages display up to two lines, with overflowing text truncated by an ellipsis. Font size is inherited from `body`, so the amount of visible text depends on the font, font size, and scale.
 
 A Korean message checked in the demo displayed approximately 34 characters, including spaces and punctuation. For Korean notifications, aim for **around 30 characters** as a starting point and verify in your app. This is a guideline, not a character limit or a guaranteed fit; English and other languages have different visible lengths.
 

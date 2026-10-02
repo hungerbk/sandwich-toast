@@ -1,4 +1,5 @@
-import { useState, type CSSProperties } from 'react'
+import { useEffect, useState, type CSSProperties } from 'react'
+import { createPortal } from 'react-dom'
 import { toastLabels } from '../labels'
 import { removeToast } from '../store'
 import { useToastStack } from '../hooks/useToastStack'
@@ -17,7 +18,17 @@ const MIN_SCALE = 0.5
 const MAX_SCALE = 1.5
 
 const RESTING_GAP = 40
-export function Toaster({ position = DEFAULT_POSITION, scale = DEFAULT_SCALE, closeButtonLabel = toastLabels.ko.closeButtonLabel, reorderHint = toastLabels.ko.reorderHint }: ToasterProps) {
+export function Toaster(props: ToasterProps) {
+  const [portalTarget, setPortalTarget] = useState<HTMLElement | null>(null)
+
+  useEffect(() => {
+    setPortalTarget(document.body)
+  }, [])
+
+  return portalTarget ? createPortal(<ToasterContent {...props} />, portalTarget) : null
+}
+
+function ToasterContent({ position = DEFAULT_POSITION, scale = DEFAULT_SCALE, closeButtonLabel = toastLabels.ko.closeButtonLabel, reorderHint = toastLabels.ko.reorderHint }: ToasterProps) {
   useInjectedStyle(STYLE_KEY, STYLE_CSS)
   const resolvedScale = Number.isFinite(scale) && scale > 0
     ? Math.min(MAX_SCALE, Math.max(MIN_SCALE, scale))
