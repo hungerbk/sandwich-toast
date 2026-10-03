@@ -5,6 +5,7 @@ import { removeToast } from '../store'
 import { useToastStack } from '../hooks/useToastStack'
 import { useToastKeyboardNavigation } from '../hooks/useToastKeyboardNavigation'
 import { useToastFocus } from '../hooks/useToastFocus'
+import { useToasterMountWarning } from '../hooks/useToasterMountWarning'
 import { ToastItem } from './ToastItem'
 import { ToastAnnouncements } from './ToastAnnouncements'
 import { useInjectedStyle } from '../injectStyle'
@@ -19,6 +20,7 @@ const MAX_SCALE = 1.5
 
 const RESTING_GAP = 40
 export function Toaster(props: ToasterProps) {
+  useToasterMountWarning()
   const [portalTarget, setPortalTarget] = useState<HTMLElement | null>(null)
 
   useEffect(() => {

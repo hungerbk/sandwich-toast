@@ -30,7 +30,7 @@ npm run dev
 
 ## Basic usage
 
-Only one mounted `<Toaster />` per app is supported. Multiple components can call the same `toast` API. Each toast’s automatic dismissal timer is managed inside that Toaster. Duplicate Toasters are not blocked at runtime, but using multiple instances simultaneously is unsupported.
+Only one mounted `<Toaster />` per app is supported. Multiple components can call the same `toast` API. Each toast’s automatic dismissal timer is managed inside that Toaster. In development, a console warning is emitted when multiple Toasters from the same library module are mounted. Duplicate rendering is not blocked, and using multiple instances simultaneously is unsupported.
 
 Place one `<Toaster />` at the top level of your app and call `toast` from event handlers. This example uses the import path for `src/demo` in this repository.
 
