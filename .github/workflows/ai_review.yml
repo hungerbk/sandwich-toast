@@ -10,7 +10,7 @@ permissions:
 
 jobs:
   ai-review:
-    if: github.event.pull_request.draft == false
+    if: ${{ github.event.pull_request.draft == false && !contains(github.event.pull_request.body || '', '[skip-ai-review]') }}
     uses: hungerbk/my-github-actions/.github/workflows/ai-review.yml@main
     secrets:
       GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
