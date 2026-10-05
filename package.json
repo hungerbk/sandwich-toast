@@ -4,14 +4,14 @@
   "version": "0.0.0",
   "type": "module",
   "description": "A playful React toast library with layered sandwich-ingredient illustrations.",
-  "main": "./dist/sandwich-toast.cjs.js",
+  "main": "./dist/sandwich-toast.cjs",
   "module": "./dist/sandwich-toast.es.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/sandwich-toast.es.js",
-      "require": "./dist/sandwich-toast.cjs.js"
+      "require": "./dist/sandwich-toast.cjs"
     }
   },
   "files": [

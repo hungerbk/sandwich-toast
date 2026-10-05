@@ -69,7 +69,7 @@ const imageBytes = readdirSync(assets)
   .filter(name => name.endsWith('.webp'))
   .reduce((total, name) => total + statSync(assets + name).size, 0);
 console.log('WebP total:', imageBytes);
-for (const name of ['sandwich-toast.es.js', 'sandwich-toast.cjs.js']) {
+for (const name of ['sandwich-toast.es.js', 'sandwich-toast.cjs']) {
   const file = readFileSync('dist/' + name);
   console.log(name, { bytes: file.length, gzip: gzipSync(file).length });
 }
