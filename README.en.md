@@ -51,6 +51,8 @@ export default function App() {
 
 ## Portal and style inheritance
 
+On the server, toast creation methods return an empty string (`""`) without storing a notification or advancing the ID counter. `toast.dismiss()` also does nothing on the server. Server notifications are neither transferred to the browser nor shared across requests; create notifications in browser event handlers or effects.
+
 After mounting in the browser, `<Toaster />` renders through a Portal into `document.body`. No Provider or Portal container configuration is required. Server rendering and the initial client render produce no toast DOM.
 
 Toasts escape the `transform`, `overflow`, and stacking context of their JSX wrapper. Fonts, font sizes, and inheritable CSS custom properties follow the actual DOM parent, `body`. Define shared fonts and theme variables on `html` or `body`. Styles and theme classes scoped to `#root` or another container do not automatically carry over. Styles on `html` and `body` themselves can still affect toasts.
@@ -58,6 +60,58 @@ Toasts escape the `transform`, `overflow`, and stacking context of their JSX wra
 React context and event propagation still follow the React tree. Toast clicks can reach ancestor click handlers, so placing `<Toaster />` at the top level of the app remains recommended. [React Portal documentation](https://react.dev/reference/react-dom/createPortal)
 
 Ordering relative to ordinary layers follows CSS stacking contexts and `z-index`. A native `<dialog>` opened with `showModal()` occupies the browser's top layer and makes the rest of the document inert. Displaying or interacting with body-level toasts above that modal is unsupported; show essential feedback inside the modal instead. Other modal libraries may also restrict toast interaction through focus traps or by making outside content inert. [MDN showModal documentation](https://developer.mozilla.org/en-US/docs/Web/API/HTMLDialogElement/showModal)
+
+## SSR and React Server Components
+
+In regular React SSR, neither the server nor the initial hydration render emits toast DOM.
+The server snapshot is a stable empty array; server notifications are not restored on the client.
+After browser mounting, the Portal is created and styles are injected through `useInsertionEffect`.
+No server-side toast CSS extraction or style Provider is required.
+
+The package entry currently provides neither a `'use client'` directive nor a separate
+`react-server` entry. In RSC environments such as Next.js App Router, import the package
+inside a consumer-owned Client Component. Direct package imports to render Toaster or
+call `toast` from a Server Component are unsupported. The no-op server API behavior in
+regular SSR does not make direct RSC imports supported.
+
+The following boundary example assumes the package is installed, unlike the repository demo's relative imports.
+
+```tsx
+// app/toast-client.tsx
+'use client';
+
+import { Toaster } from 'sandwich-toast';
+
+export default function ToastClient() {
+  return <Toaster />;
+}
+```
+
+```tsx
+// app/layout.tsx
+import type { ReactNode } from 'react';
+import ToastClient from './toast-client';
+
+export default function RootLayout({ children }: { children: ReactNode }) {
+  return (
+    <html lang="en">
+      <body>
+        {children}
+        <ToastClient />
+      </body>
+    </html>
+  );
+}
+```
+
+The whole layout need not become a Client Component. Buttons that use `toast` should
+also import it inside a Client Component and call it from event handlers.
+To announce a Server Action result, call `toast` after receiving the result on the client.
+Do not call it during rendering.
+
+Regular React `renderToString`, `hydrateRoot`, and browser style application have been verified.
+This RSC example follows [Next.js guidance on Client Component boundaries](https://nextjs.org/docs/app/getting-started/server-and-client-components);
+actual Next.js App Router builds and execution have not yet been verified.
 
 ## Status and ingredient APIs
 
