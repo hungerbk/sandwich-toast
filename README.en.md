@@ -51,6 +51,8 @@ export default function App() {
 
 ## Portal and style inheritance
 
+On the server, toast creation methods return an empty string (`""`) without storing a notification or advancing the ID counter. `toast.dismiss()` also does nothing on the server. Server notifications are neither transferred to the browser nor shared across requests; create notifications in browser event handlers or effects.
+
 After mounting in the browser, `<Toaster />` renders through a Portal into `document.body`. No Provider or Portal container configuration is required. Server rendering and the initial client render produce no toast DOM.
 
 Toasts escape the `transform`, `overflow`, and stacking context of their JSX wrapper. Fonts, font sizes, and inheritable CSS custom properties follow the actual DOM parent, `body`. Define shared fonts and theme variables on `html` or `body`. Styles and theme classes scoped to `#root` or another container do not automatically carry over. Styles on `html` and `body` themselves can still affect toasts.

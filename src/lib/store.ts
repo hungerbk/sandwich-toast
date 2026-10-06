@@ -4,6 +4,7 @@ type Listener = () => void
 
 type StoredToast = Toast & { dismissRequested?: boolean }
 
+const serverSnapshot: StoredToast[] = []
 let toasts: StoredToast[] = []
 const listeners = new Set<Listener>()
 
@@ -27,6 +28,10 @@ export function subscribe(listener: Listener) {
 // 변경이 없으면 같은 배열 참조를 반환한다.
 export function getSnapshot(): StoredToast[] {
   return toasts
+}
+
+export function getServerSnapshot(): StoredToast[] {
+  return serverSnapshot
 }
 
 export function addToast(toast: Toast) {

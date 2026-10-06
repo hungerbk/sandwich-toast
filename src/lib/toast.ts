@@ -22,6 +22,7 @@ function resolveDuration(duration: number | undefined, type: ToastType): number 
 let toastIdCounter = 0;
 
 function createToast(message: string, defaultType: ToastType, userOptions?: ToastOptions): string {
+  if (typeof window === "undefined" || typeof document === "undefined") return "";
   const id = `toast-${toastIdCounter++}`;
   const type = userOptions?.type ?? defaultType;
   const finalToast: Toast = {
@@ -50,6 +51,7 @@ export const toast = {
   scrambled: (message: string, options?: IngredientToastOptions) => createToast(message, "loading", options),
   // 인자 생략은 전체 삭제, 명시적인 undefined는 아무것도 삭제하지 않는다.
   dismiss: (...args: [id?: string]) => {
+    if (typeof window === "undefined" || typeof document === "undefined") return;
     if (args.length === 0) {
       clearToasts();
       return;

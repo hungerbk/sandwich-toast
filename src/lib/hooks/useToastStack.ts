@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from 'react'
-import { subscribe, getSnapshot } from '../store'
+import { subscribe, getSnapshot, getServerSnapshot } from '../store'
 import { TOAST_ITEM_TRANSITION_MS } from '../components/ToastItem.styles'
 
 const SETTLE_MS = TOAST_ITEM_TRANSITION_MS + 20
 
 export function useToastStack() {
-  const toasts = useSyncExternalStore(subscribe, getSnapshot)
+  const toasts = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot)
   // DOM 순서는 스토어를 따르고, 화면에 쌓이는 순서만 별도로 관리한다.
   const [visualOrder, setVisualOrder] = useState<string[]>(() => toasts.map((t) => t.id).reverse())
   const settleTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
