@@ -62,6 +62,57 @@ React context와 이벤트 전파는 기존 React 트리를 따릅니다. 토스
 
 일반 레이어와의 표시 순서는 CSS stacking context와 `z-index`를 따릅니다. `showModal()`로 연 네이티브 `<dialog>`는 브라우저의 top layer에 표시되고 바깥 영역을 비활성화하므로, `body`의 토스트를 모달 위에 표시하거나 조작하는 것은 지원하지 않습니다. 모달 안에서 필요한 안내는 모달 내부에 표시하세요. 다른 모달 라이브러리도 포커스 제한이나 외부 영역 비활성화 정책에 따라 토스트 조작을 제한할 수 있습니다. [MDN showModal 문서](https://developer.mozilla.org/en-US/docs/Web/API/HTMLDialogElement/showModal)
 
+## SSR과 React Server Components
+
+일반 React SSR에서는 서버와 hydration 첫 렌더에 토스트 DOM을 출력하지 않습니다.
+서버 snapshot은 항상 같은 빈 배열이며, 서버의 알림 상태를 클라이언트에 복원하지 않습니다.
+브라우저 마운트 후 Portal을 생성하고 `useInsertionEffect`로 스타일을 주입하므로
+별도의 서버 토스트 CSS 추출이나 스타일 Provider는 필요하지 않습니다.
+
+현재 패키지 엔트리는 `'use client'` 지시문이나 별도의 `react-server` 엔트리를 제공하지 않습니다.
+Next.js App Router 같은 RSC 환경에서는 소비 앱의 Client Component 안에서 패키지를 import하세요.
+Server Component에서 패키지를 직접 import해 Toaster를 렌더링하거나 `toast`를 호출하는 사용법은 지원하지 않습니다.
+일반 SSR에서의 서버 호출 무동작 처리가 RSC에서 직접 import할 수 있다는 의미는 아닙니다.
+
+다음은 패키지 설치 후 사용할 경계 구성 예시입니다. 기존 저장소 데모의 상대 import 예시와 구분합니다.
+
+```tsx
+// app/toast-client.tsx
+'use client';
+
+import { Toaster } from 'sandwich-toast';
+
+export default function ToastClient() {
+  return <Toaster />;
+}
+```
+
+```tsx
+// app/layout.tsx
+import type { ReactNode } from 'react';
+import ToastClient from './toast-client';
+
+export default function RootLayout({ children }: { children: ReactNode }) {
+  return (
+    <html lang="ko">
+      <body>
+        {children}
+        <ToastClient />
+      </body>
+    </html>
+  );
+}
+```
+
+레이아웃 전체를 Client Component로 바꿀 필요는 없습니다.
+`toast`를 사용하는 버튼도 Client Component에서 import하고 이벤트 핸들러로 호출하세요.
+Server Action의 결과를 알림으로 표시하려면 클라이언트가 결과를 받은 뒤 `toast`를 호출합니다.
+렌더 함수 실행 중에는 호출하지 않습니다.
+
+일반 React의 `renderToString`·`hydrateRoot`와 브라우저 스타일 적용은 검증했습니다.
+위 RSC 예시는 [Next.js의 Client Component 경계 안내](https://nextjs.org/docs/app/getting-started/server-and-client-components)에 따른 구성 가이드이며,
+현재 Next.js App Router의 실제 빌드·실행 검증을 완료한 것은 아닙니다.
+
 ## 상태와 재료로 사용하기
 
 상태 메서드는 기본 재료를 사용합니다.
