@@ -30,8 +30,8 @@ export function Toaster(props: ToasterProps) {
   return portalTarget ? createPortal(<ToasterContent {...props} />, portalTarget) : null
 }
 
-function ToasterContent({ position = DEFAULT_POSITION, scale = DEFAULT_SCALE, closeButtonLabel = toastLabels.ko.closeButtonLabel, reorderHint = toastLabels.ko.reorderHint }: ToasterProps) {
-  useInjectedStyle(STYLE_KEY, STYLE_CSS)
+function ToasterContent({ nonce, position = DEFAULT_POSITION, scale = DEFAULT_SCALE, closeButtonLabel = toastLabels.ko.closeButtonLabel, reorderHint = toastLabels.ko.reorderHint }: ToasterProps) {
+  useInjectedStyle(STYLE_KEY, STYLE_CSS, nonce)
   const resolvedScale = Number.isFinite(scale) && scale > 0
     ? Math.min(MAX_SCALE, Math.max(MIN_SCALE, scale))
     : DEFAULT_SCALE
@@ -70,6 +70,7 @@ function ToasterContent({ position = DEFAULT_POSITION, scale = DEFAULT_SCALE, cl
             onDismiss={() => removeToast(id)}
             closeButtonLabel={closeButtonLabel}
             reorderHint={reorderHint}
+            nonce={nonce}
             dismissRequested={t.dismissRequested}
             duration={t.duration}
             isPaused={hoveredId === id}

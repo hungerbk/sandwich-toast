@@ -62,6 +62,22 @@ React context와 이벤트 전파는 기존 React 트리를 따릅니다. 토스
 
 일반 레이어와의 표시 순서는 CSS stacking context와 `z-index`를 따릅니다. `showModal()`로 연 네이티브 `<dialog>`는 브라우저의 top layer에 표시되고 바깥 영역을 비활성화하므로, `body`의 토스트를 모달 위에 표시하거나 조작하는 것은 지원하지 않습니다. 모달 안에서 필요한 안내는 모달 내부에 표시하세요. 다른 모달 라이브러리도 포커스 제한이나 외부 영역 비활성화 정책에 따라 토스트 조작을 제한할 수 있습니다. [MDN showModal 문서](https://developer.mozilla.org/en-US/docs/Web/API/HTMLDialogElement/showModal)
 
+## Content Security Policy (CSP)
+
+엄격한 CSP를 사용하는 앱에서는 서버가 응답마다 생성한 nonce를 첫 마운트부터 전달하세요.
+
+```tsx
+<Toaster nonce={nonce} />
+```
+
+동일한 nonce를 CSP의 `style-src 'nonce-…'`에 허용해야 합니다. `style-src-elem`을 별도로 지정하는 경우 해당 정책에도 nonce를 허용해야 합니다.
+
+nonce는 앱에서 생성하여 전달하며, 라이브러리가 생성하지 않습니다. 응답마다 암호학적으로 안전한 난수를 새로 사용하고 고정값을 사용하지 마세요. 스타일은 한 번 삽입되므로 같은 문서에서는 첫 마운트부터 동일한 nonce를 유지해야 합니다. 중간 변경이나 nonce 누락 후 복구는 지원하지 않습니다.
+
+이미지는 인라인 WebP을 사용하므로 `img-src`에서 `data:`를 허용해야 합니다. 이 허용은 이미지 지시문에만 적용하세요. 스타일을 위해 `unsafe-inline`을 허용할 필요는 없습니다.
+
+현재 확인한 환경에서는 `style-src-attr 'none'`을 유지한 상태에서도 scale·위치 변경·호버·닫기가 정상 동작했습니다. 실제 지원 대상 브라우저와 CSP 정책에서도 확인하세요. [MDN: style-src-attr](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Content-Security-Policy/style-src-attr)
+
 ## SSR과 React Server Components
 
 일반 React SSR에서는 서버와 hydration 첫 렌더에 토스트 DOM을 출력하지 않습니다.

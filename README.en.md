@@ -61,6 +61,22 @@ React context and event propagation still follow the React tree. Toast clicks ca
 
 Ordering relative to ordinary layers follows CSS stacking contexts and `z-index`. A native `<dialog>` opened with `showModal()` occupies the browser's top layer and makes the rest of the document inert. Displaying or interacting with body-level toasts above that modal is unsupported; show essential feedback inside the modal instead. Other modal libraries may also restrict toast interaction through focus traps or by making outside content inert. [MDN showModal documentation](https://developer.mozilla.org/en-US/docs/Web/API/HTMLDialogElement/showModal)
 
+## Content Security Policy (CSP)
+
+For strict CSP, pass a server-generated, per-response nonce from the first mount:
+
+```tsx
+<Toaster nonce={nonce} />
+```
+
+Allow the same nonce in CSP using `style-src 'nonce-…'`. If `style-src-elem` is specified separately, allow the nonce there too.
+
+Your app generates and supplies the nonce; the library does not. Use a new cryptographically secure random value for each response, never a fixed value. Styles are inserted once, so keep the same nonce throughout the document from the first mount. Changing it later or recovering from an initially missing nonce is unsupported.
+
+Inline WebP images require `data:` in `img-src`. Limit that allowance to the image directive. Styles do not require `unsafe-inline`.
+
+In the environment checked, scale changes, positioning, hover, and dismissal worked with `style-src-attr 'none'`. Verify your target browsers and actual CSP policy too. [MDN: style-src-attr](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Content-Security-Policy/style-src-attr)
+
 ## SSR and React Server Components
 
 In regular React SSR, neither the server nor the initial hydration render emits toast DOM.

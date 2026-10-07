@@ -8,6 +8,7 @@ import { useInjectedStyle } from "../injectStyle";
 import { LIFT_VAR, INGREDIENT_CLIP_CLASS, INGREDIENT_MESSAGE_CLASS, STYLE_KEY, STYLE_CSS } from "./ToastItem.styles";
 
 export interface ToastItemProps {
+  nonce?: string;
   toastId?: string;
   message: string;
   ingredient: ToastIngredient;
@@ -28,8 +29,8 @@ export interface ToastItemProps {
   style?: CSSProperties;
 }
 
-export function ToastItem({ toastId, message, ingredient, isLoading = false, ketchup = false, liftOffset = 0, onMouseEnter, onMouseLeave, onClick, onDismiss, onFocusWithinChange, closeButtonLabel = toastLabels.ko.closeButtonLabel, reorderHint = toastLabels.ko.reorderHint, dismissRequested = false, duration, isPaused = false, className, style }: ToastItemProps) {
-  useInjectedStyle(STYLE_KEY, STYLE_CSS);
+export function ToastItem({ nonce, toastId, message, ingredient, isLoading = false, ketchup = false, liftOffset = 0, onMouseEnter, onMouseLeave, onClick, onDismiss, onFocusWithinChange, closeButtonLabel = toastLabels.ko.closeButtonLabel, reorderHint = toastLabels.ko.reorderHint, dismissRequested = false, duration, isPaused = false, className, style }: ToastItemProps) {
+  useInjectedStyle(STYLE_KEY, STYLE_CSS, nonce);
 
   const [isDismissing, setIsDismissing] = useState(false);
   const [isFocusWithin, setIsFocusWithin] = useState(false);
@@ -117,7 +118,7 @@ export function ToastItem({ toastId, message, ingredient, isLoading = false, ket
       }}
       style={{ [LIFT_VAR]: `${liftOffset}px`, ...style } as CSSProperties}>
       <div className={["sandwich-toast-surface", INGREDIENT_CLIP_CLASS[ingredient]].filter(Boolean).join(" ")}>
-        <Ingredient ingredient={ingredient} isLoading={isLoading} ketchup={ketchup} />
+        <Ingredient nonce={nonce} ingredient={ingredient} isLoading={isLoading} ketchup={ketchup} />
       </div>
 
       <p className={messageClassName}>

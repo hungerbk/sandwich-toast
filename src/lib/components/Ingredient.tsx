@@ -23,6 +23,7 @@ const INGREDIENT_ASSETS: Record<ToastIngredient, IngredientAsset> = {
 };
 
 export interface IngredientProps {
+  nonce?: string;
   ingredient: ToastIngredient;
   isLoading?: boolean;
   ketchup?: boolean;
@@ -30,8 +31,8 @@ export interface IngredientProps {
   style?: CSSProperties;
 }
 
-export function Ingredient({ ingredient, isLoading = false, ketchup = false, className, style }: IngredientProps) {
-  useInjectedStyle(STYLE_KEY, STYLE_CSS);
+export function Ingredient({ nonce, ingredient, isLoading = false, ketchup = false, className, style }: IngredientProps) {
+  useInjectedStyle(STYLE_KEY, STYLE_CSS, nonce);
 
   const asset = INGREDIENT_ASSETS[ingredient];
   const repeat = asset.repeat ?? 1;
