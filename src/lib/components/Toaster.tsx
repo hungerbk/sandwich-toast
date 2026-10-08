@@ -41,7 +41,7 @@ function ToasterContent({ nonce, position = DEFAULT_POSITION, scale = DEFAULT_SC
   const { handleKeyDown } = useToastKeyboardNavigation(toasts, visualOrder)
   const [focusedId, setFocusedId] = useState<string | null>(null)
   const focusedRank = focusedId === null ? -1 : (rankOf.get(focusedId) ?? -1)
-  const expandedRank = focusedRank >= 0 ? focusedRank : hoveredRank
+  const expandedRank = hoveredRank >= 0 ? hoveredRank : focusedRank
   const isBottom = position.startsWith('bottom')
   const horizontal = position.endsWith('left') ? 'left' : position.endsWith('right') ? 'right' : 'center'
   const containerClassName = ['sandwich-toaster', isBottom ? 'sandwich-toaster--bottom' : 'sandwich-toaster--top', `sandwich-toaster--${horizontal}`].join(' ')

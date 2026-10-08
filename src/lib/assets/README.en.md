@@ -150,4 +150,14 @@ These rounded thresholds leave roughly 9–11% headroom above the measured
 results. They are regression review limits, not additional compression targets.
 If exceeded, inspect the cause and visual quality before changing the budget;
 do not reduce quality solely to pass it. Measure with the same lockfile and
-Node version when comparing results. Automated CI enforcement belongs to #43.
+Node version when comparing results. `npm run check` builds the library and
+checks these budgets; CI runs the same command.
+
+Passing these budgets does not guarantee a small footprint or fast loading in
+every consuming app. Inlining all six images adds transfer cost compared with
+text notifications without images. For this release, we accept that cost to
+preserve the sandwich visuals and simple API, and use these budgets as release
+thresholds. If real consuming apps show a loading burden, revisit external
+image caching or selective ingredients in a future version. ESM and CJS are
+alternative formats, so their budgets are not added together. Actual transfer
+size depends on the consuming app's bundling, compression, and caching.
