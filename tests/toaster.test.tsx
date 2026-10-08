@@ -119,6 +119,44 @@ describe.each([false, true])('Toaster interactions (StrictMode=%s)', strict => {
   })
 })
 
+describe('reduced-motion stack layout', () => {
+  it.each(['top-center', 'bottom-center'] as const)('%s에서 삭제 후 기본 간격이 채워지고 포커스가 빠지면 펼침이 해제된다', position => {
+    vi.stubGlobal('matchMedia', vi.fn(() => ({ matches: true })))
+    act(() => root.render(<Toaster position={position} />))
+    const a = create('a', Infinity)
+    const b = create('b', Infinity)
+    const c = create('c', Infinity)
+    act(() => outside.focus())
+    act(() => button(b, '.sandwich-toast-dismiss-button').focus())
+    act(() => button(b, '.sandwich-toast-dismiss-button').click())
+    expect(exists(b)).toBe(false)
+    const edge = position.startsWith('bottom') ? 'bottom' : 'top'
+    const offsets = [card(a), card(c)].map(element => Number.parseFloat(element.style[edge])).sort((x, y) => x - y)
+    expect(offsets).toEqual([0, 40])
+    act(() => outside.focus())
+    for (const id of [a, c]) {
+      expect(card(id).style.getPropertyValue('--sandwich-toast-lift')).toBe('0px')
+    }
+  })
+})
+
+it('삭제 후 복원된 포커스가 있어도 다른 카드의 hover로 펼침 대상을 바꾼다', () => {
+  vi.stubGlobal('matchMedia', vi.fn(() => ({ matches: true })))
+  mount(false)
+  const a = create('a', Infinity)
+  const b = create('b', Infinity)
+  const c = create('c', Infinity)
+  act(() => button(b, '.sandwich-toast-dismiss-button').focus())
+  act(() => button(b, '.sandwich-toast-dismiss-button').click())
+  expect(document.activeElement).toBe(button(c, '.sandwich-toast-message-button'))
+  hover(a, true)
+  expect(card(c).style.getPropertyValue('--sandwich-toast-lift')).toBe('0px')
+  expect(card(a).style.getPropertyValue('--sandwich-toast-lift')).not.toBe('0px')
+  expect(document.activeElement).toBe(button(c, '.sandwich-toast-message-button'))
+  hover(a, false)
+  expect(card(c).style.getPropertyValue('--sandwich-toast-lift')).not.toBe('0px')
+})
+
 function mockAnimation() {
   const animation = { onfinish: null as (() => void) | null, cancel: vi.fn() }
   const animate = vi.fn(() => animation)
