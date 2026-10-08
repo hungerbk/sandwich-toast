@@ -26,7 +26,9 @@
     "lint": "oxlint",
     "preview": "vite preview",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "check:size": "node scripts/check-bundle-size.mjs",
+    "check": "npm run lint && npm run typecheck && npm test && npm run build && npm run build:demo && npm run check:size"
   },
   "peerDependencies": {
     "react": "^19.0.0",
