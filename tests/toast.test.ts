@@ -15,6 +15,15 @@ describe('toast API', () => {
     expect(getSnapshot()).toEqual([{ id, message: '알림', type, ingredient, duration, ketchup: false }])
   })
 
+  it.each([
+    ['lettuce', 'success', 4000], ['tomato', 'error', 4000],
+    ['cheese', 'warning', 4000], ['bread', 'info', 4000],
+    ['scrambled', 'loading', Infinity],
+  ] as const)('%s 별칭의 타입·재료·duration 기본값', (ingredient, type, duration) => {
+    toast[ingredient]('재료 알림')
+    expect(getSnapshot()[0]).toMatchObject({ ingredient, type, duration })
+  })
+
   it('재료 메서드는 타입을 바꿔도 재료를 유지하며 옵션으로 덮어쓸 수 있다', () => {
     toast.scrambled('완료', { type: 'success' })
     toast.success('선택', { ingredient: 'tomato', ketchup: true, duration: 6000 })

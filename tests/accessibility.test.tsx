@@ -82,6 +82,21 @@ describe('keyboard and focus', () => {
     expect(document.activeElement).toBe(button(a))
   })
 
+  it('닫기 애니메이션 중인 카드는 방향키 탐색에서 제외한다', () => {
+    mount()
+    const a = create('a')
+    const b = create('b')
+    const c = create('c')
+    const middle = button(b).closest<HTMLElement>('[data-toast-id]')!
+    const animation = { onfinish: null, cancel: vi.fn() }
+    Object.defineProperty(middle, 'animate', { configurable: true, value: vi.fn(() => animation) })
+    act(() => toast.dismiss(b))
+    expect(middle.isConnected).toBe(true)
+    focus(button(c))
+    key('ArrowDown')
+    expect(document.activeElement).toBe(button(a))
+  })
+
   it('비활성화된 메시지 버튼은 방향키 탐색에서 건너뛴다', () => {
     mount()
     const a = create('a')
