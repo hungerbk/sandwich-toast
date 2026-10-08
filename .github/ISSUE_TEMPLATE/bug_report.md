@@ -1,10 +1,9 @@
 ---
 name: Bug report
 about: Create a report to help us improve
-title: ''
-labels: ''
-assignees: ''
-
+title: ""
+labels: ""
+assignees: ""
 ---
 
 <!--
@@ -16,20 +15,25 @@ assignees: ""
 -->
 
 ## 🐛 버그 설명
+
 > 어떤 문제가 발생했나요?
 
 ## 재현 방법
-1. 
-2. 
-3. 
+
+1.
+2.
+3.
 
 ## 예상 동작
+
 > 어떻게 동작해야 하나요?
 
 ## 실제 동작
+
 > 실제로 어떻게 동작하나요?
 
 ## 환경
-- OS: 
-- Browser: 
+
+- OS:
+- Browser:
 - Version:

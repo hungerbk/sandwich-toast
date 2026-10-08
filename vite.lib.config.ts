@@ -20,7 +20,7 @@ export default defineConfig({
     lib: {
       entry: resolve(__dirname, "src/lib/index.ts"),
       name: "SandwichToast",
-      fileName: (format) => format === "cjs" ? "sandwich-toast.cjs" : "sandwich-toast.es.js",
+      fileName: (format) => (format === "cjs" ? "sandwich-toast.cjs" : "sandwich-toast.es.js"),
       formats: ["es", "cjs"],
     },
     rollupOptions: {

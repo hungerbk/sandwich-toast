@@ -31,20 +31,43 @@ export interface IngredientProps {
   style?: CSSProperties;
 }
 
-export function Ingredient({ nonce, ingredient, isLoading = false, ketchup = false, className, style }: IngredientProps) {
+export function Ingredient({
+  nonce,
+  ingredient,
+  isLoading = false,
+  ketchup = false,
+  className,
+  style,
+}: IngredientProps) {
   useInjectedStyle(STYLE_KEY, STYLE_CSS, nonce);
 
   const asset = INGREDIENT_ASSETS[ingredient];
   const repeat = asset.repeat ?? 1;
-  const containerClassName = ["sandwich-toast-ingredient", INGREDIENT_CONTAINER_CLASS[ingredient], className].filter(Boolean).join(" ");
+  const containerClassName = [
+    "sandwich-toast-ingredient",
+    INGREDIENT_CONTAINER_CLASS[ingredient],
+    className,
+  ]
+    .filter(Boolean)
+    .join(" ");
   const showKetchup = isLoading || ketchup;
-  const ketchupClassName = ["sandwich-toast-ingredient-ketchup", isLoading && "sandwich-toast-ingredient-ketchup--animated"].filter(Boolean).join(" ");
+  const ketchupClassName = [
+    "sandwich-toast-ingredient-ketchup",
+    isLoading && "sandwich-toast-ingredient-ketchup--animated",
+  ]
+    .filter(Boolean)
+    .join(" ");
 
   return (
     <div className={containerClassName} style={style}>
       <div className="sandwich-toast-ingredient-tiles">
         {Array.from({ length: repeat }, (_, c) => (
-          <img key={`${ingredient}-${c}`} className="sandwich-toast-ingredient-tile" src={asset.src} alt="" />
+          <img
+            key={`${ingredient}-${c}`}
+            className="sandwich-toast-ingredient-tile"
+            src={asset.src}
+            alt=""
+          />
         ))}
       </div>
       {showKetchup && <img className={ketchupClassName} src={ketchupSrc} alt="" />}
