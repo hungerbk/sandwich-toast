@@ -2,7 +2,6 @@
 
 <img width="1162" height="771" alt="sandwich-toast demo screenshot" src="https://github.com/user-attachments/assets/4a120279-3021-445f-8465-457e9d05c511" />
 
-
 샌드위치 재료가 겹겹이 쌓이는 React 토스트 알림 라이브러리입니다. 상태나 재료를 골라 알림을 만들고, 한입 먹는 애니메이션으로 닫을 수 있습니다.
 
 **한국어** · [English](./README.en.md)
@@ -94,9 +93,9 @@ Server Component에서 패키지를 직접 import해 Toaster를 렌더링하거�
 
 ```tsx
 // app/toast-client.tsx
-'use client';
+"use client";
 
-import { Toaster } from 'sandwich-toast';
+import { Toaster } from "sandwich-toast";
 
 export default function ToastClient() {
   return <Toaster />;
@@ -105,8 +104,8 @@ export default function ToastClient() {
 
 ```tsx
 // app/layout.tsx
-import type { ReactNode } from 'react';
-import ToastClient from './toast-client';
+import type { ReactNode } from "react";
+import ToastClient from "./toast-client";
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
@@ -134,11 +133,11 @@ Server Action의 결과를 알림으로 표시하려면 클라이언트가 결�
 상태 메서드는 기본 재료를 사용합니다.
 
 ```ts
-toast.success("저장했어요!");       // 상추
+toast.success("저장했어요!"); // 상추
 toast.error("다시 시도해주세요."); // 토마토
-toast.warning("확인해주세요.");   // 치즈
-toast.info("새 소식이 있어요.");   // 빵
-toast.loading("준비 중이에요.");  // 스크램블 에그
+toast.warning("확인해주세요."); // 치즈
+toast.info("새 소식이 있어요."); // 빵
+toast.loading("준비 중이에요."); // 스크램블 에그
 ```
 
 재료를 직접 선택할 수도 있습니다. 기본 상태는 각각 success, error, warning, info, loading입니다.
@@ -185,9 +184,9 @@ toast.cheese("케첩도 추가했어요.", { ketchup: true });
 `toastLabels`는 한국어(`ko`)와 영어(`en`) 프리셋을 제공합니다. 기본값은 한국어이며 언어를 자동으로 감지하지 않습니다. 아래 import 경로는 저장소의 `src/demo` 기준입니다.
 
 ```tsx
-import { Toaster, toastLabels } from '../lib';
+import { Toaster, toastLabels } from "../lib";
 
-<Toaster {...toastLabels.en} />
+<Toaster {...toastLabels.en} />;
 ```
 
 프리셋 하나를 전달하면 닫기 버튼 이름과 키보드 안내 문구가 함께 적용됩니다. 위 예시는 두 문구를 모두 영어로 설정합니다. 한국어는 기본값이므로 `<Toaster />`만 사용해도 됩니다.
@@ -203,12 +202,12 @@ import { Toaster, toastLabels } from '../lib';
 const appToastLabels = {
   ...toastLabels,
   ja: {
-    closeButtonLabel: '閉じる',
-    reorderHint: 'Enter/Space キーで最前面に移動',
+    closeButtonLabel: "閉じる",
+    reorderHint: "Enter/Space キーで最前面に移動",
   },
 };
 
-<Toaster {...appToastLabels.ja} />
+<Toaster {...appToastLabels.ja} />;
 ```
 
 ## 표시 시간

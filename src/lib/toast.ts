@@ -1,5 +1,12 @@
 import { addToast, clearToasts, requestDismiss } from "./store";
-import type { Toast, ToastIngredient, ToastType, ToastOptions, StandardToastOptions, IngredientToastOptions } from "./types";
+import type {
+  Toast,
+  ToastIngredient,
+  ToastType,
+  ToastOptions,
+  StandardToastOptions,
+  IngredientToastOptions,
+} from "./types";
 
 const DEFAULT_DURATION_MS = 4000;
 const MAX_TIMEOUT_MS = 2 ** 31 - 1;
@@ -13,7 +20,12 @@ const DEFAULT_INGREDIENT: Record<ToastType, ToastIngredient> = {
 
 function resolveDuration(duration: number | undefined, type: ToastType): number {
   if (duration === Infinity) return duration;
-  if (duration !== undefined && Number.isFinite(duration) && duration >= 0 && duration <= MAX_TIMEOUT_MS) {
+  if (
+    duration !== undefined &&
+    Number.isFinite(duration) &&
+    duration >= 0 &&
+    duration <= MAX_TIMEOUT_MS
+  ) {
     return duration;
   }
   return type === "loading" ? Infinity : DEFAULT_DURATION_MS;
@@ -39,16 +51,25 @@ function createToast(message: string, defaultType: ToastType, userOptions?: Toas
 }
 
 export const toast = {
-  success: (message: string, options?: StandardToastOptions) => createToast(message, "success", options),
-  error: (message: string, options?: StandardToastOptions) => createToast(message, "error", options),
-  warning: (message: string, options?: StandardToastOptions) => createToast(message, "warning", options),
+  success: (message: string, options?: StandardToastOptions) =>
+    createToast(message, "success", options),
+  error: (message: string, options?: StandardToastOptions) =>
+    createToast(message, "error", options),
+  warning: (message: string, options?: StandardToastOptions) =>
+    createToast(message, "warning", options),
   info: (message: string, options?: StandardToastOptions) => createToast(message, "info", options),
-  loading: (message: string, options?: StandardToastOptions) => createToast(message, "loading", options),
-  lettuce: (message: string, options?: IngredientToastOptions) => createToast(message, "success", options),
-  tomato: (message: string, options?: IngredientToastOptions) => createToast(message, "error", options),
-  cheese: (message: string, options?: IngredientToastOptions) => createToast(message, "warning", options),
-  bread: (message: string, options?: IngredientToastOptions) => createToast(message, "info", options),
-  scrambled: (message: string, options?: IngredientToastOptions) => createToast(message, "loading", options),
+  loading: (message: string, options?: StandardToastOptions) =>
+    createToast(message, "loading", options),
+  lettuce: (message: string, options?: IngredientToastOptions) =>
+    createToast(message, "success", options),
+  tomato: (message: string, options?: IngredientToastOptions) =>
+    createToast(message, "error", options),
+  cheese: (message: string, options?: IngredientToastOptions) =>
+    createToast(message, "warning", options),
+  bread: (message: string, options?: IngredientToastOptions) =>
+    createToast(message, "info", options),
+  scrambled: (message: string, options?: IngredientToastOptions) =>
+    createToast(message, "loading", options),
   // 인자 생략은 전체 삭제, 명시적인 undefined는 아무것도 삭제하지 않는다.
   dismiss: (...args: [id?: string]) => {
     if (typeof window === "undefined" || typeof document === "undefined") return;

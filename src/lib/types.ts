@@ -1,15 +1,15 @@
-export type ToastType = 'success' | 'error' | 'warning' | 'info' | 'loading'
-export type ToastIngredient = 'lettuce' | 'tomato' | 'cheese' | 'bread' | 'scrambled'
+export type ToastType = "success" | "error" | "warning" | "info" | "loading";
+export type ToastIngredient = "lettuce" | "tomato" | "cheese" | "bread" | "scrambled";
 
 export interface Toast {
-  id: string
-  message: string
-  type: ToastType
-  ingredient: ToastIngredient
+  id: string;
+  message: string;
+  type: ToastType;
+  ingredient: ToastIngredient;
   // loading은 항상 애니메이션을 표시하고, 그 외에는 정적 토핑을 표시한다.
-  ketchup: boolean
+  ketchup: boolean;
   // ms. Infinity는 자동 종료하지 않는다.
-  duration: number
+  duration: number;
 }
 
 export interface ToastOptions {
@@ -22,12 +22,13 @@ export interface ToastOptions {
 export type StandardToastOptions = Omit<ToastOptions, "type">;
 export type IngredientToastOptions = Omit<ToastOptions, "ingredient">;
 
-export type ToasterPosition = 'top-left' | 'top-center' | 'top-right' | 'bottom-left' | 'bottom-center' | 'bottom-right'
+export type ToasterPosition =
+  "top-left" | "top-center" | "top-right" | "bottom-left" | "bottom-center" | "bottom-right";
 
 export interface ToasterProps {
-  nonce?: string
-  closeButtonLabel?: string
-  reorderHint?: string
-  position?: ToasterPosition
-  scale?: number
+  nonce?: string;
+  closeButtonLabel?: string;
+  reorderHint?: string;
+  position?: ToasterPosition;
+  scale?: number;
 }

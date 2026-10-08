@@ -1,5 +1,5 @@
 :root {
-  font-family: ui-rounded, 'Apple SD Gothic Neo', 'Malgun Gothic', system-ui, sans-serif;
+  font-family: ui-rounded, "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
   color: #293d30;
   background: #faf6eb;
   font-synthesis: none;
@@ -8,10 +8,32 @@
   -moz-osx-font-smoothing: grayscale;
   color-scheme: light;
 }
-body { margin: 0; }
-button, select, input { font: inherit; }
-button, select { cursor: pointer; }
-a { color: inherit; }
-button { color: inherit; }
-button:focus-visible, select:focus-visible, input:focus-visible, a:focus-visible, pre:focus-visible { outline: 3px solid #a33d2d; outline-offset: 5px; }
-* { box-sizing: border-box; }
+body {
+  margin: 0;
+}
+button,
+select,
+input {
+  font: inherit;
+}
+button,
+select {
+  cursor: pointer;
+}
+a {
+  color: inherit;
+}
+button {
+  color: inherit;
+}
+button:focus-visible,
+select:focus-visible,
+input:focus-visible,
+a:focus-visible,
+pre:focus-visible {
+  outline: 3px solid #a33d2d;
+  outline-offset: 5px;
+}
+* {
+  box-sizing: border-box;
+}

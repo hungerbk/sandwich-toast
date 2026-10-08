@@ -28,7 +28,9 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "check:size": "node scripts/check-bundle-size.mjs",
-    "check": "npm run lint && npm run typecheck && npm test && npm run build && npm run build:demo && npm run check:size"
+    "check": "npm run format:check && npm run lint && npm run typecheck && npm test && npm run build && npm run build:demo && npm run check:size",
+    "format": "prettier . --write",
+    "format:check": "prettier . --check"
   },
   "peerDependencies": {
     "react": "^19.0.0",
@@ -41,6 +43,7 @@
     "@vitejs/plugin-react": "^6.0.3",
     "jsdom": "^29.1.1",
     "oxlint": "^1.71.0",
+    "prettier": "3.9.9",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
     "typescript": "~6.0.2",

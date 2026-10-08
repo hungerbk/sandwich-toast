@@ -1,11 +1,24 @@
-import { useEffect, useId, useRef, useState, type CSSProperties, type MouseEventHandler } from "react";
+import {
+  useEffect,
+  useId,
+  useRef,
+  useState,
+  type CSSProperties,
+  type MouseEventHandler,
+} from "react";
 import { toastLabels } from "../labels";
 import { useToastTimer } from "../hooks/useToastTimer";
 import type { ToastIngredient } from "../types";
 import { bitePolygon, NO_BITES, DISMISS_ANIMATION_MS } from "../dismissBite";
 import { Ingredient } from "./Ingredient";
 import { useInjectedStyle } from "../injectStyle";
-import { LIFT_VAR, INGREDIENT_CLIP_CLASS, INGREDIENT_MESSAGE_CLASS, STYLE_KEY, STYLE_CSS } from "./ToastItem.styles";
+import {
+  LIFT_VAR,
+  INGREDIENT_CLIP_CLASS,
+  INGREDIENT_MESSAGE_CLASS,
+  STYLE_KEY,
+  STYLE_CSS,
+} from "./ToastItem.styles";
 
 export interface ToastItemProps {
   nonce?: string;
@@ -29,7 +42,27 @@ export interface ToastItemProps {
   style?: CSSProperties;
 }
 
-export function ToastItem({ nonce, toastId, message, ingredient, isLoading = false, ketchup = false, liftOffset = 0, onMouseEnter, onMouseLeave, onClick, onDismiss, onFocusWithinChange, closeButtonLabel = toastLabels.ko.closeButtonLabel, reorderHint = toastLabels.ko.reorderHint, dismissRequested = false, duration, isPaused = false, className, style }: ToastItemProps) {
+export function ToastItem({
+  nonce,
+  toastId,
+  message,
+  ingredient,
+  isLoading = false,
+  ketchup = false,
+  liftOffset = 0,
+  onMouseEnter,
+  onMouseLeave,
+  onClick,
+  onDismiss,
+  onFocusWithinChange,
+  closeButtonLabel = toastLabels.ko.closeButtonLabel,
+  reorderHint = toastLabels.ko.reorderHint,
+  dismissRequested = false,
+  duration,
+  isPaused = false,
+  className,
+  style,
+}: ToastItemProps) {
   useInjectedStyle(STYLE_KEY, STYLE_CSS, nonce);
 
   const [isDismissing, setIsDismissing] = useState(false);
@@ -66,11 +99,31 @@ export function ToastItem({ nonce, toastId, message, ingredient, isLoading = fal
     const animation = el.animate(
       [
         { clipPath: NO_BITES, opacity: 1, offset: 0 },
-        { clipPath: bitePolygon({ top: false, right: true, bottom: false, left: false }), opacity: 1, offset: 0.22 },
-        { clipPath: bitePolygon({ top: true, right: true, bottom: false, left: false }), opacity: 1, offset: 0.44 },
-        { clipPath: bitePolygon({ top: true, right: true, bottom: true, left: false }), opacity: 1, offset: 0.66 },
-        { clipPath: bitePolygon({ top: true, right: true, bottom: true, left: true }), opacity: 1, offset: 0.82 },
-        { clipPath: bitePolygon({ top: true, right: true, bottom: true, left: true }), opacity: 0, offset: 1 },
+        {
+          clipPath: bitePolygon({ top: false, right: true, bottom: false, left: false }),
+          opacity: 1,
+          offset: 0.22,
+        },
+        {
+          clipPath: bitePolygon({ top: true, right: true, bottom: false, left: false }),
+          opacity: 1,
+          offset: 0.44,
+        },
+        {
+          clipPath: bitePolygon({ top: true, right: true, bottom: true, left: false }),
+          opacity: 1,
+          offset: 0.66,
+        },
+        {
+          clipPath: bitePolygon({ top: true, right: true, bottom: true, left: true }),
+          opacity: 1,
+          offset: 0.82,
+        },
+        {
+          clipPath: bitePolygon({ top: true, right: true, bottom: true, left: true }),
+          opacity: 0,
+          offset: 1,
+        },
       ],
       { duration: DISMISS_ANIMATION_MS, easing: "ease-out" },
     );
@@ -86,17 +139,28 @@ export function ToastItem({ nonce, toastId, message, ingredient, isLoading = fal
     if (dismissRequested) handleDismiss();
   });
 
-  const { resetTimer } = useToastTimer({ duration, isPaused: isPaused || isFocusWithin || isDismissing || dismissRequested, onElapsed: handleDismiss });
+  const { resetTimer } = useToastTimer({
+    duration,
+    isPaused: isPaused || isFocusWithin || isDismissing || dismissRequested,
+    onElapsed: handleDismiss,
+  });
   const handleClick: MouseEventHandler<HTMLDivElement> = (e) => {
     if (dismissedRef.current) return;
     resetTimer();
     onClick?.(e);
   };
 
-  const rootClassName = ["sandwich-toast-item", onClick && "sandwich-toast-item--clickable", isDismissing && "sandwich-toast-item--dismissing", className]
+  const rootClassName = [
+    "sandwich-toast-item",
+    onClick && "sandwich-toast-item--clickable",
+    isDismissing && "sandwich-toast-item--dismissing",
+    className,
+  ]
     .filter(Boolean)
     .join(" ");
-  const messageClassName = ["sandwich-toast-message", INGREDIENT_MESSAGE_CLASS[ingredient]].filter(Boolean).join(" ");
+  const messageClassName = ["sandwich-toast-message", INGREDIENT_MESSAGE_CLASS[ingredient]]
+    .filter(Boolean)
+    .join(" ");
 
   return (
     <div
@@ -116,21 +180,34 @@ export function ToastItem({ nonce, toastId, message, ingredient, isLoading = fal
         setIsFocusWithin(false);
         onFocusWithinChange?.(false);
       }}
-      style={{ [LIFT_VAR]: `${liftOffset}px`, ...style } as CSSProperties}>
-      <div className={["sandwich-toast-surface", INGREDIENT_CLIP_CLASS[ingredient]].filter(Boolean).join(" ")}>
+      style={{ [LIFT_VAR]: `${liftOffset}px`, ...style } as CSSProperties}
+    >
+      <div
+        className={["sandwich-toast-surface", INGREDIENT_CLIP_CLASS[ingredient]]
+          .filter(Boolean)
+          .join(" ")}
+      >
         <Ingredient nonce={nonce} ingredient={ingredient} isLoading={isLoading} ketchup={ketchup} />
       </div>
 
       <p className={messageClassName}>
         {onClick ? (
           <span className="sandwich-toast-message-action">
-            <button type="button" aria-describedby={keyboardHintId} className="sandwich-toast-message-text sandwich-toast-message-button">
+            <button
+              type="button"
+              aria-describedby={keyboardHintId}
+              className="sandwich-toast-message-text sandwich-toast-message-button"
+            >
               <span className="sandwich-toast-message-content">{message}</span>
             </button>
-            <span id={keyboardHintId} className="sandwich-toast-keyboard-hint">{reorderHint}</span>
+            <span id={keyboardHintId} className="sandwich-toast-keyboard-hint">
+              {reorderHint}
+            </span>
           </span>
         ) : (
-          <span className="sandwich-toast-message-text"><span className="sandwich-toast-message-content">{message}</span></span>
+          <span className="sandwich-toast-message-text">
+            <span className="sandwich-toast-message-content">{message}</span>
+          </span>
         )}
       </p>
 
@@ -142,7 +219,8 @@ export function ToastItem({ nonce, toastId, message, ingredient, isLoading = fal
           onClick={(e) => {
             e.stopPropagation();
             handleDismiss();
-          }}>
+          }}
+        >
           ×
         </button>
       )}

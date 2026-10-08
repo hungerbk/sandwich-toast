@@ -94,9 +94,9 @@ The following boundary example assumes the package is installed, unlike the repo
 
 ```tsx
 // app/toast-client.tsx
-'use client';
+"use client";
 
-import { Toaster } from 'sandwich-toast';
+import { Toaster } from "sandwich-toast";
 
 export default function ToastClient() {
   return <Toaster />;
@@ -105,8 +105,8 @@ export default function ToastClient() {
 
 ```tsx
 // app/layout.tsx
-import type { ReactNode } from 'react';
-import ToastClient from './toast-client';
+import type { ReactNode } from "react";
+import ToastClient from "./toast-client";
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
@@ -134,11 +134,11 @@ actual Next.js App Router builds and execution have not yet been verified.
 Status methods use a default ingredient.
 
 ```ts
-toast.success("Saved!");           // Lettuce
-toast.error("Please try again.");  // Tomato
-toast.warning("Please check.");    // Cheese
-toast.info("Fresh news!");         // Bread
-toast.loading("Getting ready…");  // Scrambled egg
+toast.success("Saved!"); // Lettuce
+toast.error("Please try again."); // Tomato
+toast.warning("Please check."); // Cheese
+toast.info("Fresh news!"); // Bread
+toast.loading("Getting ready…"); // Scrambled egg
 ```
 
 Choose an ingredient directly instead. Their default statuses are success, error, warning, info, and loading, respectively.
@@ -185,9 +185,9 @@ Put the key result or required action first, and make details available elsewher
 `toastLabels` provides Korean (`ko`) and English (`en`) presets. Korean is the default; language is not detected automatically. The import path below is relative to this repository's `src/demo` directory.
 
 ```tsx
-import { Toaster, toastLabels } from '../lib';
+import { Toaster, toastLabels } from "../lib";
 
-<Toaster {...toastLabels.en} />
+<Toaster {...toastLabels.en} />;
 ```
 
 A single preset sets both the close button label and the keyboard hint. The example above sets both to English. Use `<Toaster />` for the Korean defaults.
@@ -203,12 +203,12 @@ For other languages, add a label object in your app and pass it to `Toaster`; no
 const appToastLabels = {
   ...toastLabels,
   ja: {
-    closeButtonLabel: '閉じる',
-    reorderHint: 'Enter/Space キーで最前面に移動',
+    closeButtonLabel: "閉じる",
+    reorderHint: "Enter/Space キーで最前面に移動",
   },
 };
 
-<Toaster {...appToastLabels.ja} />
+<Toaster {...appToastLabels.ja} />;
 ```
 
 ## Duration
