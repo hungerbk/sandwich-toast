@@ -18,7 +18,15 @@ function check(label, actual, limit) {
 }
 check('WebP total', imageBytes, 90_000)
 for (const [name, limit] of [['sandwich-toast.es.js', 145_000], ['sandwich-toast.cjs', 140_000]]) {
-  const content = readFileSync(resolve(root, 'dist', name))
+  let content
+  try {
+    content = readFileSync(resolve(root, 'dist', name))
+  } catch (error) {
+    if (error.code !== 'ENOENT') throw error
+    console.error(`Missing build artifact: dist/${name}. Run npm run build first.`)
+    process.exitCode = 1
+    break
+  }
   check(name, content.length, limit)
   check(`${name} gzip`, gzipSync(content).length, 100_000)
 }
