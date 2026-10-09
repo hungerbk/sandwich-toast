@@ -2,45 +2,21 @@
 
 [한국어](README.md) | English
 
-## Naming convention
+## Files and rendering
 
-One file per ingredient, `{ingredient}.webp`. The current implementation
-uses overlapping tiles and silhouette clipping. The pre-sliced layout
-is tracked separately in issue #6.
+Each ingredient uses one `{ingredient}.webp` file. The current layout overlaps image tiles and clips their silhouettes; pre-sliced layouts are tracked separately in #6.
 
-## Current ingredients
+- `lettuce.webp`: success · lettuce · 556×562
+- `tomato.webp`: error · tomato · 499×400
+- `cheese.webp`: warning · cheese · 450×400
+- `bread.webp`: info · bread · 800×200
+- `scrambled.webp`: loading · scrambled egg · 800×200
 
-| file             | toast type | ingredient | size    |
-| ---------------- | ---------- | ---------- | ------- |
-| `lettuce.webp`   | success    | lettuce    | 556×562 |
-| `tomato.webp`    | error      | tomato     | 499×400 |
-| `cheese.webp`    | warning    | cheese     | 450×400 |
-| `bread.webp`     | info       | bread      | 800×200 |
-| `scrambled.webp` | loading    | scrambled  | 800×200 |
+Files are cropped to their content, so dimensions differ. `Ingredient.tsx` renders bread and scrambled egg as single layers, and lettuce, tomato, and cheese as four overlapping tiles. Small rotations and scale adjustments fill the card width without stretching the ingredient image.
 
-Each file is cropped tight to its drawn content (no padding/whitespace), so
-sizes differ per ingredient — that's expected, not a bug. `Ingredient.tsx`
-handles the two rendering modes:
+## Ketchup overlay
 
-- `bread` / `scrambled` render as a single full-width base/cap layer.
-- `lettuce` / `tomato` / `cheese` are tiled 4x side by side, overlapping,
-  each instance with a slightly different rotation (and a matching
-  scale-down so the rotated corners don't visually spill past the tile's
-  box) to build up the full sandwich width rather than stretching one image.
-
-## Loading overlay (`ketchup.webp`)
-
-`ketchup.webp` (800×200) is the same canvas size as
-`scrambled.webp` (issue #12) so it lines up when layered directly on top of
-it — but it's not exclusive to `scrambled`. `Ingredient` overlays it on top
-of _whichever_ ingredient is showing whenever `isLoading` is true (see
-`toast.loading()`), looping a clip-path "squeeze on, hold, wipe off"
-animation. It was kept as a separate file rather than baked into
-`scrambled.webp` specifically so it could be animated independently and
-reused across ingredients.
-
-Set `ketchup: true` to show a static overlay on non-loading toasts.
-Loading toasts show the overlay regardless of this option; reduced-motion settings disable its animation.
+`ketchup.webp` uses an 800×200 canvas, matching scrambled egg (#12), but can appear over any ingredient. Loading toasts loop a clip-path animation; other types can show a static topping with `ketchup: true`. Loading shows ketchup regardless of that option, and reduced motion stops the animation. Keeping the overlay separate allows reuse and independent animation.
 
 ## Compression and bundle measurements (#40)
 
@@ -53,7 +29,7 @@ increased its size from 19,346 to 21,962 bytes.
 Use the originals from commit `3662e73` for future compression comparisons;
 do not repeatedly recompress the already lossy optimized files.
 
-### Recorded results
+### Measurements recorded in #40
 
 Before → after, in bytes:
 
@@ -72,23 +48,16 @@ Vite v8.1.5. Gzip uses Node `zlib.gzipSync` defaults, not Vite's console estimat
 The ESM and CJS figures are alternatives, not a combined browser download.
 Declarations, package archive size, React, and HTTP headers are excluded.
 
-For a repeatable measurement, run `npm ci`, `npm run build`, then:
+To measure the current version and check its budgets, run:
 
-```sh
-node --input-type=module <<'JS'
-import { readdirSync, readFileSync, statSync } from 'node:fs';
-import { gzipSync } from 'node:zlib';
-const assets = 'src/lib/assets/';
-const imageBytes = readdirSync(assets)
-  .filter(name => name.endsWith('.webp'))
-  .reduce((total, name) => total + statSync(assets + name).size, 0);
-console.log('WebP total:', imageBytes);
-for (const name of ['sandwich-toast.es.js', 'sandwich-toast.cjs']) {
-  const file = readFileSync('dist/' + name);
-  console.log(name, { bytes: file.length, gzip: gzipSync(file).length });
-}
-JS
+```bash
+npm ci
+npm run build
+npm run check:size
 ```
+
+<details>
+<summary>Compression quality and external-asset experiments</summary>
 
 ### Visual comparison
 
@@ -138,6 +107,8 @@ from a runtime ingredient map and supports loading/ketchup options. Removing
 unused ingredients requires a separate registration, entry-point, or loading
 design. Selective ingredients are deferred to preserve the current simple API.
 
+</details>
+
 ### Size budgets
 
 Initial review thresholds for the current feature set (decimal bytes):
@@ -146,8 +117,8 @@ Initial review thresholds for the current feature set (decimal bytes):
 - ESM JavaScript: **145,000 bytes**, gzip **100,000 bytes**.
 - CJS JavaScript: **140,000 bytes**, gzip **100,000 bytes**.
 
-These rounded thresholds leave roughly 9–11% headroom above the measured
-results. They are regression review limits, not additional compression targets.
+These rounded thresholds leave roughly 9–11% headroom above the #40
+measurements. They are regression review limits, not additional compression targets.
 If exceeded, inspect the cause and visual quality before changing the budget;
 do not reduce quality solely to pass it. Measure with the same lockfile and
 Node version when comparing results. `npm run check` builds the library and
