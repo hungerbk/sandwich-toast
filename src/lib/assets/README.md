@@ -39,7 +39,7 @@ clip-path로 짜기·유지·지우기 애니메이션을 반복합니다.
 추후 압축 비교에는 `3662e73` 커밋의 원본을 사용하세요.
 이미 손실 압축한 파일을 반복해서 재압축하지 않습니다.
 
-### 측정 결과
+### #40 당시 측정 결과
 
 압축 전 → 후이며 단위는 bytes입니다.
 
@@ -58,23 +58,16 @@ Gzip은 Vite 콘솔 추정값 대신 Node `zlib.gzipSync`의 기본 옵션을 �
 ESM과 CJS는 대체 형식이므로 브라우저 다운로드 용량으로 합산하지 않습니다.
 타입 선언, 패키지 압축 파일, React, HTTP 헤더는 이 수치에서 제외합니다.
 
-같은 조건으로 측정하려면 `npm ci`, `npm run build` 이후 다음 명령을 실행합니다.
+현재 버전의 크기와 예산을 확인하려면 다음 명령을 실행하세요.
 
-```sh
-node --input-type=module <<'JS'
-import { readdirSync, readFileSync, statSync } from 'node:fs';
-import { gzipSync } from 'node:zlib';
-const assets = 'src/lib/assets/';
-const imageBytes = readdirSync(assets)
-  .filter(name => name.endsWith('.webp'))
-  .reduce((total, name) => total + statSync(assets + name).size, 0);
-console.log('WebP total:', imageBytes);
-for (const name of ['sandwich-toast.es.js', 'sandwich-toast.cjs']) {
-  const file = readFileSync('dist/' + name);
-  console.log(name, { bytes: file.length, gzip: gzipSync(file).length });
-}
-JS
+```bash
+npm ci
+npm run build
+npm run check:size
 ```
+
+<details>
+<summary>압축 품질·외부 파일 비교 기록</summary>
 
 ### 시각 품질 비교
 
@@ -117,6 +110,8 @@ Toaster가 런타임 재료 맵과 로딩·케첩 옵션을 사용하기 때문�
 미사용 재료를 제거하려면 등록 방식·진입점·로딩 설계를 별도로 정해야 합니다.
 현재의 간단한 사용법을 유지하기 위해 선택적 재료 구성은 보류합니다.
 
+</details>
+
 ### 용량 예산
 
 현재 기능을 기준으로 한 초기 검토 상한이며, 단위는 십진 bytes입니다.
@@ -125,7 +120,7 @@ Toaster가 런타임 재료 맵과 로딩·케첩 옵션을 사용하기 때문�
 - ESM JavaScript: **145,000 bytes**, gzip **100,000 bytes**
 - CJS JavaScript: **140,000 bytes**, gzip **100,000 bytes**
 
-현재 측정값에 약 9~11% 여유를 둔 기준입니다. 추가 압축 목표가 아니라 용량 증가를 검토하는 상한입니다.
+위 #40 측정값에 약 9~11% 여유를 둔 기준입니다. 추가 압축 목표가 아니라 용량 증가를 검토하는 상한입니다.
 초과하면 원인과 시각 품질을 확인한 뒤 예산 변경을 판단하며, 통과만을 위해 품질을 낮추지 않습니다.
 비교 시 동일한 lockfile과 Node 버전을 사용합니다. `npm run check`는 빌드 후 이 예산을 검사하며 CI에서도 같은 명령을 사용합니다.
 
