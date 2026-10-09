@@ -270,7 +270,7 @@ npm run check  # Formatting, lint, types, tests, builds, and size budgets
 ```
 
 - [Development setup and formatting](./CONTRIBUTING.md#english)
-- [Tests and manual QA scope (Korean)](./tests/README.md)
+- [Tests and manual QA scope](./tests/README.en.md)
 - [Image assets and size budgets](./src/lib/assets/README.en.md)
 
 Release preparation and follow-up improvements are tracked in [issues](https://github.com/hungerbk/sandwich-toast/issues).
