@@ -273,3 +273,18 @@ npm run check  # 포맷·린트·타입·테스트·빌드·용량 검사
 - [이미지 에셋과 용량 예산](./src/lib/assets/README.md)
 
 배포 준비와 후속 개선은 [이슈](https://github.com/hungerbk/sandwich-toast/issues)에서 관리합니다.
+
+## 라이선스
+
+코드와 문서는 [MIT](./LICENSE)로 제공됩니다. 이미지는 별도의 [이미지 사용 조건](./ASSET-LICENSE.md)이 적용됩니다.
+Sandwich Toast를 사용하는 앱에서의 표시·배포는 허용하지만, 이미지의 독립적인 재사용·수정·재판매는 허용하지 않습니다.
+라이브러리 동작에 필요한 크기 조절·자르기·애니메이션 등은 허용합니다.
+
+일반 앱에서 사용할 때 이미지에 대한 추가 출처 표시나 라이선스 고지는 필요하지 않습니다.
+이미지를 포함한 수정 라이브러리의 재배포는 허용하며, 이미지 라이선스·제작자·원본 프로젝트 출처를 유지해야 합니다.
+코드의 MIT 고지 조건은 별개로 적용됩니다.
+
+### 원본 프로젝트와 제작자
+
+Sandwich Toast는 hungerbk가 기획하고 제작한 프로젝트입니다. 샌드위치 테마의 시각 디자인과 원본 일러스트를 이 프로젝트를 위해 만들었습니다.
+원본 저장소: [hungerbk/sandwich-toast](https://github.com/hungerbk/sandwich-toast)

@@ -15,7 +15,9 @@
     }
   },
   "files": [
-    "dist"
+    "dist",
+    "LICENSE",
+    "ASSET-LICENSE.md"
   ],
   "sideEffects": false,
   "scripts": {
@@ -50,5 +52,21 @@
     "vite": "^8.1.1",
     "vite-plugin-dts": "^5.0.3",
     "vitest": "^5.0.3"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hungerbk/sandwich-toast.git"
+  },
+  "homepage": "https://hungerbk.github.io/sandwich-toast/",
+  "bugs": {
+    "url": "https://github.com/hungerbk/sandwich-toast/issues"
+  },
+  "keywords": [
+    "react",
+    "toast",
+    "notification",
+    "sandwich",
+    "typescript"
+  ],
+  "license": "SEE LICENSE IN LICENSE"
 }

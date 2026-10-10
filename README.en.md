@@ -274,3 +274,18 @@ npm run check  # Formatting, lint, types, tests, builds, and size budgets
 - [Image assets and size budgets](./src/lib/assets/README.en.md)
 
 Release preparation and follow-up improvements are tracked in [issues](https://github.com/hungerbk/sandwich-toast/issues).
+
+## License
+
+Code and documentation are provided under [MIT](./LICENSE). Images are covered by separate [asset terms](./ASSET-LICENSE.md).
+Display and distribution within applications using Sandwich Toast are permitted; standalone reuse, editing, and resale of the images are not.
+Rendering operations needed by the library, such as scaling, cropping, and animation, are permitted.
+
+Applications using the library need no additional image attribution or license disclosure.
+Modified library distributions containing the images are permitted if they retain the asset license, creator credit, and original project attribution.
+The code's MIT notice requirements still apply separately.
+
+### Original project and credits
+
+Sandwich Toast was conceived and created by hungerbk. Its sandwich-themed visual design and original illustrations were created for this project.
+Original repository: [hungerbk/sandwich-toast](https://github.com/hungerbk/sandwich-toast)
