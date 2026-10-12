@@ -17,25 +17,24 @@ A React toast library that stacks notifications as sandwich ingredients, with a 
 - Loading animation and ketchup topping
 - TypeScript types, with no separate CSS import required
 
-## Run locally
+## Installation
 
-The npm package release is in preparation. For now, clone the repository to try the demo. The project uses React 19.
+Requires React 19 and React DOM 19.
+
+The first npm release is in preparation. The installation command below will be available after publication.
 
 ```bash
-git clone https://github.com/hungerbk/sandwich-toast.git
-cd sandwich-toast
-npm ci
-npm run dev
+npm install sandwich-toast
 ```
 
 ## Basic usage
 
 Only one mounted `<Toaster />` per app is supported. Multiple components can call the same `toast` API. In development, a console warning is emitted when multiple Toasters are mounted. Duplicate rendering is not blocked, and using multiple instances simultaneously is unsupported.
 
-Place one `<Toaster />` at the top level of your app and call `toast` from event handlers. This example uses the import path for `src/demo` in this repository.
+Place one `<Toaster />` at the top level of your app and call `toast` from event handlers.
 
 ```tsx
-import { toast, Toaster } from "../lib";
+import { toast, Toaster } from "sandwich-toast";
 
 export default function App() {
   return (
@@ -158,10 +157,10 @@ The library respects `prefers-reduced-motion: reduce`. Ketchup remains static, a
 
 ### Labels and language
 
-`toastLabels` provides Korean (`ko`) and English (`en`) presets. Korean is the default; language is not detected automatically. The import path below is relative to this repository's `src/demo` directory.
+`toastLabels` provides Korean (`ko`) and English (`en`) presets. Korean is the default; language is not detected automatically.
 
 ```tsx
-import { Toaster, toastLabels } from "../lib";
+import { Toaster, toastLabels } from "sandwich-toast";
 
 <Toaster {...toastLabels.en} />;
 ```
@@ -263,6 +262,12 @@ This RSC example follows [Next.js guidance on Client Component boundaries](https
 actual Next.js App Router builds and execution have not yet been verified.
 
 ## Development
+
+```bash
+git clone https://github.com/hungerbk/sandwich-toast.git
+cd sandwich-toast
+npm ci
+```
 
 ```bash
 npm run dev    # Demo development server

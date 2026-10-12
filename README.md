@@ -17,25 +17,24 @@
 - loading 애니메이션과 케첩 토핑
 - TypeScript 타입 제공, 별도 CSS import 불필요
 
-## 실행하기
+## 설치
 
-npm 패키지 배포는 준비 중입니다. 현재는 저장소를 받아 데모를 실행할 수 있습니다. React 19를 사용합니다.
+React 19와 React DOM 19가 필요합니다.
+
+첫 npm 배포 준비 중입니다. 아래 설치 명령은 배포 후 사용할 수 있습니다.
 
 ```bash
-git clone https://github.com/hungerbk/sandwich-toast.git
-cd sandwich-toast
-npm ci
-npm run dev
+npm install sandwich-toast
 ```
 
 ## 기본 사용법
 
 한 앱에서 동시에 마운트된 `<Toaster />` 하나만 지원합니다. 여러 컴포넌트에서 같은 `toast` API를 호출할 수 있습니다. 개발 환경에서는 Toaster가 여러 개 마운트되면 콘솔에 경고합니다. 중복 렌더링을 차단하지는 않으며, 여러 개를 동시에 사용하는 동작은 보장하지 않습니다.
 
-`<Toaster />`는 앱 최상단에 한 번 배치하고, 이벤트 핸들러에서 `toast`를 호출합니다. 아래 예시는 저장소의 `src/demo` 기준입니다.
+`<Toaster />`는 앱 최상단에 한 번 배치하고, 이벤트 핸들러에서 `toast`를 호출합니다.
 
 ```tsx
-import { toast, Toaster } from "../lib";
+import { toast, Toaster } from "sandwich-toast";
 
 export default function App() {
   return (
@@ -158,10 +157,10 @@ Tab/Shift+Tab으로 메시지 버튼과 닫기 버튼을 탐색합니다. 두 �
 
 ### 안내 문구와 언어
 
-`toastLabels`는 한국어(`ko`)와 영어(`en`) 프리셋을 제공합니다. 기본값은 한국어이며 언어를 자동으로 감지하지 않습니다. 아래 import 경로는 저장소의 `src/demo` 기준입니다.
+`toastLabels`는 한국어(`ko`)와 영어(`en`) 프리셋을 제공합니다. 기본값은 한국어이며 언어를 자동으로 감지하지 않습니다.
 
 ```tsx
-import { Toaster, toastLabels } from "../lib";
+import { Toaster, toastLabels } from "sandwich-toast";
 
 <Toaster {...toastLabels.en} />;
 ```
@@ -262,6 +261,12 @@ Server Action의 결과를 알림으로 표시하려면 클라이언트가 결�
 현재 Next.js App Router의 실제 빌드·실행 검증을 완료한 것은 아닙니다.
 
 ## 개발
+
+```bash
+git clone https://github.com/hungerbk/sandwich-toast.git
+cd sandwich-toast
+npm ci
+```
 
 ```bash
 npm run dev    # 데모 개발 서버
