@@ -1,6 +1,6 @@
 # 🥪 sandwich-toast
 
-<img width="1162" height="771" alt="sandwich-toast demo screenshot" src="https://github.com/user-attachments/assets/4a120279-3021-445f-8465-457e9d05c511" />
+<img width="1570" height="1176" alt="sandwich-toast demo gif" src="https://github.com/user-attachments/assets/be51bb03-be30-4552-94b5-928bdecb5985" />
 
 샌드위치 재료가 겹겹이 쌓이는 React 토스트 알림 라이브러리입니다. 상태나 재료를 골라 알림을 만들고, 한입 먹는 애니메이션으로 닫을 수 있습니다.
 
@@ -17,25 +17,24 @@
 - loading 애니메이션과 케첩 토핑
 - TypeScript 타입 제공, 별도 CSS import 불필요
 
-## 실행하기
+## 설치
 
-npm 패키지 배포는 준비 중입니다. 현재는 저장소를 받아 데모를 실행할 수 있습니다. React 19를 사용합니다.
+React 19와 React DOM 19가 필요합니다.
+
+첫 npm 배포 준비 중입니다. 아래 설치 명령은 배포 후 사용할 수 있습니다.
 
 ```bash
-git clone https://github.com/hungerbk/sandwich-toast.git
-cd sandwich-toast
-npm ci
-npm run dev
+npm install sandwich-toast
 ```
 
 ## 기본 사용법
 
 한 앱에서 동시에 마운트된 `<Toaster />` 하나만 지원합니다. 여러 컴포넌트에서 같은 `toast` API를 호출할 수 있습니다. 개발 환경에서는 Toaster가 여러 개 마운트되면 콘솔에 경고합니다. 중복 렌더링을 차단하지는 않으며, 여러 개를 동시에 사용하는 동작은 보장하지 않습니다.
 
-`<Toaster />`는 앱 최상단에 한 번 배치하고, 이벤트 핸들러에서 `toast`를 호출합니다. 아래 예시는 저장소의 `src/demo` 기준입니다.
+`<Toaster />`는 앱 최상단에 한 번 배치하고, 이벤트 핸들러에서 `toast`를 호출합니다.
 
 ```tsx
-import { toast, Toaster } from "../lib";
+import { toast, Toaster } from "sandwich-toast";
 
 export default function App() {
   return (
@@ -158,10 +157,10 @@ Tab/Shift+Tab으로 메시지 버튼과 닫기 버튼을 탐색합니다. 두 �
 
 ### 안내 문구와 언어
 
-`toastLabels`는 한국어(`ko`)와 영어(`en`) 프리셋을 제공합니다. 기본값은 한국어이며 언어를 자동으로 감지하지 않습니다. 아래 import 경로는 저장소의 `src/demo` 기준입니다.
+`toastLabels`는 한국어(`ko`)와 영어(`en`) 프리셋을 제공합니다. 기본값은 한국어이며 언어를 자동으로 감지하지 않습니다.
 
 ```tsx
-import { Toaster, toastLabels } from "../lib";
+import { Toaster, toastLabels } from "sandwich-toast";
 
 <Toaster {...toastLabels.en} />;
 ```
@@ -264,6 +263,12 @@ Server Action의 결과를 알림으로 표시하려면 클라이언트가 결�
 ## 개발
 
 ```bash
+git clone https://github.com/hungerbk/sandwich-toast.git
+cd sandwich-toast
+npm ci
+```
+
+```bash
 npm run dev    # 데모 개발 서버
 npm run check  # 포맷·린트·타입·테스트·빌드·용량 검사
 ```
@@ -273,3 +278,18 @@ npm run check  # 포맷·린트·타입·테스트·빌드·용량 검사
 - [이미지 에셋과 용량 예산](./src/lib/assets/README.md)
 
 배포 준비와 후속 개선은 [이슈](https://github.com/hungerbk/sandwich-toast/issues)에서 관리합니다.
+
+## 라이선스
+
+코드와 문서는 [MIT](./LICENSE)로 제공됩니다. 이미지는 별도의 [이미지 사용 조건](./ASSET-LICENSE.md)이 적용됩니다.
+Sandwich Toast를 사용하는 앱에서의 표시·배포는 허용하지만, 이미지의 독립적인 재사용·수정·재판매는 허용하지 않습니다.
+라이브러리 동작에 필요한 크기 조절·자르기·애니메이션 등은 허용합니다.
+
+일반 앱에서 사용할 때 이미지에 대한 추가 출처 표시나 라이선스 고지는 필요하지 않습니다.
+이미지를 포함한 수정 라이브러리의 재배포는 허용하며, 이미지 라이선스·제작자·원본 프로젝트 출처를 유지해야 합니다.
+코드의 MIT 고지 조건은 별개로 적용됩니다.
+
+### 원본 프로젝트와 제작자
+
+Sandwich Toast는 hungerbk가 기획하고 제작한 프로젝트입니다. 샌드위치 테마의 시각 디자인과 원본 일러스트를 이 프로젝트를 위해 만들었습니다.
+원본 저장소: [hungerbk/sandwich-toast](https://github.com/hungerbk/sandwich-toast)

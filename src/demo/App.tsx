@@ -1,11 +1,19 @@
-import { useRef, useState } from "react";
-import { toast, Toaster, type ToastIngredient, type ToastType, type ToasterPosition } from "../lib";
+import { useEffect, useRef, useState } from "react";
+import {
+  toast,
+  Toaster,
+  toastLabels,
+  type ToastIngredient,
+  type ToastType,
+  type ToasterPosition,
+} from "../lib";
 import bread from "../lib/assets/bread.webp";
 import lettuce from "../lib/assets/lettuce.webp";
 import tomato from "../lib/assets/tomato.webp";
 import cheese from "../lib/assets/cheese.webp";
 import scrambled from "../lib/assets/scrambled.webp";
 import "./App.css";
+import { translate, type DemoLanguage } from "./translations";
 
 const MENU: {
   ingredient: ToastIngredient;
@@ -68,33 +76,49 @@ const POSITIONS: { value: ToasterPosition; label: string }[] = [
 const SCALE = { min: 0.5, max: 1.5, step: 0.1, default: 1 };
 
 function App() {
+  const [language, setLanguage] = useState<DemoLanguage>("ko");
+  const t = (text: string) => translate(language, text);
+  useEffect(() => {
+    document.documentElement.lang = language;
+    document.title =
+      language === "ko"
+        ? "sandwich-toast · 작은 알림 가게"
+        : "sandwich-toast · A little toast shop";
+  }, [language]);
   const [position, setPosition] = useState<ToasterPosition>("top-center");
   const [scale, setScale] = useState(SCALE.default);
-  const [selected, setSelected] = useState(MENU[0]);
+  const [selectedIngredient, setSelectedIngredient] = useState<ToastIngredient>("bread");
+  const menu = MENU.map((item) => ({
+    ...item,
+    name: t(item.name),
+    caption: t(item.caption),
+    message: t(item.message),
+  }));
+  const selected = menu.find((item) => item.ingredient === selectedIngredient) ?? menu[0];
   const [apiMode, setApiMode] = useState<"ingredient" | "status">("ingredient");
   const [orders, setOrders] = useState(0);
   const [copyMessage, setCopyMessage] = useState("");
   const loadingId = useRef<string | null>(null);
   const copyRequest = useRef(0);
   const method = apiMode === "ingredient" ? selected.ingredient : selected.status;
-  const code = `import { toast, Toaster } from "sandwich-toast";
+  const code = `import { toast, Toaster, toastLabels } from "sandwich-toast";
 
 export default function App() {
   return (
     <>
-      <Toaster position="${position}" scale={${scale}} />
+      <Toaster {...toastLabels.${language}} position="${position}" scale={${scale}} />
       <button
         type="button"
         onClick={() => toast.${method}(${JSON.stringify(selected.message)})}
       >
-        토스트 띄우기
+        ${t("토스트 띄우기")}
       </button>
     </>
   );
 }`;
 
   const choose = (item: (typeof MENU)[number]) => {
-    setSelected(item);
+    setSelectedIngredient(item.ingredient);
     setOrders((count) => count + 1);
     copyRequest.current++;
     setCopyMessage("");
@@ -109,10 +133,10 @@ export default function App() {
     const request = ++copyRequest.current;
     try {
       await navigator.clipboard.writeText(code);
-      if (request === copyRequest.current) setCopyMessage("코드를 복사했어요.");
+      if (request === copyRequest.current) setCopyMessage(t("코드를 복사했어요."));
     } catch {
       if (request === copyRequest.current)
-        setCopyMessage("복사하지 못했어요. 아래 코드를 직접 선택해주세요.");
+        setCopyMessage(t("복사하지 못했어요. 아래 코드를 직접 선택해주세요."));
     }
   };
   const resetCopy = () => {
@@ -123,25 +147,42 @@ export default function App() {
   return (
     <div className="shop-page">
       <a className="skip-link" href="#ingredients">
-        재료 선택으로 건너뛰기
+        {t("재료 선택으로 건너뛰기")}
       </a>
       <header className="shop-header">
         <a className="wordmark" href="#">
           sandwich<span>toast</span>
         </a>
-        <span className="header-note">작은 알림을 맛있게.</span>
+        <label className="language-control">
+          <span className="visually-hidden">Language / 언어</span>
+          <select
+            value={language}
+            onChange={(event) => {
+              setLanguage(event.target.value as DemoLanguage);
+              resetCopy();
+            }}
+          >
+            <option value="ko" lang="ko">
+              한국어
+            </option>
+            <option value="en" lang="en">
+              English
+            </option>
+          </select>
+        </label>
+        <span className="header-note">{t("작은 알림을 맛있게.")}</span>
         <a className="github-link" href="https://github.com/hungerbk/sandwich-toast">
           GitHub ↗
         </a>
       </header>
       <main>
-        <section className="control-bar" aria-label="토스트 설정">
+        <section className="control-bar" aria-label={t("토스트 설정")}>
           <div className="counter-badge">
             <span>ORDER NO.</span>
             <strong>{String(orders).padStart(3, "0")}</strong>
           </div>
           <label className="position-control">
-            서빙 위치
+            {t("서빙 위치")}
             <select
               value={position}
               onChange={(e) => {
@@ -151,13 +192,13 @@ export default function App() {
             >
               {POSITIONS.map((item) => (
                 <option key={item.value} value={item.value}>
-                  {item.label}
+                  {t(item.label)}
                 </option>
               ))}
             </select>
           </label>
           <label className="scale-control">
-            한 입 크기 <output>{scale.toFixed(1)}×</output>
+            {t("한 입 크기")} <output>{scale.toFixed(1)}×</output>
             <input
               type="range"
               min={SCALE.min}
@@ -178,7 +219,7 @@ export default function App() {
               loadingId.current = null;
             }}
           >
-            전체 비우기 <span aria-hidden="true">×</span>
+            {t("전체 비우기")} <span aria-hidden="true">×</span>
           </button>
         </section>
 
@@ -192,13 +233,13 @@ export default function App() {
             </span>
             <p className="eyebrow">THE LITTLE NOTIFICATION DELI</p>
             <h1 id="shop-title">
-              어떤 재료를
+              {t("어떤 재료를")}
               <br />
-              <em>넣어볼까요?</em>
+              <em>{t("넣어볼까요?")}</em>
             </h1>
             <p className="intro-description">
-              좋아하는 재료를 톡!
-              <br className="mobile-break" /> 나만의 샌드위치 알림이 쌓여요.
+              {t("좋아하는 재료를 톡!")}
+              <br className="mobile-break" /> {t("나만의 샌드위치 알림이 쌓여요.")}
             </p>
             <span className="shop-stamp" aria-hidden="true">
               MADE WITH
@@ -209,11 +250,11 @@ export default function App() {
             </span>
           </div>
           <div className="menu-heading" id="ingredients" tabIndex={-1}>
-            <h2>오늘의 재료</h2>
-            <span>하나씩 눌러 맛보세요</span>
+            <h2>{t("오늘의 재료")}</h2>
+            <span>{t("하나씩 눌러 맛보세요")}</span>
           </div>
           <div className="ingredient-menu">
-            {MENU.map((item, index) => (
+            {menu.map((item, index) => (
               <button
                 key={item.ingredient}
                 type="button"
@@ -243,20 +284,22 @@ export default function App() {
           <div className="recipe-intro">
             <span className="eyebrow">TAKE THE RECIPE HOME</span>
             <h2 id="recipe-title">
-              마음에 드셨나요?
+              {t("마음에 드셨나요?")}
               <br />
-              코드도 챙겨가세요.
+              {t("코드도 챙겨가세요.")}
             </h2>
             <p>
-              방금 고른 재료와 서빙 설정 그대로.
+              {t("방금 고른 재료와 서빙 설정 그대로.")}
               <br />
-              당신의 React 앱에서도 만나보세요.
+              {t("당신의 React 앱에서도 만나보세요.")}
             </p>
-            <span className="recipe-tag">오늘의 선택 · {selected.name}</span>
+            <span className="recipe-tag">
+              {t("오늘의 선택")} · {selected.name}
+            </span>
           </div>
           <div className="code-panel">
             <fieldset className="api-mode">
-              <legend className="visually-hidden">코드 호출 방식</legend>
+              <legend className="visually-hidden">{t("코드 호출 방식")}</legend>
               <label>
                 <input
                   type="radio"
@@ -268,7 +311,7 @@ export default function App() {
                     resetCopy();
                   }}
                 />
-                <span>재료로 사용</span>
+                <span>{t("재료로 사용")}</span>
               </label>
               <label>
                 <input
@@ -281,16 +324,16 @@ export default function App() {
                     resetCopy();
                   }}
                 />
-                <span>상태로 사용</span>
+                <span>{t("상태로 사용")}</span>
               </label>
             </fieldset>
             <div className="code-heading">
               <span>App.tsx</span>
               <button type="button" onClick={copy}>
-                코드 복사
+                {t("코드 복사")}
               </button>
             </div>
-            <pre tabIndex={0} aria-label="선택한 토스트 사용 코드">
+            <pre tabIndex={0} aria-label={t("선택한 토스트 사용 코드")}>
               <code>{code}</code>
             </pre>
             <p className="copy-feedback" role="status">
@@ -301,10 +344,10 @@ export default function App() {
       </main>
       <footer className="shop-footer">
         <span>sandwich-toast</span>
-        <span>작은 알림에도, 취향 한 조각.</span>
-        <a href="https://github.com/hungerbk/sandwich-toast">소스 코드 보기 ↗</a>
+        <span>{t("작은 알림에도, 취향 한 조각.")}</span>
+        <a href="https://github.com/hungerbk/sandwich-toast">{t("소스 코드 보기 ↗")}</a>
       </footer>
-      <Toaster position={position} scale={scale} />
+      <Toaster {...toastLabels[language]} position={position} scale={scale} />
     </div>
   );
 }

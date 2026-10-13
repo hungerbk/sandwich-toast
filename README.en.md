@@ -1,6 +1,6 @@
 # 🥪 sandwich-toast
 
-<img width="1162" height="771" alt="sandwich-toast demo screenshot" src="https://github.com/user-attachments/assets/4a120279-3021-445f-8465-457e9d05c511" />
+<img width="1570" height="1176" alt="sandwich-toast demo gif" src="https://github.com/user-attachments/assets/be51bb03-be30-4552-94b5-928bdecb5985" />
 
 A React toast library that stacks notifications as sandwich ingredients, with a bite animation when they close.
 
@@ -17,25 +17,24 @@ A React toast library that stacks notifications as sandwich ingredients, with a 
 - Loading animation and ketchup topping
 - TypeScript types, with no separate CSS import required
 
-## Run locally
+## Installation
 
-The npm package release is in preparation. For now, clone the repository to try the demo. The project uses React 19.
+Requires React 19 and React DOM 19.
+
+The first npm release is in preparation. The installation command below will be available after publication.
 
 ```bash
-git clone https://github.com/hungerbk/sandwich-toast.git
-cd sandwich-toast
-npm ci
-npm run dev
+npm install sandwich-toast
 ```
 
 ## Basic usage
 
 Only one mounted `<Toaster />` per app is supported. Multiple components can call the same `toast` API. In development, a console warning is emitted when multiple Toasters are mounted. Duplicate rendering is not blocked, and using multiple instances simultaneously is unsupported.
 
-Place one `<Toaster />` at the top level of your app and call `toast` from event handlers. This example uses the import path for `src/demo` in this repository.
+Place one `<Toaster />` at the top level of your app and call `toast` from event handlers.
 
 ```tsx
-import { toast, Toaster } from "../lib";
+import { toast, Toaster } from "sandwich-toast";
 
 export default function App() {
   return (
@@ -158,10 +157,10 @@ The library respects `prefers-reduced-motion: reduce`. Ketchup remains static, a
 
 ### Labels and language
 
-`toastLabels` provides Korean (`ko`) and English (`en`) presets. Korean is the default; language is not detected automatically. The import path below is relative to this repository's `src/demo` directory.
+`toastLabels` provides Korean (`ko`) and English (`en`) presets. Korean is the default; language is not detected automatically.
 
 ```tsx
-import { Toaster, toastLabels } from "../lib";
+import { Toaster, toastLabels } from "sandwich-toast";
 
 <Toaster {...toastLabels.en} />;
 ```
@@ -265,6 +264,12 @@ actual Next.js App Router builds and execution have not yet been verified.
 ## Development
 
 ```bash
+git clone https://github.com/hungerbk/sandwich-toast.git
+cd sandwich-toast
+npm ci
+```
+
+```bash
 npm run dev    # Demo development server
 npm run check  # Formatting, lint, types, tests, builds, and size budgets
 ```
@@ -274,3 +279,18 @@ npm run check  # Formatting, lint, types, tests, builds, and size budgets
 - [Image assets and size budgets](./src/lib/assets/README.en.md)
 
 Release preparation and follow-up improvements are tracked in [issues](https://github.com/hungerbk/sandwich-toast/issues).
+
+## License
+
+Code and documentation are provided under [MIT](./LICENSE). Images are covered by separate [asset terms](./ASSET-LICENSE.md).
+Display and distribution within applications using Sandwich Toast are permitted; standalone reuse, editing, and resale of the images are not.
+Rendering operations needed by the library, such as scaling, cropping, and animation, are permitted.
+
+Applications using the library need no additional image attribution or license disclosure.
+Modified library distributions containing the images are permitted if they retain the asset license, creator credit, and original project attribution.
+The code's MIT notice requirements still apply separately.
+
+### Original project and credits
+
+Sandwich Toast was conceived and created by hungerbk. Its sandwich-themed visual design and original illustrations were created for this project.
+Original repository: [hungerbk/sandwich-toast](https://github.com/hungerbk/sandwich-toast)

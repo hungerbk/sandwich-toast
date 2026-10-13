@@ -132,3 +132,11 @@ thresholds. If real consuming apps show a loading burden, revisit external
 image caching or selective ingredients in a future version. ESM and CJS are
 alternative formats, so their budgets are not added together. Actual transfer
 size depends on the consuming app's bundling, compression, and caching.
+
+## Origin and usage terms
+
+All six images were created by hungerbk. They are excluded from the code's MIT license
+and covered by the [asset terms](../../../ASSET-LICENSE.md). Standalone reuse, editing, and resale outside the permitted Sandwich Toast use are not allowed.
+
+Applications using the library need no additional image notices. Modified library distributions containing the images must retain
+the asset license, hungerbk's creator credit, and the original project URL. MIT notices for the code remain separate.

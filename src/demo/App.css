@@ -19,6 +19,26 @@
   gap: 28px;
   min-height: 100px;
   border-bottom: 1px solid #c9cebb;
+  flex-wrap: wrap;
+  padding: 12px 0;
+}
+.language-control select {
+  background: #faf8ef;
+  color: #293d30;
+  border: 1px solid #bac0ac;
+  border-radius: 7px;
+  padding: 8px;
+  font-size: 13px;
+}
+.language-control select:hover {
+  background: #dce5ce;
+}
+.language-control select:focus-visible {
+  outline: 3px solid #526d43;
+  outline-offset: 2px;
+}
+html[lang="en"] .shop-intro h1 {
+  letter-spacing: -1px;
 }
 .wordmark {
   font-family: Georgia, serif;
