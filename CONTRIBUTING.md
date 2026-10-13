@@ -2,6 +2,16 @@
 
 ## 한국어
 
+로컬·CI·Pages는 Node 24.21.0과 npm 11.19.0을 사용합니다. nvm을 사용한다면:
+
+```bash
+nvm install
+nvm use
+npm install --global npm@11.19.0
+```
+
+다른 버전 관리자를 사용해도 같은 버전을 선택하세요. `.nvmrc`는 CI와 Pages에서도 읽습니다.
+
 `npm ci`로 저장소에 고정된 도구 버전을 설치하세요. Oxlint는 코드 규칙을 검사하고,
 Prettier는 포맷을 담당합니다. Prettier 기본값에 줄 너비만 100자로 설정합니다.
 
@@ -20,6 +30,16 @@ VS Code에서는 권장 Prettier 확장을 설치하세요. 이 저장소의 `.v
 빌드 결과·로컬 확인 파일·lockfile은 포맷 대상에서 제외합니다.
 
 ## English
+
+Local development, CI, and Pages use Node 24.21.0 and npm 11.19.0. With nvm:
+
+```bash
+nvm install
+nvm use
+npm install --global npm@11.19.0
+```
+
+Select the same versions with other version managers. CI and Pages also read `.nvmrc`.
 
 Run `npm ci` to install the repository's pinned tool versions. Oxlint checks code rules;
 Prettier handles formatting with its defaults and a print width of 100.
