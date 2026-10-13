@@ -4,7 +4,7 @@
 
 ## Running checks
 
-Run `npm ci` first. CI uses Node 24.13.0 for every PR, pushes to main, and manual runs.
+Run `npm ci` first. CI uses Node 24.21.0 / npm 11.19.0 for every PR, pushes to main, and manual runs.
 
 - `npm run check`: formatting, lint, types, tests, library/demo builds, and size budgets. CI uses the same command.
 - `npm test`: run tests once.
