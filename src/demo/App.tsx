@@ -94,7 +94,7 @@ function App() {
     caption: t(item.caption),
     message: t(item.message),
   }));
-  const selected = menu.find((item) => item.ingredient === selectedIngredient)!;
+  const selected = menu.find((item) => item.ingredient === selectedIngredient) ?? menu[0];
   const [apiMode, setApiMode] = useState<"ingredient" | "status">("ingredient");
   const [orders, setOrders] = useState(0);
   const [copyMessage, setCopyMessage] = useState("");
