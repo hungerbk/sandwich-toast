@@ -1,5 +1,7 @@
 # 🥪 sandwich-toast
 
+<img width="640" height="478" alt="Oct-13-2026 22-08-37" src="https://github.com/user-attachments/assets/ea3d188d-3f94-4a6f-a7f2-f89e20ee9c22" />
+
 <img width="1162" height="771" alt="sandwich-toast demo screenshot" src="https://github.com/user-attachments/assets/4a120279-3021-445f-8465-457e9d05c511" />
 
 샌드위치 재료가 겹겹이 쌓이는 React 토스트 알림 라이브러리입니다. 상태나 재료를 골라 알림을 만들고, 한입 먹는 애니메이션으로 닫을 수 있습니다.
