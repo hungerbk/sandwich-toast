@@ -1,6 +1,6 @@
 # 🥪 sandwich-toast
 
-<img width="1162" height="771" alt="sandwich-toast demo screenshot" src="https://github.com/user-attachments/assets/4a120279-3021-445f-8465-457e9d05c511" />
+<img width="1570" height="1176" alt="sandwich-toast demo gif" src="https://github.com/user-attachments/assets/be51bb03-be30-4552-94b5-928bdecb5985" />
 
 A React toast library that stacks notifications as sandwich ingredients, with a bite animation when they close.
 
