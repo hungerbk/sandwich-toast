@@ -21,7 +21,7 @@ A React toast library that stacks notifications as sandwich ingredients, with a 
 
 Requires React 19 and React DOM 19.
 
-The first npm release is in preparation. The installation command below will be available after publication.
+Install the package from [npm](https://www.npmjs.com/package/sandwich-toast).
 
 ```bash
 npm install sandwich-toast
@@ -278,7 +278,7 @@ npm run check  # Formatting, lint, types, tests, builds, and size budgets
 - [Tests and manual QA scope](./tests/README.en.md)
 - [Image assets and size budgets](./src/lib/assets/README.en.md)
 
-Release preparation and follow-up improvements are tracked in [issues](https://github.com/hungerbk/sandwich-toast/issues).
+Follow-up improvements are tracked in [issues](https://github.com/hungerbk/sandwich-toast/issues).
 
 ## License
 
