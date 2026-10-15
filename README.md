@@ -21,7 +21,7 @@
 
 React 19와 React DOM 19가 필요합니다.
 
-첫 npm 배포 준비 중입니다. 아래 설치 명령은 배포 후 사용할 수 있습니다.
+[npm 패키지](https://www.npmjs.com/package/sandwich-toast)에서 설치할 수 있습니다.
 
 ```bash
 npm install sandwich-toast
@@ -277,7 +277,7 @@ npm run check  # 포맷·린트·타입·테스트·빌드·용량 검사
 - [테스트 실행과 수동 QA 범위](./tests/README.md)
 - [이미지 에셋과 용량 예산](./src/lib/assets/README.md)
 
-배포 준비와 후속 개선은 [이슈](https://github.com/hungerbk/sandwich-toast/issues)에서 관리합니다.
+후속 개선은 [이슈](https://github.com/hungerbk/sandwich-toast/issues)에서 관리합니다.
 
 ## 라이선스
 
